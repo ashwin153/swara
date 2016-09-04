@@ -10,7 +10,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>swara-midi</artifactId>
+    <artifactId>swara-music</artifactId>
 
     <dependencies>
         <!-- Preconditions -->
@@ -22,7 +22,14 @@
         <!-- Fractions -->
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+
+        <!-- Serialization -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.2</version>
         </dependency>
 
         <!-- Test Dependencies -->

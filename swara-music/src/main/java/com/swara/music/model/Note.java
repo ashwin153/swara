@@ -1,12 +1,16 @@
-package com.swara.midi;
+package com.swara.music.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
 /**
  * A musical note. Notes have a pitch and a volume. Notes are combined together to form a
- * {@link com.swara.midi.Chord}. Notes are built using a {@link com.swara.midi.Note.Builder}
- * immutable, and, therefore, thread-safe.
+ * {@link Chord}. Notes are built using a {@link Note.Builder} immutable, and, therefore,
+ * thread-safe.
  */
+@JsonDeserialize(builder = Note.Builder.class)
 public class Note {
 
     public static final int C  = 0;
@@ -39,6 +43,7 @@ public class Note {
      * Returns the MIDI pitch of the note. The pitch is encoded as a number on the interval
      * [0, 128), in which 0 represents C and each successive number represents a half-step higher.
      */
+    @JsonGetter
     public int pitch() {
         return this.pitch;
     }
@@ -47,13 +52,14 @@ public class Note {
      * Returns the volume of the note. Volume is synonymous with MIDI velocity. The volume is
      * encoded as a number on the interval [0, 128), in which 0 represents silence.
      */
+    @JsonGetter
     public int volume() {
         return this.volume;
     }
 
     /**
-     * Constructs a {@link com.swara.midi.Note} using a Fluent-style builder pattern. By default,
-     * the builder will construct a medium volume, middle-C.
+     * Constructs a {@link Note} using a Fluent-style builder pattern. By default, the builder will
+     * construct a medium volume, middle-C.
      */
     public static final class Builder {
 
@@ -65,11 +71,19 @@ public class Note {
             this.volume = 64;
         }
 
+        @JsonIgnore
         public Builder withPitch(int note, int octave) {
             // The pitch must be on the interval [0, 128).
-            Preconditions.checkArgument(note >= 0 && note < 11);
+            Preconditions.checkArgument(note >= 0 && note <= 11);
             Preconditions.checkArgument(octave >= 0 && octave < 11);
             this.pitch = octave * 12 + note;
+            return this;
+        }
+
+        public Builder withPitch(int pitch) {
+            // The pitch must be on the interval [0, 128).
+            Preconditions.checkArgument(pitch >= 0 && pitch < 128);
+            this.pitch = pitch;
             return this;
         }
 

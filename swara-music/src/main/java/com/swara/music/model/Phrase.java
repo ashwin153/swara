@@ -1,15 +1,18 @@
-package com.swara.midi;
+package com.swara.music.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
 /**
  * A set of chords played sequentially for a particular instrument. Phrases are combined together to
- * form a {@link com.swara.midi.Fragment} and are built with {@link com.swara.midi.Phrase.Builder}.
- * Phrases are immutable, and, therefore, thread-safe.
+ * form a {@link Fragment} and are built with {@link Phrase.Builder}. Phrases are immutable, and,
+ * therefore, thread-safe.
  */
+@JsonDeserialize(builder = Phrase.Builder.class)
 public class Phrase {
 
     private final int program;
@@ -25,6 +28,7 @@ public class Phrase {
      * configured soundbank. For example, program numbers 0-8 are mapped to piano instruments. The
      * program number must be on the interval [0, 128).
      */
+    @JsonGetter
     public int program() {
         return this.program;
     }
@@ -33,13 +37,14 @@ public class Phrase {
      * Returns the a mutable copy of the list of chords that comprise this phrase. Chords are stored
      * sequentially in playback order.
      */
+    @JsonGetter
     public List<Chord> chords() {
         return this.chords;
     }
 
     /**
-     * Constructs a {@link com.swara.midi.Chord} using a Fluent-style builder pattern. By default,
-     * the builder will construct an empty piano (program 0) phrase.
+     * Constructs a {@link Chord} using a Fluent-style builder pattern. By default, the builder will
+     * construct an empty piano (program 0) phrase.
      */
     public static final class Builder {
 
@@ -62,6 +67,13 @@ public class Phrase {
             // The chord must not be null.
             Preconditions.checkNotNull(chord);
             this.chords.add(chord);
+            return this;
+        }
+
+        public Builder withChords(List<Chord> chords) {
+            // The chords may not be null.
+            Preconditions.checkNotNull(chords);
+            this.chords = chords;
             return this;
         }
 

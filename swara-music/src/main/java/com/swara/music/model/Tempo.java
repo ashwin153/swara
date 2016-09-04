@@ -1,17 +1,21 @@
-package com.swara.midi;
+package com.swara.music.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.math3.fraction.Fraction;
 
 /**
  * A musical tempo. Tempo specify the number of beats (quarter-notes) per minute as well as a time
- * signature. Tempos are built with {@link com.swara.midi.Tempo.Builder} and are immutable, and,
- * therefore, thread-safe.
+ * signature. Tempos are built with {@link Tempo.Builder} and are immutable, and, therefore,
+ * thread-safe.
  */
+@JsonDeserialize(builder = Tempo.Builder.class)
 public class Tempo {
 
-    public static final Fraction COMMON = Fraction.getFraction(4, 4);
+    public static final Fraction COMMON = new Fraction(4, 4);
 
     private final int bpm;
     private final Fraction signature;
@@ -26,6 +30,7 @@ public class Tempo {
      * adagio would likely be played at around 60 bpm, while a piece in allegro would likely be
      * played at around 140 bpm.
      */
+    @JsonGetter
     public int bpm() {
         return this.bpm;
     }
@@ -36,13 +41,14 @@ public class Tempo {
      * numerator specifies the number of that type of note that comprise a measure of music. For
      * example, a piece in the common time signature (4/4) would have 4 quarter-notes per measure.
      */
+    @JsonGetter
     public Fraction signature() {
         return this.signature;
     }
 
     /**
-     * Constructs a {@link com.swara.midi.Tempo} using a Fluent-style builder pattern. By default,
-     * the builder will construct a 120 bpm tempo in common time (4/4).
+     * Constructs a {@link Tempo} using a Fluent-style builder pattern. By default, the builder will
+     * construct a 120 bpm tempo in common time (4/4).
      */
     public static final class Builder {
 
@@ -61,11 +67,21 @@ public class Tempo {
             return this;
         }
 
+        @JsonIgnore
         public Builder withSignature(int beats, int note) {
             // Beats and note must both be positive and note must be a power of 2.
             Preconditions.checkArgument(beats > 0 && note > 0);
             Preconditions.checkArgument((note & -note) == note);
-            this.signature = Fraction.getFraction(beats, note);
+            this.signature = new Fraction(beats, note);
+            return this;
+        }
+
+        public Builder withSignature(Fraction sig) {
+            // Fraction must not be negative and denominator must be a power of 2.
+            Preconditions.checkNotNull(sig);
+            Preconditions.checkArgument(sig.compareTo(Fraction.ZERO) > 0);
+            Preconditions.checkArgument((sig.getDenominator() & -sig.getDenominator()) == sig.getDenominator());
+            this.signature = sig;
             return this;
         }
 

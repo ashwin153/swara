@@ -1,13 +1,20 @@
-package com.swara.midi;
+package com.swara.midi.io;
 
 import java.io.File;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
 
-import org.apache.commons.lang3.math.Fraction;
+import com.swara.music.io.MidiSongWriter;
+import com.swara.music.model.Chord;
+import com.swara.music.model.Fragment;
+import com.swara.music.model.Key;
+import com.swara.music.model.Note;
+import com.swara.music.model.Phrase;
+import com.swara.music.model.Song;
+import com.swara.music.model.Tempo;
+
+import org.apache.commons.math3.fraction.Fraction;
 import org.junit.Test;
 
-public class FragmentTest {
+public class MidiSongWriterTest {
 
     @Test
     public void testWrite() throws Exception {
@@ -48,9 +55,9 @@ public class FragmentTest {
         // Guitar Phrase.
         final Phrase guitar = new Phrase.Builder()
             .withProgram(25)
-            .withChord(cmaj7.withDuration(Fraction.getFraction(1, 8)).build())
-            .withChord(gmaj7.withDuration(Fraction.getFraction(1, 8)).build())
-            .withChord(cmaj7.withDuration(Fraction.getFraction(3, 4)).build())
+            .withChord(cmaj7.withDuration(new Fraction(1, 8)).build())
+            .withChord(gmaj7.withDuration(new Fraction(1, 8)).build())
+            .withChord(cmaj7.withDuration(new Fraction(3, 4)).build())
             .build();
 
         // Song Fragment.
@@ -61,13 +68,13 @@ public class FragmentTest {
             .withPhrase(1, guitar)
             .build();
 
+        // Song.
+        final Song song = new Song.Builder()
+            .withFragment(fragment)
+            .build();
+
         // Write to File.
-        final Sequence sequence = new Sequence(Sequence.PPQ, 480);
-        fragment.write(sequence);
-        fragment.write(sequence);
-        MidiSystem.write(sequence, 1, new File("./test.mid"));
+        new MidiSongWriter().write(new File("./test.mid"), song);
     }
-
-
 
 }
