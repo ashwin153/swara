@@ -16,16 +16,12 @@ import com.swara.music.model.Phrase;
 import com.swara.music.model.Song;
 
 /**
- *
+ * Writes {@link Song} to a MIDI {@link Sequence}. Writing conforms to the MIDI Format 0 spec;
+ * therefore, the result is a single-track, 16-channel MIDI file. For more information about the
+ * MIDI file spec check out: http://www.somascape.org/midi/tech/mfile.html.
  */
 public class MidiSongWriter implements SongWriter {
 
-    /**
-     * Writes the song fragment to a MIDI sequence. Writing conforms with the Midi Format 0 spec;
-     * all channels are written to the same track alongside key/tempo information. Currently
-     * requires that the sequence use the PPQ division type. This link is God's Gift to Midi Files:
-     * http://www.somascape.org/midi/tech/mfile.html.
-     */
     @Override
     public void write(OutputStream out, Song song) throws Exception {
         // Create MIDI sequence using the PPQ (pulses-per-quarter-note) division type.

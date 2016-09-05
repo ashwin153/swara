@@ -44,6 +44,27 @@ public class Key {
     }
 
     /**
+     * Returns the pitches of all notes in the key. The tonic (root; first note of scale) is
+     * calculated using the Circle of Fifths, which states that each additional sharp moves the
+     * tonic up a perfect fifth (7 half-steps) and each additional flat moves the tonic down a
+     * perfect fifth. The notes that comprise a scale are based on the observation that notes in a
+     * major scale are 2, 4, 5, 7, 9, and 11 half-steps above tonic and notes in a minor scale are
+     * 2, 3, 5, 7, 8, and 10 half-steps above tonic.
+     */
+    public int[] scale() {
+        final int tonic = ((this.type == Key.MAJOR ? Note.C : Note.A) + this.signature * 7) % 12;
+        return new int[] {
+            tonic,
+            tonic + 2,
+            tonic + 4 - this.type,
+            tonic + 5,
+            tonic + 7,
+            tonic + 9 - this.type,
+            tonic + 11 - this.type
+        };
+    }
+
+    /**
      * Constructs a {@link Key} using a Fluent-style builder pattern. By default, the builder will
      * construct C Major, which is a major key with no sharps nor flats.
      */

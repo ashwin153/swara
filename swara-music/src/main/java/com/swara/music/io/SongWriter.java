@@ -9,7 +9,7 @@ import com.swara.music.model.Song;
 public interface SongWriter {
 
     /**
-     *
+     * Writes a {@link Song} to the specified {@link OutputStream}.
      */
     void write(OutputStream out, Song song) throws Exception;
 

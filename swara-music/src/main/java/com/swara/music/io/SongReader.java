@@ -8,13 +8,13 @@ import com.swara.music.model.Song;
 
 public interface SongReader {
 
-    /**
-     *
+    /**]
+     * Reads a {@link Song} from an {@link InputStream}.
      */
     Song read(InputStream in) throws Exception;
 
     default Song read(File file) throws Exception {
-        try (InputStream in = new FileInputStream(file)) {
+        try (final InputStream in = new FileInputStream(file)) {
             return read(in);
         }
     }

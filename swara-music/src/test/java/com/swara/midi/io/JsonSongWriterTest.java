@@ -32,17 +32,17 @@ public class JsonSongWriterTest {
 
         // C Major 7 Chord.
         final Chord.Builder cmaj7 = new Chord.Builder()
-            .withNote(new Note.Builder().withPitch(Note.C, 4).withVolume(80).build())
-            .withNote(new Note.Builder().withPitch(Note.E, 4).withVolume(60).build())
-            .withNote(new Note.Builder().withPitch(Note.G, 5).withVolume(75).build())
-            .withNote(new Note.Builder().withPitch(Note.B, 5).withVolume(90).build());
+            .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).withVolume(80).build())
+            .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).withVolume(60).build())
+            .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).withVolume(75).build())
+            .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).withVolume(90).build());
 
         // G Major 7 Chord.
         final Chord.Builder gmaj7 = new Chord.Builder()
-            .withNote(new Note.Builder().withPitch(Note.G, 4).withVolume(80).build())
-            .withNote(new Note.Builder().withPitch(Note.B, 4).withVolume(60).build())
-            .withNote(new Note.Builder().withPitch(Note.D, 5).withVolume(75).build())
-            .withNote(new Note.Builder().withPitch(Note.F, 5).withVolume(90).build());
+            .withNote(new Note.Builder().withPitch(Note.G).withOctave(4).withVolume(80).build())
+            .withNote(new Note.Builder().withPitch(Note.B).withOctave(4).withVolume(60).build())
+            .withNote(new Note.Builder().withPitch(Note.D).withOctave(5).withVolume(75).build())
+            .withNote(new Note.Builder().withPitch(Note.F).withOctave(5).withVolume(90).build());
 
         // Piano Phrase.
         final Phrase piano = new Phrase.Builder()
@@ -70,7 +70,7 @@ public class JsonSongWriterTest {
 
         // Write to File.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new JsonSongWriter().write(out, new Song.Builder()
+        new JsonSongWriter().write(System.out, new Song.Builder()
             .withFragment(fragment)
             .build()
         );

@@ -1,9 +1,10 @@
 package com.swara.music.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * A musical note. Notes have a pitch and a volume. Notes are combined together to form a
@@ -11,7 +12,7 @@ import com.google.common.base.Preconditions;
  * thread-safe.
  */
 @JsonDeserialize(builder = Note.Builder.class)
-public class Note {
+public class Note implements Comparable<Note> {
 
     public static final int C  = 0;
     public static final int Cx = 1;
@@ -32,10 +33,12 @@ public class Note {
     public static final int B  = 11;
 
     private final int pitch;
+    private final int octave;
     private final int volume;
 
     private Note(Builder builder) {
         this.pitch = builder.pitch;
+        this.octave = builder.octave;
         this.volume = builder.volume;
     }
 
@@ -49,12 +52,43 @@ public class Note {
     }
 
     /**
+     *
+     */
+    @JsonGetter
+    public int octave() { return this.octave; }
+
+    /**
      * Returns the volume of the note. Volume is synonymous with MIDI velocity. The volume is
      * encoded as a number on the interval [0, 128), in which 0 represents silence.
      */
     @JsonGetter
     public int volume() {
         return this.volume;
+    }
+
+    @Override
+    public int compareTo(Note rhs) {
+        return ComparisonChain.start()
+            .compare(this.octave, rhs.octave)
+            .compare(this.pitch, rhs.pitch)
+            .result();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Note rhs = (Note) obj;
+        return this.octave == rhs.octave && this.pitch == rhs.pitch;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.octave, this.pitch);
     }
 
     /**
@@ -64,26 +98,26 @@ public class Note {
     public static final class Builder {
 
         private int pitch;
+        private int octave;
         private int volume;
 
         public Builder() {
-            this.pitch = 60;
+            this.pitch = Note.C;
+            this.octave = 5;
             this.volume = 64;
         }
 
-        @JsonIgnore
-        public Builder withPitch(int note, int octave) {
-            // The pitch must be on the interval [0, 128).
-            Preconditions.checkArgument(note >= 0 && note <= 11);
-            Preconditions.checkArgument(octave >= 0 && octave < 11);
-            this.pitch = octave * 12 + note;
+        public Builder withPitch(int pitch) {
+            // The pitch must be on the interval [0, 11].
+            Preconditions.checkArgument(pitch >= 0 && pitch <= 11);
+            this.pitch = pitch;
             return this;
         }
 
-        public Builder withPitch(int pitch) {
-            // The pitch must be on the interval [0, 128).
-            Preconditions.checkArgument(pitch >= 0 && pitch < 128);
-            this.pitch = pitch;
+        public Builder withOctave(int octave) {
+            // The octave must be on the interval [0, 11).
+            Preconditions.checkArgument(octave >= 0);
+            this.octave = octave;
             return this;
         }
 

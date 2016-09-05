@@ -14,13 +14,14 @@ import com.swara.music.model.Song;
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
- *
+ * Writes a {@link Song} to a JSON string.
  */
 public class JsonSongWriter implements SongWriter {
 
     private final ObjectMapper mapper;
 
     public JsonSongWriter() {
+        // Register custom fraction serializer.
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Fraction.class, new FractionSerializer());
 
@@ -35,9 +36,10 @@ public class JsonSongWriter implements SongWriter {
     }
 
     /**
-     *
+     * Custom fraction serializer to make is easier to read and modify fractional values like time
+     * signatures, note durations, etc.
      */
-    private class FractionSerializer extends JsonSerializer<Fraction> {
+    private final class FractionSerializer extends JsonSerializer<Fraction> {
 
         @Override
         public void serialize(Fraction fraction,

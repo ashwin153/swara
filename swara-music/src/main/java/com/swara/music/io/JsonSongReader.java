@@ -13,13 +13,14 @@ import com.swara.music.model.Song;
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
- *
+ * Reads a {@link Song} from a JSON string.
  */
 public class JsonSongReader implements SongReader {
 
     private final ObjectMapper mapper;
 
     public JsonSongReader() {
+        // Register custom fraction deserializer.
         final SimpleModule module = new SimpleModule();
         module.addDeserializer(Fraction.class, new FractionDeserializer());
 
@@ -33,7 +34,8 @@ public class JsonSongReader implements SongReader {
     }
 
     /**
-     *
+     * Custom fraction deserializer to make is easier to read and modify fractional values like time
+     * signatures, note durations, etc.
      */
     private class FractionDeserializer extends JsonDeserializer<Fraction> {
 
@@ -41,8 +43,8 @@ public class JsonSongReader implements SongReader {
         public Fraction deserialize(JsonParser jsonParser,
                                     DeserializationContext context) throws IOException {
 
-            final String[] tokens = jsonParser.getValueAsString().split("/");
-            return new Fraction(Integer.parseInt(tokens[0].trim()), Integer.parseInt(tokens[1].trim()));
+            final String[] tokens = jsonParser.getValueAsString().split("\\s/\\s");
+            return new Fraction(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
         }
 
     }
