@@ -4,9 +4,6 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.math3.linear.RealVector;
 
-/**
- *
- */
 public class GaussianRbfKernel implements KernelFunction {
 
     private final double gamma;
