@@ -7,14 +7,30 @@
     <groupId>com.swara</groupId>
     <artifactId>swara-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
     <modules>
         <module>swara-core</module>
+        <module>swara-ml</module>
         <module>swara-music</module>
     </modules>
-    <packaging>pom</packaging>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Project Dependencies -->
+            <dependency>
+                <groupId>com.swara</groupId>
+                <artifactId>swara-music</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.swara</groupId>
+                <artifactId>swara-ml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Compile Dependencies -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>

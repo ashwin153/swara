@@ -1,4 +1,9 @@
+# OS Files
 .DS_Store
+
+# Build Files
 target/
+
+# IntelliJ Files
 .idea/
 *.iml
