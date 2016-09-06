@@ -11,7 +11,7 @@
 
     <modules>
         <module>swara-core</module>
-        <module>swara-ml</module>
+        <module>swara-learn</module>
         <module>swara-music</module>
     </modules>
 

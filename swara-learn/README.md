@@ -1,5 +1,5 @@
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-# Swara Machine Learning (ML)
+# Swara Machine Learning
 A machine learning framework built on [Apache Commons Math](http://commons.apache.org/proper/commons-math/).
 
 ## Recipes
