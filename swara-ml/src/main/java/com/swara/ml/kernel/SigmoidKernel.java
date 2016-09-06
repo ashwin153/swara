@@ -2,9 +2,6 @@ package com.swara.ml.kernel;
 
 import org.apache.commons.math3.linear.RealVector;
 
-/**
- *
- */
 public class SigmoidKernel implements KernelFunction {
 
     private final double gamma;

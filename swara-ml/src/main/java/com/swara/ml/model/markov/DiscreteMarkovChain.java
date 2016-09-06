@@ -14,14 +14,14 @@ import com.swara.ml.model.UnsupervisedModel;
 /**
  *
  */
-public class MarkovChain<T> implements UnsupervisedModel<T, T> {
+public class DiscreteMarkovChain<T> implements UnsupervisedModel<T, T> {
 
     private final Map<List<T>, List<T>> transitions;
     private final Random rand;
     private final int k;
     private List<T> state;
 
-    public MarkovChain(int k, Comparator<T> comparator) {
+    public DiscreteMarkovChain(int k, Comparator<T> comparator) {
         Preconditions.checkArgument(k > 0);
         this.transitions =  new TreeMap<>(Ordering.from(comparator).lexicographical());
         this.rand = new Random();

@@ -3,17 +3,25 @@
 A machine learning framework built on [Apache Commons Math](http://commons.apache.org/proper/commons-math/).
 
 ## Recipes
-### Kernels
-- Linear Kernel: $$K(x, y) = x^T y$$
-- Polynomial Kernel: $$K(x, y) = (x^T y + c)^d$$
-- Sigmoid Kernel: $$K(x, y) = tanh(\gamma x^T y + r), \gamma > 0$$
-- Gaussian RBF Kernel: $$K(x, y) = exp(- \gamma \parallel x - y \parallel^2)$$
-
 ### Neural Networks
+- Tanh Layer
+- Sigmoid Layer
+- LSTM Layer
+- Gated Layer
+- Convolutional Layer
+- Pooling Layer
+
+### Markov Chains
+- Discrete Markov Chain
+- Continuous Markov Chain
 
 ### Support Vector Machines (SVM)
 
-### Markov Chains
+### Kernels
+- Linear Kernel
+- Polynomial Kernel
+- Sigmoid Kernel
+- Gaussian RBF Kernel
 
 ## Attribution
 Here's a little page-rank karma for all the sources I used:
