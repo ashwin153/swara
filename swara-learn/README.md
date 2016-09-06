@@ -30,3 +30,4 @@ Here's a little page-rank karma for all the sources I used:
 - [Convolutional Neural Networks](http://ufldl.stanford.edu/tutorial/supervised/ConvolutionalNeuralNetwork/)
 - [Support Vector Machines](https://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf)
 - [Decision Trees](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
+- [Fast Learning Algorithms](https://page.mi.fu-berlin.de/rojas/neural/chapter/K8.pdf)
