@@ -10,20 +10,21 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>swara-core</artifactId>
+    <artifactId>swara-ml</artifactId>
 
     <dependencies>
+        <!-- Preconditions -->
         <dependency>
-            <groupId>com.swara</groupId>
-            <artifactId>swara-ml</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.swara</groupId>
-            <artifactId>swara-music</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
         </dependency>
 
-        <!-- Test Dependencies -->
+        <!-- Test Dependenies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -35,11 +36,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

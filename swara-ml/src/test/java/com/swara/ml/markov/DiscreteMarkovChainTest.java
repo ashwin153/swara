@@ -1,4 +1,4 @@
-package com.swara.markov;
+package com.swara.ml.markov;
 
 public class DiscreteMarkovChainTest {
 
