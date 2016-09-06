@@ -2,6 +2,7 @@ package com.swara.music.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -62,6 +63,23 @@ public class Key {
             tonic + 9 - this.type,
             tonic + 11 - this.type
         };
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || obj.getClass() == this.getClass()) {
+            return false;
+        }
+
+        Key rhs = (Key) obj;
+        return this.signature == rhs.signature && this.type == rhs.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.signature, this.type);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.swara.music.model;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import org.apache.commons.math3.fraction.Fraction;
@@ -44,6 +45,23 @@ public class Tempo {
     @JsonGetter
     public Fraction signature() {
         return this.signature;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || obj.getClass() == this.getClass()) {
+            return false;
+        }
+
+        Tempo rhs = (Tempo) obj;
+        return this.bpm == rhs.bpm && this.signature == rhs.signature;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.bpm, this.signature);
     }
 
     /**

@@ -69,8 +69,8 @@ public class Note implements Comparable<Note> {
     @Override
     public int compareTo(Note rhs) {
         return ComparisonChain.start()
-            .compare(this.octave, rhs.octave)
             .compare(this.pitch, rhs.pitch)
+            .compare(this.octave, rhs.octave)
             .result();
     }
 
@@ -83,7 +83,7 @@ public class Note implements Comparable<Note> {
         }
 
         Note rhs = (Note) obj;
-        return this.octave == rhs.octave && this.pitch == rhs.pitch;
+        return this.pitch == rhs.pitch && this.octave == rhs.octave;
     }
 
     @Override
