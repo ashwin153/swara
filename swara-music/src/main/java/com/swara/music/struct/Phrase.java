@@ -1,4 +1,4 @@
-package com.swara.music.model;
+package com.swara.music.struct;
 
 import java.util.ArrayList;
 import java.util.List;

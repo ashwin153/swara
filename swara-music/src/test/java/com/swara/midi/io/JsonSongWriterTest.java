@@ -3,13 +3,13 @@ package com.swara.midi.io;
 import java.io.ByteArrayOutputStream;
 
 import com.swara.music.io.JsonSongWriter;
-import com.swara.music.model.Chord;
-import com.swara.music.model.Fragment;
-import com.swara.music.model.Key;
-import com.swara.music.model.Note;
-import com.swara.music.model.Phrase;
-import com.swara.music.model.Song;
-import com.swara.music.model.Tempo;
+import com.swara.music.struct.Chord;
+import com.swara.music.struct.Fragment;
+import com.swara.music.struct.Key;
+import com.swara.music.struct.Note;
+import com.swara.music.struct.Phrase;
+import com.swara.music.struct.Song;
+import com.swara.music.struct.Tempo;
 
 import org.apache.commons.math3.fraction.Fraction;
 import org.junit.Test;

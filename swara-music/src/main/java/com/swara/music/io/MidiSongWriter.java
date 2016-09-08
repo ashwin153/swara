@@ -9,11 +9,11 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import com.swara.music.model.Chord;
-import com.swara.music.model.Fragment;
-import com.swara.music.model.Note;
-import com.swara.music.model.Phrase;
-import com.swara.music.model.Song;
+import com.swara.music.struct.Chord;
+import com.swara.music.struct.Fragment;
+import com.swara.music.struct.Note;
+import com.swara.music.struct.Phrase;
+import com.swara.music.struct.Song;
 
 /**
  * Writes {@link Song} to a MIDI {@link Sequence}. Writing conforms to the MIDI Format 0 spec;

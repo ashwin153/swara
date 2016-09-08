@@ -1,4 +1,4 @@
-package com.swara.music.model;
+package com.swara.music.struct;
 
 import java.util.HashSet;
 import java.util.Set;

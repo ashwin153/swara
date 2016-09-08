@@ -2,7 +2,7 @@ package com.swara.music.io;
 
 import java.io.InputStream;
 
-import com.swara.music.model.Song;
+import com.swara.music.struct.Song;
 
 /**
  * Reads a {@link Song} from a MIDI {@link javax.sound.midi.Sequence}.
