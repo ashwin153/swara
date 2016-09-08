@@ -1,16 +1,13 @@
-package com.swara.ml.model.svm;
-
-import java.util.List;
+package com.swara.ml.svm;
 
 import com.swara.ml.kernel.KernelFunction;
-import com.swara.ml.model.SupervisedModel;
 
 import org.apache.commons.math3.linear.RealVector;
 
 /**
  *
  */
-public class SupportVectorMachine implements SupervisedModel<RealVector, Integer> {
+public class SupportVectorMachine {
 
     private final KernelFunction kernel;
 
@@ -18,13 +15,11 @@ public class SupportVectorMachine implements SupervisedModel<RealVector, Integer
         this.kernel = kernel;
     }
 
-    @Override
-    public void train(List<RealVector> inputs, List<Integer> outputs) {
+    public void train(RealVector[] inputs, Integer[] outputs) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public Integer predict(RealVector input) {
+    public Integer classify(RealVector input) {
         throw new UnsupportedOperationException();
     }
 
