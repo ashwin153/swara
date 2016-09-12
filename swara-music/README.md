@@ -14,6 +14,8 @@ Each ```Song``` is composed of a sequence of ```Fragments``` in which each ```Fr
 - ```Note```: pitch and volume
 
 ### Example
+![Rendered Sheet Music](https://raw.githubusercontent.com/ashwin153/swara/master/swara-assets/swara-pics/sheet-music.png)
+
 ```java
 // C Major Key.
 final Key cmajor = new Key.Builder()
