@@ -43,8 +43,8 @@ public class Note implements Comparable<Note> {
     }
 
     /**
-     * Returns the MIDI pitch of the note. The pitch is encoded as a number on the interval
-     * [0, 128), in which 0 represents C and each successive number represents a half-step higher.
+     * Returns the pitch of the note. The pitch is encoded as a number on the interval [0, 11], in
+     * which 0 represents C and each successive number represents a half-step higher.
      */
     @JsonGetter
     public int pitch() {
@@ -52,7 +52,8 @@ public class Note implements Comparable<Note> {
     }
 
     /**
-     *
+     * Returns the octave of the note. The octave is on the interval [0, 11], in which 4 represents
+     * the middle octave.
      */
     @JsonGetter
     public int octave() { return this.octave; }

@@ -89,10 +89,10 @@ public class Fragment {
             return this;
         }
 
-        public Builder withPhrases(Map<Integer, Phrase> phrases) {
+        public Builder withPhrases(Map<? extends Integer, ? extends Phrase> phrases) {
             // The phrase mapping may not be null.
             Preconditions.checkNotNull(phrases);
-            this.phrases = phrases;
+            this.phrases.putAll(phrases);
             return this;
         }
 

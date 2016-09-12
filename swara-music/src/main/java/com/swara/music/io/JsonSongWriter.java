@@ -24,7 +24,6 @@ public class JsonSongWriter implements SongWriter {
         // Register custom fraction serializer.
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Fraction.class, new FractionSerializer());
-
         this.mapper = new ObjectMapper();
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
         this.mapper.registerModule(module);
@@ -43,10 +42,10 @@ public class JsonSongWriter implements SongWriter {
 
         @Override
         public void serialize(Fraction fraction,
-                              JsonGenerator jsonGenerator,
-                              SerializerProvider serializerProvider) throws IOException {
+                              JsonGenerator generator,
+                              SerializerProvider provider) throws IOException {
 
-            jsonGenerator.writeString(fraction.toString());
+            generator.writeString(fraction.toString());
         }
 
     }

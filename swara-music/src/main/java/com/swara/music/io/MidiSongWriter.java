@@ -22,29 +22,25 @@ import com.swara.music.data.Song;
  */
 public class MidiSongWriter implements SongWriter {
 
+    private static final int TICK_RESOLUTION = 480;
+
     @Override
     public void write(OutputStream out, Song song) throws Exception {
         // Create MIDI sequence using the PPQ (pulses-per-quarter-note) division type.
-        final Sequence seq = new Sequence(Sequence.PPQ, 480);
+        final Sequence sequence = new Sequence(Sequence.PPQ, 480);
+        final Track track = sequence.createTrack();
 
         for (Fragment fragment : song.fragments()) {
             // Create a track if it doesn't already exist.
-            final long start = seq.getTickLength();
-            final Track track = (seq.getTracks().length == 0) ? seq.createTrack() : seq.getTracks()[0];
+            final long start = sequence.getTickLength();
 
-            // Write the tempo in microseconds-per-quarter-note.
+            // Write the bpm to the sequence. (mspqn = milliseconds/quarter-note)
             final int mspqn = 60_000_000 / fragment.tempo().bpm();
-            track.add(new MidiEvent(new MetaMessage(0x51, new byte[]{
+            track.add(new MidiEvent(new MetaMessage(0x51, new byte[] {
                 (byte) ((mspqn >> 16) & 0xFF),
-                (byte) ((mspqn >> 8) & 0xFF),
-                (byte) (mspqn & 0xFF),
+                (byte) ((mspqn >>  8) & 0xFF),
+                (byte) ((mspqn) & 0xFF)
             }, 3), start));
-
-            // Write the key signature.
-            track.add(new MidiEvent(new MetaMessage(0x59, new byte[] {
-                (byte) fragment.key().signature(),
-                (byte) fragment.key().type()
-            }, 2), start));
 
             // Write the time signature.
             track.add(new MidiEvent(new MetaMessage(0x58, new byte[]{
@@ -54,19 +50,28 @@ public class MidiSongWriter implements SongWriter {
                 (byte) 8
             }, 4), start));
 
+            // Write the key signature.
+            track.add(new MidiEvent(new MetaMessage(0x59, new byte[] {
+                (byte) fragment.key().signature(),
+                (byte) fragment.key().type()
+            }, 2), start));
+
             // Write each phrase on a separate channel on a separate track.
             for (Map.Entry<Integer, Phrase> entry : fragment.phrases().entrySet()) {
-                final int channel = entry.getKey();
                 final Phrase phrase = entry.getValue();
+                final int channel = entry.getKey();
                 long tick = start;
 
                 // Write the program change event.
                 track.add(new MidiEvent(new ShortMessage(
                     ShortMessage.PROGRAM_CHANGE, channel, phrase.program(), 0
-                ), tick));
+                ), start));
 
                 for (Chord chord : phrase.chords()) {
-                    final long next = tick + chord.duration().multiply(4 * seq.getResolution()).longValue();
+                    // Calculate the duration of the chord. (ppb = pulses per beat)
+                    final int ppb = 4 * TICK_RESOLUTION;
+                    final long next = tick + chord.duration().multiply(ppb).longValue();
+
                     for (Note note : chord.notes()) {
                         // Translate the note into a MIDI key.
                         final int key = note.octave() * 12 + note.pitch();
@@ -81,13 +86,15 @@ public class MidiSongWriter implements SongWriter {
                             ShortMessage.NOTE_ON, channel, key, 0
                         ), next));
                     }
+
+                    // Update the tick to the beginning of the next chord.
                     tick = next;
                 }
             }
         }
 
         // Write the sequence to file.
-        MidiSystem.write(seq, 0, out);
+        MidiSystem.write(sequence, 0, out);
     }
 
 }

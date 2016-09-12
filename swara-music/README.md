@@ -43,18 +43,18 @@ final Chord.Builder gmaj7 = new Chord.Builder()
 
 // Piano Phrase.
 final Phrase piano = new Phrase.Builder()
-    .withProgram(0)
     .withChord(cmaj7.withDuration(Fraction.ONE_QUARTER).build())
     .withChord(gmaj7.withDuration(Fraction.ONE_HALF).build())
     .withChord(gmaj7.withDuration(Fraction.ONE_QUARTER).build())
+    .withProgram(0)
     .build();
 
 // Guitar Phrase.
 final Phrase guitar = new Phrase.Builder()
-    .withProgram(25)
     .withChord(cmaj7.withDuration(new Fraction(1, 8)).build())
     .withChord(gmaj7.withDuration(new Fraction(1, 8)).build())
     .withChord(cmaj7.withDuration(new Fraction(3, 4)).build())
+    .withProgram(25)
     .build();
 
 // Song Fragment.
@@ -72,8 +72,19 @@ final Song song = new Song.Builder()
 ```
 
 ## I/O
-The I/O APIs provide a simple interface for constructing ```SongWriters``` and ```SongReaders``` for serializing and deserializing ```Songs``` to and from files. This provides a convenient solution to interoperability. For example, if you wanted to use machine learning frameworks written in Python ([TensorFlow](https://www.tensorflow.org/), [Theano](http://deeplearning.net/software/theano/), etc.), you would no longer have to rewrite the clunky ```MidiSongWriter``` and ```MidiSongReader```; you could simple do all the heavy-weight MIDI parsing in Java, and pass around light weight JSON strings between languages. Another advantage of this approach is that you no longer need a MIDI sequencer to create music; you can write your music as a JSON string in a text editor read it through a ```JsonSongReader``` into a MIDI file using a  ```MidiSongWriter```. The possibilities are endless!
+### Overview
+The I/O APIs expose the ```SongWriter``` and ```SongReader``` interface for serializing and deserializing ```Songs``` to and from streams. This provides a convenient solution to interoperability. For example, if you wanted to use machine learning frameworks written in Python ([TensorFlow](https://www.tensorflow.org/), [Theano](http://deeplearning.net/software/theano/), etc.), you would no longer have to rewrite the clunky ```MidiSongWriter``` and ```MidiSongReader```; you could simple do all the heavy-weight MIDI parsing in Java, and pass around comparatively light-weight JSON strings between languages. Another advantage of this approach is that you no longer need a MIDI sequencer to create music; you can write your music as a JSON string in a text editor read it through a ```JsonSongReader``` and into a MIDI file using a  ```MidiSongWriter```. The possibilities are endless!
 
+### Example
+```java
+// Read song from JSON file.
+final SongReader reader = new JsonSongReader();
+final Song song = reader.read(new File("test.json"));
+
+// Write song to MIDI file.
+final SongWriter writer = new MidiSongWriter();
+writer.write(new File("test.midi"), song);
+```
 
 ## Attribution
 Here's a little page-rank karma for all the sources I used:

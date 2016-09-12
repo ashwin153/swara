@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.sound.midi.MetaMessage;
@@ -30,113 +33,126 @@ import org.apache.commons.math3.fraction.Fraction;
  */
 public class MidiSongReader implements SongReader {
 
+    private static final Predicate<MidiEvent> MIDI_KEY = evt ->
+        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x59;
+
+    private static final Predicate<MidiEvent> MIDI_BPM = evt ->
+        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x51;
+
+    private static final Predicate<MidiEvent> MIDI_TIME = evt ->
+        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x58;
+
+    private static final Predicate<MidiEvent> MIDI_PROG = evt ->
+        evt.getMessage() instanceof ShortMessage && ((ShortMessage) evt.getMessage()).getCommand() == 0xC0;
+
+    private static final Predicate<MidiEvent> MIDI_NOTE = evt -> evt.getMessage() instanceof ShortMessage && (
+        ((ShortMessage) evt.getMessage()).getCommand() == ShortMessage.NOTE_ON ||
+        ((ShortMessage) evt.getMessage()).getCommand() == ShortMessage.NOTE_OFF
+    );
+
     @Override
     public Song read(InputStream in) throws Exception {
-        // Read a MIDI sequence from the input stream.
-        final Sequence seq = MidiSystem.getSequence(in);
-        Preconditions.checkArgument(seq.getDivisionType() == Sequence.PPQ);
-
-        // Group all the relevant MIDI meta events by fragment (key = 0x02, tempo = 0x03, time = 0x04).
-        final TreeMap<Long, List<MidiEvent>> fragments = Arrays.stream(seq.getTracks())
+        // Read a MIDI sequence from the input stream and flatten all tracks.
+        final Sequence sequence = MidiSystem.getSequence(in);
+        Preconditions.checkArgument(sequence.getDivisionType() == Sequence.PPQ);
+        final List<MidiEvent> events = Arrays.stream(sequence.getTracks())
             .flatMap(track -> IntStream.range(0, track.size()).mapToObj(track::get))
-            .filter(i -> i.getMessage() instanceof MetaMessage)
-            .filter(i -> {
-                final int type = ((MetaMessage) i.getMessage()).getType();
-                return type == 0x51 || type == 0x58 || type == 0x59;
-            }).collect(Collectors.groupingBy(MidiEvent::getTick, TreeMap::new, Collectors.toList()));
+            .sorted((a, b) -> Long.compare(a.getTick(), b.getTick()))
+            .collect(Collectors.toList());
 
-        // Add all the MIDI channel events to the correct group.
-        Arrays.stream(seq.getTracks())
-            .flatMap(track -> IntStream.range(0, track.size()).mapToObj(track::get))
-            .filter(i -> i.getMessage() instanceof ShortMessage)
-            .forEach(i -> fragments.floorEntry(i.getTick()).getValue().add(i));
+        // Split the events whenever a new fragment begins.
+        final TreeMap<Long, List<MidiEvent>> headers = events.stream()
+            .filter(MIDI_KEY.or(MIDI_BPM).or(MIDI_TIME).or(MIDI_PROG))
+            .collect(Collectors.groupingBy(MidiEvent::getTick, TreeMap::new, Collectors.toList()));
 
-        // Iteratively construct a song from the specified fragments. By default, the key, tempo,
-        // and program mappings are the same as the previous fragment.
+        // Iteratively construct a song.
         final Song.Builder song = new Song.Builder();
         final Key.Builder key = new Key.Builder();
         final Tempo.Builder tempo = new Tempo.Builder();
         final Map<Integer, Integer> programs = new HashMap<>();
 
-        fragments.entrySet().forEach(entry -> {
-            final long start = entry.getKey();
-            final List<MidiEvent> list = entry.getValue();
+        headers.keySet().forEach(start -> {
             final Fragment.Builder fragment = new Fragment.Builder();
+            final List<MidiEvent> header = headers.get(start);
 
-            // Extract key and tempo information; if the information is not present, then it is
-            // assumed to be the same as the previous fragment (or default values).
-            for (int i = 0; i < list.size() && list.get(i).getMessage() instanceof MetaMessage; i++) {
-                final MetaMessage msg = (MetaMessage) list.get(i).getMessage();
-                if (msg.getType() == 0x59) {
-                    key.withSignature(msg.getData()[0]);
-                    key.withType(msg.getData()[1]);
-                } else if (msg.getType() == 0x51) {
-                    final int mspqn = (msg.getData()[0] << 16) + (msg.getData()[1] << 8) + (msg.getData()[2]);
-                    tempo.withBpm(60_000_000 / mspqn);
-                } else if (msg.getType() == 0x58) {
-                    tempo.withSignature(msg.getData()[0], (int) Math.pow(2, msg.getData()[1]));
-                }
-            }
+            // Read key information.
+            header.stream().filter(MIDI_KEY).findAny()
+                .map(i -> ((MetaMessage) i.getMessage()).getData())
+                .ifPresent(i -> {
+                    key.withSignature(i[0]);
+                    key.withType(i[1]);
+                });
 
-            // Add the key and tempo information to the fragment.
-            fragment.withKey(key.build());
-            fragment.withTempo(tempo.build());
+            // Read tempo information.
+            header.stream().filter(MIDI_BPM).findAny()
+                .map(i -> ((MetaMessage) i.getMessage()).getData())
+                .map(i -> 60_000_000 / ((i[0] << 16) + (i[1] << 8) + i[2]))
+                .ifPresent(tempo::withBpm);
 
-            // Separate the MIDI events for the fragment by channel.
-            final Map<Integer, List<MidiEvent>> channels = list.stream()
-                .filter(i -> i.getMessage() instanceof ShortMessage)
-                .collect(Collectors.groupingBy(i -> ((ShortMessage) i.getMessage()).getChannel()));
+            header.stream().filter(MIDI_TIME).findAny()
+                .map(i -> ((MetaMessage) i.getMessage()).getData())
+                .map(i -> new Fraction(i[0], (int) Math.pow(2, i[1])))
+                .ifPresent(tempo::withSignature);
 
-            for (Integer channel : channels.keySet()) {
-                // Group events by tick.
-                final Phrase.Builder phrase = new Phrase.Builder();
-                final Map<Integer, Integer> keys = new HashMap<>();
-                final TreeMap<Long, List<MidiEvent>> ticks = channels.get(channel).stream()
-                    .collect(Collectors.groupingBy(MidiEvent::getTick, TreeMap::new, Collectors.toList()));
+            // Read program change information.
+            header.stream().filter(MIDI_PROG)
+                .map(i -> (ShortMessage) i.getMessage())
+                .forEach(msg -> programs.put(msg.getChannel(), msg.getData1()));
 
-                for (Long tick : ticks.keySet()) {
-                    // Articulate all notes (if any) in the current chord.
-                    if (tick > start) {
+            // Parse the fragment channel information.
+            events.stream().filter(MIDI_NOTE.and(i -> headers.floorKey(i.getTick()).equals(start)))
+                .collect(Collectors.groupingBy(i -> ((ShortMessage) i.getMessage()).getChannel()))
+                .forEach((channel, list) -> {
+                    final Phrase.Builder phrase = new Phrase.Builder();
+                    final Set<Note> notes = new TreeSet<>();
+
+                    // Group note on and note off events by tick.
+                    final TreeMap<Long, List<MidiEvent>> ticks = list.stream().collect(
+                        Collectors.groupingBy(MidiEvent::getTick, TreeMap::new, Collectors.toList())
+                    );
+
+                    ticks.forEach((tick, group) -> {
                         final Long last = ticks.lowerKey(tick);
                         final long diff = tick - (last == null ? start : last);
 
-                        phrase.withChord(new Chord.Builder()
-                            .withDuration(new Fraction(diff / (4.0 * seq.getResolution())))
-                            .withNotes(keys.entrySet().stream()
-                                .map(e -> new Note.Builder()
-                                    .withPitch(e.getKey() % 12)
-                                    .withOctave(e.getKey() / 12)
-                                    .withVolume(e.getValue())
-                                    .build())
-                                .collect(Collectors.toSet()))
-                            .build()
-                        );
-                    }
-
-                    // Add any new notes and remove any old notes.
-                    for (MidiEvent event : ticks.get(tick)) {
-                        final ShortMessage msg = (ShortMessage) event.getMessage();
-                        if (msg.getCommand() == ShortMessage.PROGRAM_CHANGE) {
-                            programs.put(msg.getChannel(), msg.getData1());
-                        } else if (msg.getCommand() == ShortMessage.NOTE_ON && msg.getData2() > 0) {
-                            keys.put(msg.getData1(), msg.getData2());
-                        } else if (msg.getCommand() == ShortMessage.NOTE_OFF || (msg.getCommand() == ShortMessage.NOTE_ON && msg.getData2() == 0)) {
-                            keys.remove(msg.getData1());
+                        if (diff > 0) {
+                            // Articulate all notes (if any) in the current chord.
+                            phrase.withChord(new Chord.Builder()
+                                .withDuration(new Fraction(diff / (4.0 * sequence.getResolution())))
+                                .withNotes(notes)
+                                .build()
+                            );
                         }
-                    }
-                }
 
-                // Add the program to the phrase.
-                phrase.withProgram(programs.get(channel));
+                        for (MidiEvent event : group) {
+                            // Construct a note from a MIDI note event.
+                            final ShortMessage msg = (ShortMessage) event.getMessage();
+                            final Note note = new Note.Builder()
+                                .withPitch(msg.getData1() % 12)
+                                .withOctave(msg.getData1() / 12)
+                                .withVolume(msg.getData2())
+                                .build();
 
-                // Add the phrase to the fragment.
-                fragment.withPhrase(channel, phrase.build());
-            }
+                            // If the note does not currently exist, then add it to the active set.
+                            if (!notes.remove(note)) {
+                                notes.add(note);
+                            }
+                        }
+                    });
 
-            // Add the fragment to the song.
-            song.withFragment(fragment.build());
+                    fragment.withPhrase(channel, phrase
+                        .withProgram(programs.get(channel))
+                        .build());
+                });
+
+            // Build the fragment and add it to the song.
+            song.withFragment(fragment
+                .withKey(key.build())
+                .withTempo(tempo.build())
+                .build());
         });
 
+        // Assemble and return the parsed song.
         return song.build();
     }
 

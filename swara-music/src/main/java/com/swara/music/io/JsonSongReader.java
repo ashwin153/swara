@@ -23,7 +23,6 @@ public class JsonSongReader implements SongReader {
         // Register custom fraction deserializer.
         final SimpleModule module = new SimpleModule();
         module.addDeserializer(Fraction.class, new FractionDeserializer());
-
         this.mapper = new ObjectMapper();
         this.mapper.registerModule(module);
     }
@@ -40,10 +39,10 @@ public class JsonSongReader implements SongReader {
     private class FractionDeserializer extends JsonDeserializer<Fraction> {
 
         @Override
-        public Fraction deserialize(JsonParser jsonParser,
+        public Fraction deserialize(JsonParser parser,
                                     DeserializationContext context) throws IOException {
 
-            final String[] tokens = jsonParser.getValueAsString().split("\\s/\\s");
+            final String[] tokens = parser.getValueAsString().split("\\s/\\s");
             return new Fraction(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
         }
 

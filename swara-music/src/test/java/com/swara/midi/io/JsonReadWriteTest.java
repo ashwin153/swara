@@ -1,79 +1,25 @@
 package com.swara.midi.io;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 
-import com.swara.music.io.JsonSongWriter;
-import com.swara.music.data.Chord;
-import com.swara.music.data.Fragment;
-import com.swara.music.data.Key;
-import com.swara.music.data.Note;
-import com.swara.music.data.Phrase;
 import com.swara.music.data.Song;
-import com.swara.music.data.Tempo;
+import com.swara.music.io.JsonSongReader;
+import com.swara.music.io.JsonSongWriter;
+import com.swara.music.io.SongReader;
+import com.swara.music.io.SongWriter;
 
-import org.apache.commons.math3.fraction.Fraction;
 import org.junit.Test;
 
 public class JsonReadWriteTest {
 
     @Test
-    public void testWrite() throws Exception {
-        // C Major Key.
-        final Key cmajor = new Key.Builder()
-            .withSignature(0)
-            .withType(Key.MAJOR)
-            .build();
+    public void testReadWrite() throws Exception {
+        final SongReader reader = new JsonSongReader();
+        final SongWriter writer = new JsonSongWriter();
 
-        // Waltz Tempo.
-        final Tempo waltz = new Tempo.Builder()
-            .withSignature(3, 4)
-            .withBpm(88)
-            .build();
-
-        // C Major 7 Chord.
-        final Chord.Builder cmaj7 = new Chord.Builder()
-            .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).withVolume(80).build())
-            .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).withVolume(60).build())
-            .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).withVolume(75).build())
-            .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).withVolume(90).build());
-
-        // G Major 7 Chord.
-        final Chord.Builder gmaj7 = new Chord.Builder()
-            .withNote(new Note.Builder().withPitch(Note.G).withOctave(4).withVolume(80).build())
-            .withNote(new Note.Builder().withPitch(Note.B).withOctave(4).withVolume(60).build())
-            .withNote(new Note.Builder().withPitch(Note.D).withOctave(5).withVolume(75).build())
-            .withNote(new Note.Builder().withPitch(Note.F).withOctave(5).withVolume(90).build());
-
-        // Piano Phrase.
-        final Phrase piano = new Phrase.Builder()
-            .withProgram(0)
-            .withChord(cmaj7.withDuration(Fraction.ONE_QUARTER).build())
-            .withChord(gmaj7.withDuration(Fraction.ONE_HALF).build())
-            .withChord(gmaj7.withDuration(Fraction.ONE_QUARTER).build())
-            .build();
-
-        // Guitar Phrase.
-        final Phrase guitar = new Phrase.Builder()
-            .withProgram(25)
-            .withChord(cmaj7.withDuration(new Fraction(1, 8)).build())
-            .withChord(gmaj7.withDuration(new Fraction(1, 8)).build())
-            .withChord(cmaj7.withDuration(new Fraction(3, 4)).build())
-            .build();
-
-        // Song Fragment.
-        final Fragment fragment = new Fragment.Builder()
-            .withKey(cmajor)
-            .withTempo(waltz)
-            .withPhrase(0, piano)
-            .withPhrase(1, guitar)
-            .build();
-
-        // Write to File.
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new JsonSongWriter().write(System.out, new Song.Builder()
-            .withFragment(fragment)
-            .build()
-        );
+        // Read the test file and write it to the result file.
+        final Song song = reader.read(new File("./src/test/resources/test.json"));
+        writer.write(new File("./src/test/resources/test-result.json"), song);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.swara.music.data;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,10 +66,10 @@ public class Chord {
             return this;
         }
 
-        public Builder withNotes(Set<Note> notes) {
+        public Builder withNotes(Collection<? extends Note> notes) {
             // The notes may not be null.
             Preconditions.checkNotNull(notes);
-            this.notes = notes;
+            this.notes.addAll(notes);
             return this;
         }
 

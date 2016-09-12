@@ -1,6 +1,7 @@
 package com.swara.music.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -50,7 +51,7 @@ public class Song {
             return this;
         }
 
-        public Builder withFragments(List<Fragment> fragments) {
+        public Builder withFragments(Collection<? extends Fragment> fragments) {
             // The fragments may not be null.
             Preconditions.checkNotNull(fragments);
             this.fragments.addAll(fragments);
