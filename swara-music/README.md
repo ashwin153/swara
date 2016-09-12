@@ -33,21 +33,21 @@ final Tempo waltz = new Tempo.Builder()
 final Chord.Builder cmaj7 = new Chord.Builder()
     .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).withVolume(80).build())
     .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).withVolume(60).build())
-    .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).withVolume(75).build())
-    .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).withVolume(90).build());
+    .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).withVolume(80).build())
+    .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).withVolume(75).build());
 
 // G Major 7 Chord.
 final Chord.Builder gmaj7 = new Chord.Builder()
-    .withNote(new Note.Builder().withPitch(Note.G).withOctave(4).withVolume(80).build())
-    .withNote(new Note.Builder().withPitch(Note.B).withOctave(4).withVolume(60).build())
-    .withNote(new Note.Builder().withPitch(Note.D).withOctave(5).withVolume(75).build())
-    .withNote(new Note.Builder().withPitch(Note.F).withOctave(5).withVolume(90).build());
+    .withNote(new Note.Builder().withPitch(Note.G).withOctave(4).build())
+    .withNote(new Note.Builder().withPitch(Note.B).withOctave(4).build())
+    .withNote(new Note.Builder().withPitch(Note.D).withOctave(5).build())
+    .withNote(new Note.Builder().withPitch(Note.F).withOctave(5).build());
 
 // Piano Phrase.
 final Phrase piano = new Phrase.Builder()
-    .withChord(cmaj7.withDuration(Fraction.ONE_QUARTER).build())
-    .withChord(gmaj7.withDuration(Fraction.ONE_HALF).build())
-    .withChord(gmaj7.withDuration(Fraction.ONE_QUARTER).build())
+    .withChord(cmaj7.withDuration(new Fraction(1, 4)).build())
+    .withChord(gmaj7.withDuration(new Fraction(1, 2)).build())
+    .withChord(gmaj7.withDuration(new Fraction(1, 4)).build())
     .withProgram(0)
     .build();
 
