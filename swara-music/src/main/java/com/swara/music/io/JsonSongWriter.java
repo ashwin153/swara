@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.swara.music.struct.Song;
+import com.swara.music.data.Song;
 
 import org.apache.commons.math3.fraction.Fraction;
 

@@ -1,4 +1,4 @@
-package com.swara.music.struct;
+package com.swara.music.data;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -88,7 +88,7 @@ public class Note implements Comparable<Note> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.octave, this.pitch);
+        return Objects.hashCode(this.pitch, this.octave);
     }
 
     /**

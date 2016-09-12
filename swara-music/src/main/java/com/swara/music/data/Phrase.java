@@ -1,4 +1,4 @@
-package com.swara.music.struct;
+package com.swara.music.data;
 
 import java.util.ArrayList;
 import java.util.List;

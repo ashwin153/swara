@@ -1,20 +1,20 @@
 package com.swara.midi.io;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 
-import com.swara.music.io.MidiSongWriter;
-import com.swara.music.struct.Chord;
-import com.swara.music.struct.Fragment;
-import com.swara.music.struct.Key;
-import com.swara.music.struct.Note;
-import com.swara.music.struct.Phrase;
-import com.swara.music.struct.Song;
-import com.swara.music.struct.Tempo;
+import com.swara.music.io.JsonSongWriter;
+import com.swara.music.data.Chord;
+import com.swara.music.data.Fragment;
+import com.swara.music.data.Key;
+import com.swara.music.data.Note;
+import com.swara.music.data.Phrase;
+import com.swara.music.data.Song;
+import com.swara.music.data.Tempo;
 
 import org.apache.commons.math3.fraction.Fraction;
 import org.junit.Test;
 
-public class MidiSongWriterTest {
+public class JsonReadWriteTest {
 
     @Test
     public void testWrite() throws Exception {
@@ -68,13 +68,12 @@ public class MidiSongWriterTest {
             .withPhrase(1, guitar)
             .build();
 
-        // Song.
-        final Song song = new Song.Builder()
-            .withFragment(fragment)
-            .build();
-
         // Write to File.
-        new MidiSongWriter().write(new File("./test.mid"), song);
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new JsonSongWriter().write(System.out, new Song.Builder()
+            .withFragment(fragment)
+            .build()
+        );
     }
 
 }

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import com.swara.music.struct.Song;
+import com.swara.music.data.Song;
 
 public interface SongReader {
 

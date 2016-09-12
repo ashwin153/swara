@@ -1,4 +1,4 @@
-package com.swara.music.struct;
+package com.swara.music.data;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

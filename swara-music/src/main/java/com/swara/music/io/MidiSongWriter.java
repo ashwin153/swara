@@ -9,11 +9,11 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import com.swara.music.struct.Chord;
-import com.swara.music.struct.Fragment;
-import com.swara.music.struct.Note;
-import com.swara.music.struct.Phrase;
-import com.swara.music.struct.Song;
+import com.swara.music.data.Chord;
+import com.swara.music.data.Fragment;
+import com.swara.music.data.Note;
+import com.swara.music.data.Phrase;
+import com.swara.music.data.Song;
 
 /**
  * Writes {@link Song} to a MIDI {@link Sequence}. Writing conforms to the MIDI Format 0 spec;
@@ -68,14 +68,17 @@ public class MidiSongWriter implements SongWriter {
                 for (Chord chord : phrase.chords()) {
                     final long next = tick + chord.duration().multiply(4 * seq.getResolution()).longValue();
                     for (Note note : chord.notes()) {
+                        // Translate the note into a MIDI key.
+                        final int key = note.octave() * 12 + note.pitch();
+
                         // Write the note on event.
                         track.add(new MidiEvent(new ShortMessage(
-                            ShortMessage.NOTE_ON, channel, note.pitch(), note.volume()
+                            ShortMessage.NOTE_ON, channel, key, note.volume()
                         ), tick));
 
                         // Write the note off event.
                         track.add(new MidiEvent(new ShortMessage(
-                            ShortMessage.NOTE_ON, channel, note.pitch(), 0
+                            ShortMessage.NOTE_ON, channel, key, 0
                         ), next));
                     }
                     tick = next;

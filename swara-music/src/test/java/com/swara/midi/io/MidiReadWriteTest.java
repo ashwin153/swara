@@ -1,20 +1,22 @@
 package com.swara.midi.io;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 
-import com.swara.music.io.JsonSongWriter;
-import com.swara.music.struct.Chord;
-import com.swara.music.struct.Fragment;
-import com.swara.music.struct.Key;
-import com.swara.music.struct.Note;
-import com.swara.music.struct.Phrase;
-import com.swara.music.struct.Song;
-import com.swara.music.struct.Tempo;
+import com.swara.music.io.MidiSongReader;
+import com.swara.music.io.MidiSongWriter;
+import com.swara.music.data.Chord;
+import com.swara.music.data.Fragment;
+import com.swara.music.data.Key;
+import com.swara.music.data.Note;
+import com.swara.music.data.Phrase;
+import com.swara.music.data.Song;
+import com.swara.music.data.Tempo;
 
 import org.apache.commons.math3.fraction.Fraction;
 import org.junit.Test;
 
-public class JsonSongWriterTest {
+public class MidiReadWriteTest {
 
     @Test
     public void testWrite() throws Exception {
@@ -68,12 +70,15 @@ public class JsonSongWriterTest {
             .withPhrase(1, guitar)
             .build();
 
-        // Write to File.
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new JsonSongWriter().write(System.out, new Song.Builder()
+        // Song.
+        final Song song = new Song.Builder()
             .withFragment(fragment)
-            .build()
-        );
+            .build();
+
+        // Write to File.
+        new MidiSongWriter().write(new File("./test.mid"), song);
+        Song s2 = new MidiSongReader().read(new FileInputStream("./test.mid"));
+        new MidiSongWriter().write(new File("./test2.mid"), s2);
     }
 
 }
