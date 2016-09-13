@@ -30,6 +30,7 @@ final Stream<Integer> output = markov.generate(Arrays.asList(1, 4));
 
 ## Attribution
 Here's a little page-rank karma for all the sources I used:
+- [Markov Chains](https://www.jair.org/media/1491/live-1491-2335-jair.pdf)
 - [Recurrent Neural Networks](http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/)
 - [LSTM Neural Networks #1](http://arunmallya.github.io/writeups/nn/lstm/index.html#/)
 - [LSTM Neural Networks #2](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)

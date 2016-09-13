@@ -93,3 +93,4 @@ Here's a little page-rank karma for all the sources I used:
 - [Midi Guide #1](http://www.somascape.org/midi/tech/mfile.html)
 - [Midi Guide #2](https://www.csie.ntu.edu.tw/~r92092/ref/midi/)
 - [Effective Java](https://github.com/HackathonHackers/programming-ebooks/blob/master/Java/Effective%20Java%20(2nd%20Edition).pdf)
+- [MuseScore 2](https://musescore.org/en/2.0)

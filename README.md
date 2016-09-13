@@ -2,10 +2,10 @@
 Musical machine learning.
 
 ## Modules
-- ```swara-assets/```: Pictures, data, and files
-- ```swara-core/```: Core libraries (search, composition, etc.)
-- ```swara-learn/```: Machine learning framework
-- ```swara-music/```: Musical data structures
+- [ ] ```swara-assets/```: Pictures, data, and files
+- [ ] ```swara-core/```: Core libraries (search, composition, etc.)
+- [ ] ```swara-learn/```: Machine learning framework
+- [x] ```swara-music/```: Musical data structures
 
 ## Roadmap
 - Experiment with digital music.
