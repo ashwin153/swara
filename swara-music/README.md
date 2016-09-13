@@ -10,8 +10,8 @@ Each ```Song``` is composed of a sequence of ```Fragments``` in which each ```Fr
 - ```Key```: scale
 - ```Tempo```: beat
 - ```Phrase```: melodies
-- ```Chord```: harmony and duration
-- ```Note```: pitch and volume
+- ```Chord```: harmony, volume, and duration
+- ```Note```: pitch
 
 ### Example
 ![Rendered Sheet Music](https://raw.githubusercontent.com/ashwin153/swara/master/swara-assets/swara-pics/sheet-music.png)
