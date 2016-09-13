@@ -34,12 +34,10 @@ public class Note implements Comparable<Note> {
 
     private final int pitch;
     private final int octave;
-    private final int volume;
 
     private Note(Builder builder) {
         this.pitch = builder.pitch;
         this.octave = builder.octave;
-        this.volume = builder.volume;
     }
 
     /**
@@ -57,15 +55,6 @@ public class Note implements Comparable<Note> {
      */
     @JsonGetter
     public int octave() { return this.octave; }
-
-    /**
-     * Returns the volume of the note. Volume is synonymous with MIDI velocity. The volume is
-     * encoded as a number on the interval [0, 128), in which 0 represents silence.
-     */
-    @JsonGetter
-    public int volume() {
-        return this.volume;
-    }
 
     @Override
     public int compareTo(Note rhs) {
@@ -100,12 +89,10 @@ public class Note implements Comparable<Note> {
 
         private int pitch;
         private int octave;
-        private int volume;
 
         public Builder() {
             this.pitch = Note.C;
             this.octave = 5;
-            this.volume = 64;
         }
 
         public Builder withPitch(int pitch) {
@@ -119,13 +106,6 @@ public class Note implements Comparable<Note> {
             // The octave must be on the interval [0, 11).
             Preconditions.checkArgument(octave >= 0);
             this.octave = octave;
-            return this;
-        }
-
-        public Builder withVolume(int volume) {
-            // The volume must be on the interval [0, 128).
-            Preconditions.checkArgument(volume >= 0 && volume < 128);
-            this.volume = volume;
             return this;
         }
 

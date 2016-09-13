@@ -78,7 +78,7 @@ public class MidiSongWriter implements SongWriter {
 
                         // Write the note on event.
                         track.add(new MidiEvent(new ShortMessage(
-                            ShortMessage.NOTE_ON, channel, key, note.volume()
+                            ShortMessage.NOTE_ON, channel, key, chord.volume()
                         ), tick));
 
                         // Write the note off event.

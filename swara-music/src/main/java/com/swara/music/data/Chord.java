@@ -20,10 +20,12 @@ public class Chord {
 
     private final Set<Note> notes;
     private final Fraction duration;
+    private final int volume;
 
     private Chord(Builder builder) {
         this.notes = builder.notes;
         this.duration = builder.duration;
+        this.volume = builder.volume;
     }
 
     /**
@@ -46,6 +48,15 @@ public class Chord {
     }
 
     /**
+     * Returns the volume of the note. Volume is synonymous with MIDI velocity. The volume is
+     * encoded as a number on the interval [0, 128), in which 0 represents silence.
+     */
+    @JsonGetter
+    public int volume() {
+        return this.volume;
+    }
+
+    /**
      * Constructs a {@link Chord} using a Fluent-style builder pattern. By default, the builder will
      * construct a quarter-rest.
      */
@@ -53,10 +64,12 @@ public class Chord {
 
         private Set<Note> notes;
         private Fraction duration;
+        private int volume;
 
         public Builder() {
             this.notes = new HashSet<>();
             this.duration = Fraction.ONE_QUARTER;
+            this.volume = 64;
         }
 
         public Builder withNote(Note note) {
@@ -78,6 +91,13 @@ public class Chord {
             Preconditions.checkNotNull(duration);
             Preconditions.checkArgument(duration.compareTo(Fraction.ZERO) > 0);
             this.duration = duration;
+            return this;
+        }
+
+        public Builder withVolume(int volume) {
+            // The volume must be on the interval [0, 128).
+            Preconditions.checkArgument(volume >= 0 && volume < 128);
+            this.volume = volume;
             return this;
         }
 

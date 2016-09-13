@@ -31,10 +31,10 @@ final Tempo waltz = new Tempo.Builder()
 
 // C Major 7 Chord.
 final Chord.Builder cmaj7 = new Chord.Builder()
-    .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).withVolume(80).build())
-    .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).withVolume(60).build())
-    .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).withVolume(80).build())
-    .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).withVolume(75).build());
+    .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).build())
+    .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).build())
+    .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).build())
+    .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).build());
 
 // G Major 7 Chord.
 final Chord.Builder gmaj7 = new Chord.Builder()
@@ -45,17 +45,17 @@ final Chord.Builder gmaj7 = new Chord.Builder()
 
 // Piano Phrase.
 final Phrase piano = new Phrase.Builder()
-    .withChord(cmaj7.withDuration(new Fraction(1, 4)).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 2)).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 4)).build())
+    .withChord(cmaj7.withDuration(new Fraction(1, 4)).withVolume(42).build())
+    .withChord(gmaj7.withDuration(new Fraction(1, 2)).withVolume(64).build())
+    .withChord(gmaj7.withDuration(new Fraction(1, 4)).withVolume(80).build())
     .withProgram(0)
     .build();
 
 // Guitar Phrase.
 final Phrase guitar = new Phrase.Builder()
-    .withChord(cmaj7.withDuration(new Fraction(1, 8)).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 8)).build())
-    .withChord(cmaj7.withDuration(new Fraction(3, 4)).build())
+    .withChord(cmaj7.withDuration(new Fraction(1, 8)).withVolume(80).build())
+    .withChord(gmaj7.withDuration(new Fraction(1, 8)).withVolume(64).build())
+    .withChord(cmaj7.withDuration(new Fraction(3, 4)).withVolume(42).build())
     .withProgram(25)
     .build();
 

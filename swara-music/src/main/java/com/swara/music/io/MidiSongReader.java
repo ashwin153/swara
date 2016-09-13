@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -104,7 +102,7 @@ public class MidiSongReader implements SongReader {
                 .collect(Collectors.groupingBy(i -> ((ShortMessage) i.getMessage()).getChannel()))
                 .forEach((channel, list) -> {
                     final Phrase.Builder phrase = new Phrase.Builder();
-                    final Set<Note> notes = new TreeSet<>();
+                    final Map<Integer, ShortMessage> notes = new HashMap<>();
 
                     // Group note on and note off events by tick.
                     final TreeMap<Long, List<MidiEvent>> ticks = list.stream().collect(
@@ -112,31 +110,30 @@ public class MidiSongReader implements SongReader {
                     );
 
                     ticks.forEach((tick, group) -> {
+                        // Articulate all notes (if any) in the current chord.
                         final Long last = ticks.lowerKey(tick);
                         final long diff = tick - (last == null ? start : last);
 
                         if (diff > 0) {
-                            // Articulate all notes (if any) in the current chord.
                             phrase.withChord(new Chord.Builder()
                                 .withDuration(new Fraction(diff / (4.0 * sequence.getResolution())))
-                                .withNotes(notes)
-                                .build()
-                            );
+                                .withNotes(notes.values().stream()
+                                    .map(i -> new Note.Builder()
+                                        .withPitch(i.getData1() % 12)
+                                        .withOctave(i.getData1() / 12)
+                                        .build())
+                                    .collect(Collectors.toSet()))
+                                .withVolume((int) notes.values().stream()
+                                    .mapToInt(ShortMessage::getData2)
+                                    .average()
+                                    .orElse(0))
+                                .build());
                         }
 
+                        // Add all new events and remove all old events.
                         for (MidiEvent event : group) {
-                            // Construct a note from a MIDI note event.
                             final ShortMessage msg = (ShortMessage) event.getMessage();
-                            final Note note = new Note.Builder()
-                                .withPitch(msg.getData1() % 12)
-                                .withOctave(msg.getData1() / 12)
-                                .withVolume(msg.getData2())
-                                .build();
-
-                            // If the note does not currently exist, then add it to the active set.
-                            if (!notes.remove(note)) {
-                                notes.add(note);
-                            }
+                            notes.merge(msg.getData1(), msg, (v1, v2) -> null);
                         }
                     });
 
