@@ -53,7 +53,9 @@ public class Key {
      * 2, 3, 5, 7, 8, and 10 half-steps above tonic.
      */
     public int[] scale() {
-        final int tonic = ((this.type == Key.MAJOR ? Note.C : Note.A) + this.signature * 7) % 12;
+        final int start = this.type == Key.MAJOR ? Note.C : Note.A;
+        final int tonic = Math.floorMod(start + this.signature * 7, 12);
+
         return new int[] {
             tonic,
             tonic + 2,
