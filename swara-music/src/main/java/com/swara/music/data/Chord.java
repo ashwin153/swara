@@ -12,7 +12,7 @@ import org.apache.commons.math3.fraction.Fraction;
 
 /**
  * A set of notes played simultaneously for a period of time. Chords are combined together to form a
- * {@link Phrase}. Chords are built using a {@link Chord.Builder} immutable, and, therefore,
+ * {@link Phrase}. Chords are built using a {@link Chord.Builder} and are immutable, and, therefore,
  * thread-safe.
  */
 @JsonDeserialize(builder = Chord.Builder.class)
@@ -48,7 +48,7 @@ public class Chord {
     }
 
     /**
-     * Returns the volume of the note. Volume is synonymous with MIDI velocity. The volume is
+     * Returns the volume of the chord. Volume is synonymous with MIDI velocity. The volume is
      * encoded as a number on the interval [0, 128), in which 0 represents silence.
      */
     @JsonGetter
