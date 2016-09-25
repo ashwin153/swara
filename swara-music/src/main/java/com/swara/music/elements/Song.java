@@ -1,4 +1,4 @@
-package com.swara.music.data;
+package com.swara.music.elements;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,16 +7,24 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
-import com.swara.music.io.SongReader;
-import com.swara.music.io.SongWriter;
+import com.swara.music.MusicElement;
+import com.swara.music.MusicReader;
+import com.swara.music.MusicWriter;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * A list of fragments played sequentially. Songs can be read from various input sources using the
- * {@link SongReader} and written to various output sources using the {@link SongWriter}. Songs are
- * immutable, and, therefore, thread-safe, and are constructed using the {@link Song.Builder}.
+ * {@link MusicReader} and written to various output sources using the {@link MusicWriter}. Songs
+ * are immutable, and, therefore, thread-safe, and are constructed using the {@link Song.Builder}.
+ * Songs are the top-level {@link MusicElement}. By default, a song consists of an empty list of
+ * fragments.
  */
+@ToString
+@EqualsAndHashCode
 @JsonDeserialize(builder = Song.Builder.class)
-public class Song {
+public class Song implements MusicElement {
 
     private final List<Fragment> fragments;
 
@@ -25,18 +33,15 @@ public class Song {
     }
 
     /**
-     * Returns a mutable copy of all the fragments that comprise the song in playback order.
+     * Returns a list of the fragments that comprise the song. Fragments are retained in playback
+     * order, and, together, they contain all the musical elements of the song.
      */
     @JsonGetter
     public List<Fragment> fragments() {
         return this.fragments;
     }
 
-    /**
-     * Constructs a {@link Song} using a Fluent-style builder pattern. By default, the builder will
-     * construct an empty song with no fragments.
-     */
-    public static final class Builder {
+    public static final class Builder implements MusicElement.Builder<Song>{
 
         private List<Fragment> fragments;
 

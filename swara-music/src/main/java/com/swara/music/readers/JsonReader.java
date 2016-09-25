@@ -1,4 +1,4 @@
-package com.swara.music.io;
+package com.swara.music.readers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,18 +8,19 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.swara.music.data.Song;
+import com.swara.music.MusicReader;
+import com.swara.music.elements.Song;
 
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
  * Reads a {@link Song} from a JSON string.
  */
-public class JsonSongReader implements SongReader {
+public class JsonReader implements MusicReader {
 
     private final ObjectMapper mapper;
 
-    public JsonSongReader() {
+    public JsonReader() {
         // Register custom fraction deserializer.
         final SimpleModule module = new SimpleModule();
         module.addDeserializer(Fraction.class, new FractionDeserializer());
@@ -33,8 +34,8 @@ public class JsonSongReader implements SongReader {
     }
 
     /**
-     * Custom fraction deserializer to make is easier to read and modify fractional values like time
-     * signatures, note durations, etc.
+     * Custom fraction deserializer to make is easier to read and modify fractional values note
+     * durations, etc.
      */
     private class FractionDeserializer extends JsonDeserializer<Fraction> {
 

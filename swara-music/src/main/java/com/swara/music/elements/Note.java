@@ -1,18 +1,22 @@
-package com.swara.music.data;
+package com.swara.music.elements;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ComparisonChain;
+import com.swara.music.MusicElement;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * A musical note. Notes have a pitch and a volume. Notes are combined together to form a
- * {@link Chord}. Notes are built using a {@link Note.Builder} immutable, and, therefore,
- * thread-safe.
+ * A musical note. Notes represent pitch. Notes are combined together to form a {@link Chord}. Notes
+ * are built using a {@link Note.Builder} immutable, and, therefore, thread-safe. The default note
+ * is a middle-C.
  */
+@ToString
+@EqualsAndHashCode
 @JsonDeserialize(builder = Note.Builder.class)
-public class Note implements Comparable<Note> {
+public class Note implements MusicElement {
 
     public static final int C  = 0;
     public static final int Cx = 1;
@@ -56,36 +60,7 @@ public class Note implements Comparable<Note> {
     @JsonGetter
     public int octave() { return this.octave; }
 
-    @Override
-    public int compareTo(Note rhs) {
-        return ComparisonChain.start()
-            .compare(this.pitch, rhs.pitch)
-            .compare(this.octave, rhs.octave)
-            .result();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-
-        Note rhs = (Note) obj;
-        return this.pitch == rhs.pitch && this.octave == rhs.octave;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(this.pitch, this.octave);
-    }
-
-    /**
-     * Constructs a {@link Note} using a Fluent-style builder pattern. By default, the builder will
-     * construct a medium volume, middle-C.
-     */
-    public static final class Builder {
+    public static final class Builder implements MusicElement.Builder<Note> {
 
         private int pitch;
         private int octave;
