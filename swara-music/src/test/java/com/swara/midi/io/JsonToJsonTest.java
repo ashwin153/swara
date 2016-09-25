@@ -2,20 +2,20 @@ package com.swara.midi.io;
 
 import java.io.File;
 
-import com.swara.music.data.Song;
-import com.swara.music.io.JsonSongReader;
-import com.swara.music.io.JsonSongWriter;
-import com.swara.music.io.SongReader;
-import com.swara.music.io.SongWriter;
+import com.swara.music.MusicReader;
+import com.swara.music.MusicWriter;
+import com.swara.music.elements.Song;
+import com.swara.music.readers.JsonReader;
+import com.swara.music.writers.JsonWriter;
 
 import org.junit.Test;
 
-public class JsonReadWriteTest {
+public class JsonToJsonTest {
 
     @Test
     public void testReadWrite() throws Exception {
-        final SongReader reader = new JsonSongReader();
-        final SongWriter writer = new JsonSongWriter();
+        final MusicReader reader = new JsonReader();
+        final MusicWriter writer = new JsonWriter();
 
         // Read the test file and write it to the result file.
         final Song song = reader.read(new File("./src/test/resources/test.json"));

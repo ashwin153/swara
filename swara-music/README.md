@@ -3,13 +3,14 @@ Musical data structures.
 
 ## Data
 ### Terminology
-Each ```Song``` is composed of a sequence of ```Fragments``` in which each ```Fragment``` represents a group of instruments playing simultaneously in a particular key and tempo. Each instrument is represented by a ```Phrase``` that consists of sequence of ```Chords``` played sequentially. Each ```Chord``` consists of a set of ```Notes``` played simulatenously. Each data structure is constructed using a Fluent-style Builder Pattern.
+Each ```Song``` is composed of a sequence of ```Fragments``` in which each ```Fragment``` represents a group of instruments playing simultaneously in a particular key and tempo. Each instrument is represented by a ```Phrase``` that consists of series of ```Voices``` played simultaneously. Each ```Voice``` consists of a series of ```Chords``` played sequentially, which each consist of a set of ```Notes``` played simulatenously. Each data structure is constructed using a Fluent-style Builder Pattern.
 
-- ```Song```: symphonies
-- ```Fragment```: passages
+- ```Song```: symphony
+- ```Fragment```: passage
 - ```Key```: scale
 - ```Tempo```: beat
-- ```Phrase```: melodies
+- ```Phrase```: instrument
+- ```Voice```: melody
 - ```Chord```: harmony, volume, and duration
 - ```Note```: pitch
 
@@ -45,18 +46,22 @@ final Chord.Builder gmaj7 = new Chord.Builder()
 
 // Piano Phrase.
 final Phrase piano = new Phrase.Builder()
-    .withChord(cmaj7.withDuration(new Fraction(1, 4)).withVolume(42).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 2)).withVolume(64).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 4)).withVolume(80).build())
-    .withProgram(0)
+    .withVoice(new Voice.Builder()
+        .withChord(cmaj7.withDuration(new Fraction(1, 4)).withVolume(42).build())
+        .withChord(gmaj7.withDuration(new Fraction(1, 2)).withVolume(64).build())
+        .withChord(gmaj7.withDuration(new Fraction(1, 4)).withVolume(80).build())
+        .withProgram(Phrase.PIANO)
+        .build()
     .build();
 
 // Guitar Phrase.
 final Phrase guitar = new Phrase.Builder()
-    .withChord(cmaj7.withDuration(new Fraction(1, 8)).withVolume(80).build())
-    .withChord(gmaj7.withDuration(new Fraction(1, 8)).withVolume(64).build())
-    .withChord(cmaj7.withDuration(new Fraction(3, 4)).withVolume(42).build())
-    .withProgram(25)
+    .withVoice(new Voice.Builder()
+        .withChord(cmaj7.withDuration(new Fraction(1, 8)).withVolume(80).build())
+        .withChord(gmaj7.withDuration(new Fraction(1, 8)).withVolume(64).build())
+        .withChord(cmaj7.withDuration(new Fraction(3, 4)).withVolume(42).build())
+        .build()
+    .withProgram(Phrase.ACOUSTIC_GUITAR)
     .build();
 
 // Song Fragment.
@@ -75,7 +80,7 @@ final Song song = new Song.Builder()
 
 ## I/O
 ### Overview
-The I/O APIs expose the ```SongWriter``` and ```SongReader``` interface for serializing and deserializing ```Songs``` to and from streams. This provides a convenient solution to interoperability. For example, if you wanted to use machine learning frameworks written in Python ([TensorFlow](https://www.tensorflow.org/), [Theano](http://deeplearning.net/software/theano/), etc.), you would no longer have to rewrite the clunky ```MidiSongWriter``` and ```MidiSongReader```; you could simple do all the heavy-weight MIDI parsing in Java, and pass around comparatively light-weight JSON strings between languages. Another advantage of this approach is that you no longer need a MIDI sequencer to create music; you can write your music as a JSON string in a text editor read it through a ```JsonSongReader``` and into a MIDI file using a  ```MidiSongWriter```. The possibilities are endless!
+The I/O APIs expose the ```MusicWriter``` and ```MusicReader``` interface for serializing and deserializing ```Songs``` to and from streams. This provides a convenient solution to interoperability. For example, if you wanted to use machine learning frameworks written in Python ([TensorFlow](https://www.tensorflow.org/), [Theano](http://deeplearning.net/software/theano/), etc.), you would no longer have to rewrite the clunky ```MidiSongWriter``` and ```MidiSongReader```; you could simple do all the heavy-weight MIDI parsing in Java, and pass around comparatively light-weight JSON strings between languages. Another advantage of this approach is that you no longer need a MIDI sequencer to create music; you can write your music as a JSON string in a text editor read it through a ```JsonSongReader``` and into a MIDI file using a  ```MidiSongWriter```. The possibilities are endless!
 
 ### Example
 ```java

@@ -1,4 +1,4 @@
-package com.swara.music.io;
+package com.swara.music.readers;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -16,37 +17,34 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 
 import com.google.common.base.Preconditions;
-import com.swara.music.data.Chord;
-import com.swara.music.data.Fragment;
-import com.swara.music.data.Key;
-import com.swara.music.data.Note;
-import com.swara.music.data.Phrase;
-import com.swara.music.data.Song;
-import com.swara.music.data.Tempo;
+import com.swara.music.MusicReader;
+import com.swara.music.elements.Chord;
+import com.swara.music.elements.Fragment;
+import com.swara.music.elements.Key;
+import com.swara.music.elements.Note;
+import com.swara.music.elements.Phrase;
+import com.swara.music.elements.Song;
+import com.swara.music.elements.Tempo;
+import com.swara.music.elements.Voice;
 
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
  * Reads a {@link Song} from a MIDI {@link javax.sound.midi.Sequence}.
  */
-public class MidiSongReader implements SongReader {
+public class MidiReader implements MusicReader {
 
-    private static final Predicate<MidiEvent> MIDI_KEY = evt ->
-        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x59;
+    private static final Function<Integer, Predicate<MidiEvent>> META_EVENT = type ->
+        (evt -> evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == type);
 
-    private static final Predicate<MidiEvent> MIDI_BPM = evt ->
-        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x51;
+    private static final Function<Integer, Predicate<MidiEvent>> CHANNEL_EVENT = command ->
+        (evt -> evt.getMessage() instanceof ShortMessage && ((ShortMessage) evt.getMessage()).getCommand() == command);
 
-    private static final Predicate<MidiEvent> MIDI_TIME = evt ->
-        evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == 0x58;
-
-    private static final Predicate<MidiEvent> MIDI_PROG = evt ->
-        evt.getMessage() instanceof ShortMessage && ((ShortMessage) evt.getMessage()).getCommand() == 0xC0;
-
-    private static final Predicate<MidiEvent> MIDI_NOTE = evt -> evt.getMessage() instanceof ShortMessage && (
-        ((ShortMessage) evt.getMessage()).getCommand() == ShortMessage.NOTE_ON ||
-        ((ShortMessage) evt.getMessage()).getCommand() == ShortMessage.NOTE_OFF
-    );
+    private static final Predicate<MidiEvent> MIDI_KEY  = META_EVENT.apply(0x59);
+    private static final Predicate<MidiEvent> MIDI_BPM  = META_EVENT.apply(0x51);
+    private static final Predicate<MidiEvent> MIDI_TIME = META_EVENT.apply(0x58);
+    private static final Predicate<MidiEvent> MIDI_PROG = CHANNEL_EVENT.apply(0xC0);
+    private static final Predicate<MidiEvent> MIDI_NOTE = CHANNEL_EVENT.apply(0x90).or(CHANNEL_EVENT.apply(0x80));
 
     @Override
     public Song read(InputStream in) throws Exception {
@@ -89,8 +87,7 @@ public class MidiSongReader implements SongReader {
 
             header.stream().filter(MIDI_TIME).findAny()
                 .map(i -> ((MetaMessage) i.getMessage()).getData())
-                .map(i -> new Fraction(i[0], (int) Math.pow(2, i[1])))
-                .ifPresent(tempo::withSignature);
+                .ifPresent(i -> tempo.withSignature(i[0], (int) Math.pow(2, i[1])));
 
             // Read program change information.
             header.stream().filter(MIDI_PROG)
@@ -101,7 +98,7 @@ public class MidiSongReader implements SongReader {
             events.stream().filter(MIDI_NOTE.and(i -> headers.floorKey(i.getTick()).equals(start)))
                 .collect(Collectors.groupingBy(i -> ((ShortMessage) i.getMessage()).getChannel()))
                 .forEach((channel, list) -> {
-                    final Phrase.Builder phrase = new Phrase.Builder();
+                    final Voice.Builder voice = new Voice.Builder();
                     final Map<Integer, ShortMessage> notes = new HashMap<>();
 
                     // Group note on and note off events by tick.
@@ -113,10 +110,12 @@ public class MidiSongReader implements SongReader {
                         // Articulate all notes (if any) in the current chord.
                         final Long last = ticks.lowerKey(tick);
                         final long diff = tick - (last == null ? start : last);
+                        final long pulses = 4 * sequence.getResolution();
+                        final long length = ((diff + 60/2) / 60) * 60;
 
-                        if (diff > 0) {
-                            phrase.withChord(new Chord.Builder()
-                                .withDuration(new Fraction(diff / (4.0 * sequence.getResolution())))
+                        if (diff >= 60) {
+                            voice.withChord(new Chord.Builder()
+                                .withDuration(new Fraction((double) length / pulses))
                                 .withNotes(notes.values().stream()
                                     .map(i -> new Note.Builder()
                                         .withPitch(i.getData1() % 12)
@@ -137,7 +136,8 @@ public class MidiSongReader implements SongReader {
                         }
                     });
 
-                    fragment.withPhrase(channel, phrase
+                    fragment.withPhrase(channel, new Phrase.Builder()
+                        .withVoice(voice.build())
                         .withProgram(programs.get(channel))
                         .build());
                 });

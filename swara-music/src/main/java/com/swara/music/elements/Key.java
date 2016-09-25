@@ -1,27 +1,35 @@
-package com.swara.music.data;
+package com.swara.music.elements;
+
+import java.beans.Transient;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.swara.music.MusicElement;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * A musical key. Keys may be major or minor and contain a key signature which specifies which notes
- * are sharp (# or x), which are flat (b), and which are natural. Keys are immutable, and, therefore,
- * thread-safe. Keys are built with a {@link Key.Builder}.
+ * are sharp (# or x), which are flat (b), and which are natural. Keys are immutable, and,
+ * therefore, thread-safe. Keys are built with a {@link Key.Builder}. The default key is C-Major.
  */
+@ToString
+@EqualsAndHashCode
 @JsonDeserialize(builder = Key.Builder.class)
-public class Key {
+public class Key implements MusicElement {
 
     public static final int MAJOR = 0;
     public static final int MINOR = 1;
 
-    private final int type;
     private final int signature;
+    private final int type;
 
     private Key(Builder builder) {
-        this.type = builder.type;
         this.signature = builder.signature;
+        this.type = builder.type;
     }
 
     /**
@@ -52,11 +60,12 @@ public class Key {
      * major scale are 2, 4, 5, 7, 9, and 11 half-steps above tonic and notes in a minor scale are
      * 2, 3, 5, 7, 8, and 10 half-steps above tonic.
      */
+    @Transient
     public int[] scale() {
         final int start = this.type == Key.MAJOR ? Note.C : Note.A;
-        final int tonic = Math.floorMod(start + this.signature * 7, 12);
+        final int tonic = start + this.signature * 7;
 
-        return new int[] {
+        return Arrays.stream(new int[] {
             tonic,
             tonic + 2,
             tonic + 4 - this.type,
@@ -64,31 +73,10 @@ public class Key {
             tonic + 7,
             tonic + 9 - this.type,
             tonic + 11 - this.type
-        };
+        }).map(i -> i % 12).toArray();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null || obj.getClass() == this.getClass()) {
-            return false;
-        }
-
-        Key rhs = (Key) obj;
-        return this.signature == rhs.signature && this.type == rhs.type;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(this.signature, this.type);
-    }
-
-    /**
-     * Constructs a {@link Key} using a Fluent-style builder pattern. By default, the builder will
-     * construct C Major, which is a major key with no sharps nor flats.
-     */
-    public static final class Builder {
+    public static final class Builder implements MusicElement.Builder<Key> {
 
         public int signature;
         public int type;

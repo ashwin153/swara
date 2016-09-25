@@ -1,4 +1,4 @@
-package com.swara.music.io;
+package com.swara.music.writers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,18 +9,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.swara.music.data.Song;
+import com.swara.music.MusicWriter;
+import com.swara.music.elements.Song;
 
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
  * Writes a {@link Song} to a JSON string.
  */
-public class JsonSongWriter implements SongWriter {
+public class JsonWriter implements MusicWriter {
 
     private final ObjectMapper mapper;
 
-    public JsonSongWriter() {
+    public JsonWriter() {
         // Register custom fraction serializer.
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Fraction.class, new FractionSerializer());

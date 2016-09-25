@@ -1,4 +1,4 @@
-package com.swara.music.data;
+package com.swara.music.elements;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,14 +6,21 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
+import com.swara.music.MusicElement;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * A set of phrases played simultaneously in a particular {@link Key} and {@link Tempo}. Fragments
- * are combined together to form a song. Fragments are built using a {@link Fragment.Builder} and
- * are immutable and, therefore, thread-safe.
+ * A set of {@link Phrase} played simultaneously in a particular {@link Key} and {@link Tempo}.
+ * Fragments are the building blocks of a {@link Song}; a song is simply a set of fragments played
+ * sequentially. Fragments are built using a {@link Fragment.Builder} and are immutable and,
+ * therefore, thread-safe. The default fragment is an empty set of phrases in the default key/tempo.
  */
+@ToString
+@EqualsAndHashCode
 @JsonDeserialize(builder = Fragment.Builder.class)
-public class Fragment {
+public class Fragment implements MusicElement {
 
     private final Key key;
     private final Tempo tempo;
@@ -42,20 +49,17 @@ public class Fragment {
     }
 
     /**
-     * Returns the mapping of phrases to channels. A MIDI sequence is composed of 16 channels over
-     * which information may be passed. Each phrase in the fragment is assigned to a unique channel.
-     * Channel 10 is reserved for percussion.
+     * Returns the mapping of phrases to channels. Communication with a Midi sequencer occurs over
+     * sixteen channels. Each channel represents an independent part in a musical score. The general
+     * Midi (GM) specification dictates that percussion must occur on channel 10 and all other
+     * instruments may be played on the other channels.
      */
     @JsonGetter
     public Map<Integer, Phrase> phrases() {
         return this.phrases;
     }
 
-    /**
-     * Constructs a {@link Fragment} using a Fluent-style builder pattern. By default, the builder
-     * will construct an empty fragment with the default key and tempo.
-     */
-    public static final class Builder {
+    public static final class Builder implements MusicElement.Builder<Fragment> {
 
         private Key key;
         private Tempo tempo;
