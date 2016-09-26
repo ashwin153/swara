@@ -37,3 +37,4 @@ Here's a little page-rank karma for all the sources I used:
 - [Convolutional Neural Networks](http://ufldl.stanford.edu/tutorial/supervised/ConvolutionalNeuralNetwork/)
 - [Fast Learning Algorithms](https://page.mi.fu-berlin.de/rojas/neural/chapter/K8.pdf)
 - [Support Vector Machines](https://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf)
+- [Stanford CS229](http://cs229.stanford.edu)

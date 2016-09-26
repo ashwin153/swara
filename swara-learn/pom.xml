@@ -25,6 +25,18 @@
             <artifactId>commons-math3</artifactId>
         </dependency>
 
+        <!-- Tries -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+
+        <!-- Equals and HashCode -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
         <!-- Test Dependenies -->
         <dependency>
             <groupId>junit</groupId>

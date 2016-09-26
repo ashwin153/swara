@@ -26,7 +26,7 @@
 
             <dependency>
                 <groupId>com.swara</groupId>
-                <artifactId>swara-ml</artifactId>
+                <artifactId>swara-learn</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -41,6 +41,18 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>3.6.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.10</version>
             </dependency>
 
             <dependency>
