@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.swara</groupId>
-            <artifactId>swara-ml</artifactId>
+            <artifactId>swara-learn</artifactId>
         </dependency>
 
         <dependency>
