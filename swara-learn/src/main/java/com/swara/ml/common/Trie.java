@@ -80,12 +80,15 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
         if (seq == null || seq.isEmpty()) {
             return this;
         } else {
-            final long stamp = this.lock.readLock();
+            // Perform binary search using a read lock.
             final Trie<K, V> search = new Trie<>(this, seq.get(0), null);
+            long stamp = this.lock.readLock();
             int index = Collections.binarySearch(this.children, search);
             final Trie<K, V> result = index < 0 ? null : this.children.get(index);
             this.lock.unlock(stamp);
-            return result == null ? this : result.get(seq.subList(1, seq.size()));
+
+            // Recurse on matching child or return if no such child exists.
+            return result == null ? null : result.get(seq.subList(1, seq.size()));
         }
     }
 
@@ -100,8 +103,8 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
     public void put(List<K> seq, Function<V, V> update) {
         if (seq != null && !seq.isEmpty()) {
             // Find the child whose key matches the first element in the sequence.
-            long stamp = this.lock.readLock();
             final Trie<K, V> search = new Trie<>(this, seq.get(0), null);
+            long stamp = this.lock.readLock();
             int index = Collections.binarySearch(this.children, search);
             this.lock.unlock(stamp);
 
@@ -130,7 +133,7 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
         this.children.forEach(Trie::remove);
 
         // Remove the tree from the parent.
-        final long stamp = this.parent.lock.writeLock();
+        long stamp = this.parent.lock.writeLock();
         this.parent.children.remove(this);
         this.parent.lock.unlock(stamp);
     }
