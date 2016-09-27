@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 import com.swara.ml.common.Trie;
@@ -29,10 +30,10 @@ public class DiscreteMarkovChain<T extends Comparable<T>> implements MarkovModel
     public void train(List<T> sequence) {
         // Slides an 'order' length window across the specified input sequence and records a mapping
         // between each 'order' length state sequence and the state that immediately follows it.
-        for (int i = 0; i < sequence.size() - this.order; i++) {
+        IntStream.range(0, sequence.size() - this.order).parallel().forEach(i -> {
             final List<T> sub = sequence.subList(i, i + this.order + 1);
             this.markov.put(sub, v -> v == null ? 0 : ++v);
-        }
+        });
     }
 
     @Override
