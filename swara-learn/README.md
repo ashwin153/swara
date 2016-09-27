@@ -6,11 +6,10 @@ A machine learning framework built on [Apache Commons Math](http://commons.apach
 All neural networks are trained via [backpropagation through time](https://en.wikipedia.org/wiki/Backpropagation_through_time).
 
 ```java
-final NeuralNetwork network = new NeuralNetwork(lrate, 
-    new ForwardLayer(6, 4, ForwardLayer.LOGISTIC),
-    new ForwardLayer(4, 3, ForwardLayer.TANH),
-    new LstmLayer(3, 4)
-);
+final NeuralNetwork<RealVector, RealVector> network = NeuralNetwork.of(new LstmLayer())
+    .compose(new ForwardLayer(4, 3, new Tanh()))
+    .compose(new LstmLayer(3, 2))
+    .compose(NeuralNetwork.of(new LstmLayer()));
 ```
 
 ### Markov Chains

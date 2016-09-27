@@ -1,5 +1,9 @@
-package com.swara.ml.neural.layer;
+package com.swara.ml.neural.layers;
 
+import com.swara.ml.neural.NeuralLayer;
+
+import org.apache.commons.math3.analysis.function.Logistic;
+import org.apache.commons.math3.analysis.function.Tanh;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -8,21 +12,20 @@ import org.apache.commons.math3.linear.RealVector;
  * recurrent neural networks capable of learning long-term dependencies, because they are able to
  * selectively modify elements of their hidden state.
  */
-public class LstmLayer extends Layer {
+public class LstmLayer extends NeuralLayer {
 
     private final ForwardLayer forget;
     private final ForwardLayer input;
     private final ForwardLayer output;
     private final ForwardLayer detect;
-
     private RealVector memory;
 
     public LstmLayer(int inputs, int outputs) {
         super(inputs, outputs);
-        this.input  = new ForwardLayer(inputs + outputs, outputs, ForwardLayer.LOGISTIC);
-        this.forget = new ForwardLayer(inputs + outputs, outputs, ForwardLayer.LOGISTIC);
-        this.output = new ForwardLayer(inputs + outputs, outputs, ForwardLayer.LOGISTIC);
-        this.detect = new ForwardLayer(inputs + outputs, outputs, ForwardLayer.TANH);
+        this.input  = new ForwardLayer(inputs, outputs);
+        this.forget = new ForwardLayer(inputs, outputs);
+        this.output = new ForwardLayer(inputs, outputs);
+        this.detect = new ForwardLayer(inputs, outputs, new Tanh());
 
         // Initialize the memory and set the last output to empty.
         this.memory = new ArrayRealVector(outputs);
@@ -44,7 +47,7 @@ public class LstmLayer extends Layer {
     }
 
     @Override
-    public RealVector backward(RealVector error, double lrate) {
+    public RealVector backward(RealVector error) {
         // Propagate errors to various gates.
 
         // Gradient Output Gate = error * tanh(ct) = error * norm;
