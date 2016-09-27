@@ -17,10 +17,6 @@ public class LstmLayer extends Layer {
 
     private RealVector memory;
 
-    /**
-     *
-     *
-     */
     public LstmLayer(int inputs, int outputs) {
         super(inputs, outputs);
         this.input  = new ForwardLayer(inputs + outputs, outputs, ForwardLayer.LOGISTIC);
@@ -49,6 +45,8 @@ public class LstmLayer extends Layer {
 
     @Override
     public RealVector backward(RealVector error, double lrate) {
+        // Propagate errors to various gates.
+
         // Gradient Output Gate = error * tanh(ct) = error * norm;
         // Error cT += error * ot * (1 - tanh^2(ct))
         // Gradient Forget = err memory * last_memory

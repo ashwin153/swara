@@ -1,6 +1,6 @@
 package com.swara.ml.neural.layer;
 
-import java.util.Stack;
+import com.google.common.base.Preconditions;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -11,45 +11,35 @@ public abstract class Layer {
 
     private final int inputs;
     private final int outputs;
-    private final Stack<RealVector> history;
 
     public Layer(int inputs, int outputs) {
+        Preconditions.checkArgument(inputs > 0);
+        Preconditions.checkArgument(outputs > 0);
         this.inputs = inputs;
         this.outputs = outputs;
-        this.history = new Stack<>();
     }
 
-    /**
-     * Returns the number of inputs to this neural layer. The number of inputs to this layer should
-     * be equal to the number of outputs of the previous layer.
-     */
     public int inputs() {
         return this.inputs;
     }
 
-    /**
-     * Returns the number of outputs to this neural layer. The number of outputs to this layer
-     * should be equal to the number of inputs of the next layer.
-     */
     public int outputs() {
         return this.outputs;
     }
 
     /**
-     *
-     */
-    public Stack<RealVector> history() {
-        return this.history;
-    }
-
-    /**
-     *
+     * Compute the output activation of each neuron.
      */
     public abstract RealVector forward(RealVector input);
 
     /**
-     *
+     * Compute the error gradients of each input.
      */
-    public abstract RealVector backward(RealVector error, double lrate);
+    public abstract RealVector backward(RealVector output, RealVector error);
+
+    /**
+     * Update the weights of each neuron.
+     */
+    public abstract void update(RealVector input, RealVector gradient);
 
 }

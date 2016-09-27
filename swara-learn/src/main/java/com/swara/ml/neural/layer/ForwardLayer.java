@@ -3,7 +3,9 @@ package com.swara.ml.neural.layer;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
+import org.apache.commons.math3.analysis.function.Cos;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -15,64 +17,59 @@ import org.apache.commons.math3.linear.RealVector;
  */
 public class ForwardLayer extends Layer {
 
-    public static final UnivariateFunction IDENTITY = i -> i;
-    public static final UnivariateFunction LOGISTIC = i -> 1.0 / (1.0 + Math.exp(-i));
-    public static final UnivariateFunction SOFTSIGN = i -> i / (1 + Math.abs(i));
-    public static final UnivariateFunction GAUSSIAN = i -> Math.pow(Math.E, -(i * i));
-    public static final UnivariateFunction STEP = i -> (i < 0) ? 0 : 1;
-    public static final UnivariateFunction SINE = Math::sin;
-    public static final UnivariateFunction TANH = Math::tanh;
-    public static final UnivariateFunction ATAN = Math::atan;
-
+    private final UnivariateDifferentiableFunction activation;
     private final RealMatrix weights;
-    private final RealVector biases;
-    private final UnivariateFunction activation;
 
-    public ForwardLayer(int inputs, int outputs, UnivariateFunction activation) {
+    public ForwardLayer(int inputs, int outputs, UnivariateDifferentiableFunction activation) {
         super(inputs, outputs);
         this.activation = activation;
 
-        // Initialize the weights/biases of the neural network.
+        // Initialize the weights of the layer.
         final Random rand = new Random();
         final double lbound = - 1.0 / Math.sqrt(inputs);
         final double ubound = + 1.0 / Math.sqrt(inputs);
 
-        this.biases = MatrixUtils.createRealVector(rand.doubles(outputs, lbound, ubound).toArray());
-        this.weights = MatrixUtils.createRealMatrix(IntStream.range(0, outputs)
-                .mapToObj(i -> rand.doubles(inputs, lbound, ubound).toArray())
-                .toArray(double[][]::new)
+        this.weights = MatrixUtils.createRealMatrix(IntStream.range(0, outputs + 1)
+            .mapToObj(i -> rand.doubles(inputs, lbound, ubound).toArray())
+            .toArray(double[][]::new)
         );
     }
 
     @Override
     public RealVector forward(RealVector input) {
-        // Save the input and output arguments.
-        this.history().push(input);
-        return this.history().push(this.weights
-            .operate(input)
-            .add(this.biases)
-            .mapToSelf(this.activation)
-        );
+        return this.weights.operate(input.append(1)).mapToSelf(this.activation);
     }
 
     @Override
-    public RealVector backward(RealVector error, double lrate) {
-        // Retrieve the output and input arguments from the history.
-        final RealVector output = this.history().pop();
-        final RealVector input  = this.history().pop();
+    public RealVector backward(RealVector output, RealVector gradient) {
+        // If it is an output neuron than it is
+        derivative * (output     private final Deque<RealVector> outputs;
+        - target)
 
-        // Error for each neuron, scaled by neuron output and the learning rate.
-        final RealVector delta = output
-            .ebeMultiply(output.map(i -> 1 - i))
-            .ebeMultiply(error)
-            .mapMultiply(lrate);
+        // Otherwise,
+        derivative * (previousError * weights)
 
-        // Update the weights and biases for each neuron.
-        this.biases.subtract(delta);
-        this.weights.subtract(delta.outerProduct(input));
 
-        // Propagate the error backward.
-        return this.weights.preMultiply(delta);
+
+
+        final DerivativeStructure[] neurons = new DerivativeStructure[];
+        for (int i = 0; i < neurons.length; i++) {
+
+        }
+
+
+        new Cos().derivative();
+        .value(new DerivativeStructure(1, 1, 0, 1)).
+        new Tanh().
+            UnivariateDifferentiabl
+        this.activation.value(new DerivativeStructure());
+
+        return output.ebeMultiply(output.map(i -> 1 - i)).ebeMultiply(gradient);
+    }
+
+    @Override
+    public void update(RealVector input, RealVector gradient, double lrate) {
+        this.weights.subtract(gradient.outerProduct(input.append(1)));
     }
 
 }
