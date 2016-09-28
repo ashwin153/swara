@@ -32,10 +32,9 @@ IntStream.range(0, height).forEach(h -> {
 ImageIO.write(result, "jpg", new File("src/test/resources/gradient-result.jpg"));
 ```
 
-| Training Example                     |  Result                                      |
-|:------------------------------------:|:--------------------------------------------:|
-| ![](src/test/resources/gradient.jpg) |  ![](src/test/resources/gradient-result.jpg) |
+<img style="float: left; width: 45%" src="src/test/resources/gradient.jpg"/>
 
+<img style="float: right; width: 45%" src="src/test/resources/gradient-result.jpg"/>
 
 ### Neural Networks
 All neural networks are trained via [backpropagation through time](https://en.wikipedia.org/wiki/Backpropagation_through_time).
