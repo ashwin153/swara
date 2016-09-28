@@ -129,9 +129,6 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
      * can be performed in O(h) where h is the height of the trie.
      */
     public void remove() {
-        // Recursively delete all children of the tree.
-        this.children.forEach(Trie::remove);
-
         // Remove the tree from the parent.
         long stamp = this.parent.lock.writeLock();
         this.parent.children.remove(this);
