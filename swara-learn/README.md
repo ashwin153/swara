@@ -3,10 +3,15 @@ A machine learning framework built on [Apache Commons Math](http://commons.apach
 
 ## Recipes
 ### Markov Chains
-The following is an example of a 3rd-order discrete markov chain learning to generate a gradient.
+#### Discrete Markov Chains
+The following is an example of a 3rd-order discrete markov chain learning to generate a gradient. The image below is the training example, and the image to the right is the output of a 3rd-order discrete markov chain. This example highlights the simplicity of the implementation; all that must be provided is an order, a comparator, and training examples.
+
 ```java
-// Load the gradient image and construct a markov chain that compares colors by luminance.
+// Load the gradient image and create the output image.
 final BufferedImage input = ImageIO.read(this.getClass().getResource("/gradient.jpg"));
+final BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+// Construct a markov chain that compares colors by luminance.
 final DiscreteMarkovChain<Color> markov = new DiscreteMarkovChain<>(3, (a, b) -> {
     final int dr = a.getRed() - b.getRed();
     final int dg = a.getGreen() - b.getGreen();
@@ -20,8 +25,6 @@ markov.train(IntStream.range(0, input.getWidth() * input.getHeight()).boxed()
     .collect(Collectors.toList()));
 
 // Generate a sequence of bits and write it it to an image.
-final int width = 200, height = 200;
-final BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 final Iterator<Color> color = markov.generate();
 IntStream.range(0, height).forEach(h -> {
     final int rgb = color.next().getRGB();
@@ -32,9 +35,8 @@ IntStream.range(0, height).forEach(h -> {
 ImageIO.write(result, "jpg", new File("src/test/resources/gradient-result.jpg"));
 ```
 
-<img style="float: left; width: 45%" src="src/test/resources/gradient.jpg"/>
-
-<img style="float: right; width: 45%" src="src/test/resources/gradient-result.jpg"/>
+<img width="49.744%" src="src/test/resources/gradient.jpg"/>
+<img width="49.744%" style="float: right" src="src/test/resources/gradient-result.jpg"/>
 
 ### Neural Networks
 All neural networks are trained via [backpropagation through time](https://en.wikipedia.org/wiki/Backpropagation_through_time).
