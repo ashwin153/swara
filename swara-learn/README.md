@@ -2,6 +2,41 @@
 A machine learning framework built on [Apache Commons Math](http://commons.apache.org/proper/commons-math/).
 
 ## Recipes
+### Markov Chains
+The following is an example of a 3rd-order discrete markov chain learning to generate a gradient.
+```java
+// Load the gradient image and construct a markov chain that compares colors by luminance.
+final BufferedImage input = ImageIO.read(this.getClass().getResource("/gradient.jpg"));
+final DiscreteMarkovChain<Color> markov = new DiscreteMarkovChain<>(3, (a, b) -> {
+    final int dr = a.getRed() - b.getRed();
+    final int dg = a.getGreen() - b.getGreen();
+    final int db = a.getBlue() - b.getBlue();
+    return (int) (0.2126 * dr + 0.7152 * dg + 0.0722 * db);
+});
+
+// Train the markov chains on the RGB contents of the image.
+markov.train(IntStream.range(0, input.getWidth() * input.getHeight()).boxed()
+    .map(i -> new Color(input.getRGB(i / input.getHeight(), i % input.getHeight())))
+    .collect(Collectors.toList()));
+
+// Generate a sequence of bits and write it it to an image.
+final int width = 200, height = 200;
+final BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+final Iterator<Color> color = markov.generate();
+IntStream.range(0, height).forEach(h -> {
+    final int rgb = color.next().getRGB();
+    IntStream.range(0, width).forEach(w -> result.setRGB(w, h, rgb));
+});
+
+// Write the image to file.
+ImageIO.write(result, "jpg", new File("src/test/resources/gradient-result.jpg"));
+```
+
+| Training Example                     |  Result                                      |
+|:------------------------------------:|:--------------------------------------------:|
+| ![](src/test/resources/gradient.jpg) |  ![](src/test/resources/gradient-result.jpg) |
+
+
 ### Neural Networks
 All neural networks are trained via [backpropagation through time](https://en.wikipedia.org/wiki/Backpropagation_through_time).
 
@@ -12,12 +47,6 @@ final NeuralNetwork<RealVector, RealVector> network = NeuralNetwork.of(new LstmL
     .compose(NeuralNetwork.of(new LstmLayer()));
 ```
 
-### Markov Chains
-```java
-final DiscreteMarkovChain<Integer> markov = new DiscreteMarkovChain<>(2);
-markov.train(Arrays.asList(1, 4, 3, 1, 4, 3));
-final Stream<Integer> output = markov.generate(Arrays.asList(1, 4));
-```
 
 ### Support Vector Machines (SVM)
 

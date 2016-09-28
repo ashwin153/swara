@@ -53,7 +53,7 @@ public class DiscreteMarkovChainTest {
             .map(i -> new Color(input.getRGB(i / input.getHeight(), i % input.getHeight())))
             .collect(Collectors.toList()));
 
-        // Generate a sequence of 40,000 bits and write it is a 200x200 image.
+        // Generate a sequence of bits and write it is a 200x200 image.
         final BufferedImage image = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
         final Iterator<Color> color = markov.generate();
         IntStream.range(0, 200).forEach(h -> {
