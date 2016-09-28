@@ -2,6 +2,7 @@ package com.swara.ml.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
@@ -18,21 +19,23 @@ import lombok.EqualsAndHashCode;
  * @param <V> Value Type
  */
 @EqualsAndHashCode(exclude = { "parent", "children", "value" })
-public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> {
+public class Trie<K, V> implements Comparable<Trie<K, V>> {
 
     private final Trie<K, V> parent;
     private final List<Trie<K, V>> children;
+    private final Comparator<K> comparator;
     private final StampedLock lock;
     private final K key;
     private volatile V value;
 
-    public Trie() {
-        this(null, null, null);
+    public Trie(Comparator<K> comparator) {
+        this(null, null, null, comparator);
     }
 
-    public Trie(Trie<K, V> parent, K key, V value) {
+    private Trie(Trie<K, V> parent, K key, V value, Comparator<K> comparator) {
         this.parent = parent;
         this.children = new ArrayList<>();
+        this.comparator = comparator;
         this.lock = new StampedLock();
         this.key = key;
         this.value = value;
@@ -81,7 +84,7 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
             return this;
         } else {
             // Perform binary search using a read lock.
-            final Trie<K, V> search = new Trie<>(this, seq.get(0), null);
+            final Trie<K, V> search = new Trie<>(this, seq.get(0), null, comparator);
             long stamp = this.lock.readLock();
             int index = Collections.binarySearch(this.children, search);
             final Trie<K, V> result = index < 0 ? null : this.children.get(index);
@@ -103,7 +106,7 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
     public void put(List<K> seq, Function<V, V> update) {
         if (seq != null && !seq.isEmpty()) {
             // Find the child whose key matches the first element in the sequence.
-            final Trie<K, V> search = new Trie<>(this, seq.get(0), null);
+            final Trie<K, V> search = new Trie<>(this, seq.get(0), null, comparator);
             long stamp = this.lock.readLock();
             int index = Collections.binarySearch(this.children, search);
             this.lock.unlock(stamp);
@@ -137,7 +140,7 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<Trie<K, V>> 
 
     @Override
     public int compareTo(Trie<K, V> rhs) {
-        return this.key.compareTo(rhs.key);
+        return this.comparator.compare(key, rhs.key);
     }
 
 }

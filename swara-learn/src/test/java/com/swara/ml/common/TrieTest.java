@@ -14,7 +14,7 @@ public class TrieTest {
 
     @Test
     public void testGetAfterPutAndRemove() {
-        final Trie<Character, Long> trie = new Trie<>();
+        final Trie<Character, Long> trie = new Trie<>(Character::compare);
         final List<Character> k1 = Arrays.asList('h', 'e', 'l', 'l', 'o');
         final List<Character> k2 = Arrays.asList('h', 'e', 'l', 'p');
 
@@ -39,7 +39,7 @@ public class TrieTest {
     
     @Test
     public void testPutThreadSafety() throws InterruptedException {
-        final Trie<Character, Long> trie = new Trie<>();
+        final Trie<Character, Long> trie = new Trie<>(Character::compare);
         final List<Character> key = Arrays.asList('h', 'e', 'l', 'l', 'o');
         final ExecutorService executor = Executors.newFixedThreadPool(10);
 
