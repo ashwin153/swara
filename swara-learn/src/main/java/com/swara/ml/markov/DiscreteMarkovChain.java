@@ -29,9 +29,10 @@ public class DiscreteMarkovChain<T> implements MarkovModel<T> {
 
     @Override
     public void train(List<T> sequence) {
-        // Slides an 'order' length window across the specified input sequence and records a mapping
-        // between each 'order' length state sequence and the state that immediately follows it.
         IntStream.range(0, sequence.size() - this.order).parallel().forEach(i -> {
+            // Slides an 'order' length window in parallel across the specified input sequence and
+            // records a mapping between each 'order' length state sequence and the state that
+            // immediately follows it.
             final List<T> sub = sequence.subList(i, i + this.order + 1);
             this.markov.put(sub, v -> v == null ? 1 : ++v);
         });
