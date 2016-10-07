@@ -42,10 +42,6 @@ public class DiscreteMarkovChain<T> implements MarkovModel<T> {
         return new StateIterator(null);
     }
 
-    public Iterator<T> generate(List<T> seed) {
-        return new StateIterator(seed);
-    }
-
     /**
      * An infinite, lazy iterator over the Markov state space. Every state iterator operates
      * independently, and, therefore, will produce different results. Only iterators with the same
