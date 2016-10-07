@@ -1,5 +1,7 @@
 package com.swara.ml.neural.layers;
 
+import java.util.Stack;
+
 import com.swara.ml.neural.NeuralLayer;
 
 import org.apache.commons.math3.analysis.function.Logistic;
@@ -18,24 +20,26 @@ public class LstmLayer extends NeuralLayer {
     private final ForwardLayer input;
     private final ForwardLayer output;
     private final ForwardLayer detect;
+    private final Stack<RealVector> history;
     private RealVector memory;
 
     public LstmLayer(int inputs, int outputs) {
         super(inputs, outputs);
-        this.input  = new ForwardLayer(inputs, outputs);
-        this.forget = new ForwardLayer(inputs, outputs);
-        this.output = new ForwardLayer(inputs, outputs);
+        this.input  = new ForwardLayer(inputs, outputs, new Logistic(1, 1, 0.5, 1, 0, 1));
+        this.forget = new ForwardLayer(inputs, outputs, new Logistic(1, 1, 0.5, 1, 0, 1));
+        this.output = new ForwardLayer(inputs, outputs, new Logistic(1, 1, 0.5, 1, 0, 1));
         this.detect = new ForwardLayer(inputs, outputs, new Tanh());
 
         // Initialize the memory and set the last output to empty.
         this.memory = new ArrayRealVector(outputs);
-        this.history().push(this.memory);
+        this.history = new Stack<>();
+        this.history.push(this.memory);
     }
 
     @Override
     public RealVector forward(RealVector input) {
         // Input is a concatenation of previous output and new input.
-        final RealVector in = this.history().peek().append(input);
+        final RealVector in = this.history.peek().append(input);
 
         // Update the memory as a linear combination of recalled memory and detected updates.
         final RealVector recall = this.forget.forward(in).ebeMultiply(this.memory);
@@ -43,7 +47,7 @@ public class LstmLayer extends NeuralLayer {
         this.memory = recall.add(update);
 
         // The cell selectively outputs normalized elements of its memory.
-        return this.history().push(this.output.forward(in).ebeMultiply(this.memory.map(Math::tanh)));
+        return this.history.push(this.output.forward(in).ebeMultiply(this.memory.map(Math::tanh)));
     }
 
     @Override

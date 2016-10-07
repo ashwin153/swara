@@ -28,6 +28,11 @@ public class Trie<K, V> implements Comparable<Trie<K, V>> {
     private final K key;
     private volatile V value;
 
+    @SuppressWarnings("unchecked")
+    public Trie() {
+        this((Comparator<K>) Comparator.naturalOrder());
+    }
+
     public Trie(Comparator<K> comparator) {
         this(null, null, null, comparator);
     }

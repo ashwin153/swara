@@ -13,6 +13,11 @@
     <artifactId>swara-learn</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.swara</groupId>
+            <artifactId>swara-music</artifactId>
+        </dependency>
+
         <!-- Preconditions -->
         <dependency>
             <groupId>com.google.guava</groupId>

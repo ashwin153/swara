@@ -38,7 +38,7 @@ public class DiscreteMarkovChainTest {
     }
 
     @Test
-    public void testImage() throws URISyntaxException, IOException {
+    public void testGradient() throws URISyntaxException, IOException {
         // Load the gradient image and construct a markov chain that compares colors by luminance.
         final BufferedImage input = ImageIO.read(this.getClass().getResource("/gradient.jpg"));
         final DiscreteMarkovChain<Color> markov = new DiscreteMarkovChain<>(3, (a, b) -> {
@@ -64,5 +64,7 @@ public class DiscreteMarkovChainTest {
         // Write the image to file.
         ImageIO.write(image, "jpg", new File("src/test/resources/gradient-result.jpg"));
     }
+
+
 
 }

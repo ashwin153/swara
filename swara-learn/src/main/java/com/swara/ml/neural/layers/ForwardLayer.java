@@ -6,7 +6,6 @@ import com.swara.ml.neural.NeuralLayer;
 
 import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
-import org.apache.commons.math3.analysis.function.Logistic;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -21,11 +20,6 @@ public class ForwardLayer extends NeuralLayer {
     private final UnivariateDifferentiableFunction activation;
     private final Stack<RealVector> history;
     private RealMatrix weights;
-
-    public ForwardLayer(int inputs, int outputs) {
-        // By default, construct a sigmoid function with a 0.5 learn rate.
-        this(inputs, outputs, new Logistic(1, 1, 0.5, 1, 0, 1));
-    }
 
     public ForwardLayer(int inputs, int outputs, UnivariateDifferentiableFunction activation) {
         super(inputs, outputs);

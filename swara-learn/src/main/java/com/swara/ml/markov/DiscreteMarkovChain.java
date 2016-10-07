@@ -39,7 +39,11 @@ public class DiscreteMarkovChain<T> implements MarkovModel<T> {
 
     @Override
     public Iterator<T> generate() {
-        return new StateIterator();
+        return new StateIterator(null);
+    }
+
+    public Iterator<T> generate(List<T> seed) {
+        return new StateIterator(seed);
     }
 
     /**
@@ -52,8 +56,8 @@ public class DiscreteMarkovChain<T> implements MarkovModel<T> {
         private final Random rng;
         private List<T> state;
 
-        public StateIterator() {
-            this.state = null;
+        public StateIterator(List<T> seed) {
+            this.state = seed;
             this.rng = new Random();
         }
 
