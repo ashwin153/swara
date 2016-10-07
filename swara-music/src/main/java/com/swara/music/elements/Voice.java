@@ -1,5 +1,6 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Voice.Builder.class)
-public class Voice implements MusicElement {
+public class Voice implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = 8001733437942259259L;
 
     private final List<Chord> chords;
 

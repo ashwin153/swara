@@ -1,5 +1,6 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +22,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Phrase.Builder.class)
-public class Phrase implements MusicElement {
+public class Phrase implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = 6517777100169939721L;
 
     public static final int GRAND_PIANO     = 0;
     public static final int KEYBOARD        = 4;

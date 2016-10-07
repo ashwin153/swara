@@ -1,8 +1,9 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -24,7 +25,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(exclude = { "volume" })
 @JsonDeserialize(builder = Chord.Builder.class)
-public class Chord implements MusicElement {
+public class Chord implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = 4074771317712567295L;
 
     private final Set<Note> notes;
     private final Fraction duration;
@@ -73,7 +76,7 @@ public class Chord implements MusicElement {
         private int volume;
 
         public Builder() {
-            this.notes = new HashSet<>();
+            this.notes = new TreeSet<>();
             this.duration = Fraction.ONE_QUARTER;
             this.volume = 64;
         }

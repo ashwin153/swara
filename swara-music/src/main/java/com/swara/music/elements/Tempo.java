@@ -1,5 +1,7 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -17,7 +19,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Tempo.Builder.class)
-public class Tempo implements MusicElement {
+public class Tempo implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = 3472258255797173960L;
 
     private final int type;
     private final int beats;

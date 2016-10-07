@@ -1,6 +1,7 @@
 package com.swara.music.elements;
 
 import java.beans.Transient;
+import java.io.Serializable;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -19,7 +20,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Key.Builder.class)
-public class Key implements MusicElement {
+public class Key implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = -7968398092402936978L;
 
     public static final int MAJOR = 0;
     public static final int MINOR = 1;

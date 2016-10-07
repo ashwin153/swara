@@ -1,8 +1,11 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ComparisonChain;
 import com.swara.music.MusicElement;
 
 import lombok.EqualsAndHashCode;
@@ -16,7 +19,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Note.Builder.class)
-public class Note implements MusicElement {
+public class Note implements MusicElement, Serializable, Comparable<Note> {
+
+    private static final long serialVersionUID = -5203900717155048726L;
 
     public static final int C  = 0;
     public static final int Cx = 1;
@@ -59,6 +64,14 @@ public class Note implements MusicElement {
      */
     @JsonGetter
     public int octave() { return this.octave; }
+
+    @Override
+    public int compareTo(Note rhs) {
+        return ComparisonChain.start()
+            .compare(this.octave, rhs.octave)
+            .compare(this.pitch, rhs.pitch)
+            .result();
+    }
 
     public static final class Builder implements MusicElement.Builder<Note> {
 

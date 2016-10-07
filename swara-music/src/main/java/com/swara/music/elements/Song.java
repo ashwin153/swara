@@ -1,5 +1,6 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Song.Builder.class)
-public class Song implements MusicElement {
+public class Song implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = 7959312166736630115L;
 
     private final List<Fragment> fragments;
 

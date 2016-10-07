@@ -1,5 +1,6 @@
 package com.swara.music.elements;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonDeserialize(builder = Fragment.Builder.class)
-public class Fragment implements MusicElement {
+public class Fragment implements MusicElement, Serializable {
+
+    private static final long serialVersionUID = -5666974680990877863L;
 
     private final Key key;
     private final Tempo tempo;
