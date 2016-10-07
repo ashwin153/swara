@@ -1,9 +1,11 @@
 package com.swara.music.elements;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -67,6 +69,24 @@ public class Chord implements MusicElement, Serializable {
     @JsonGetter
     public Set<Note> notes() {
         return this.notes;
+    }
+
+    /**
+     * Returns the type of the chord. Because chord theory is so vast and complex, a simple but
+     * expressive alternative is necessary. Chords are partitioned into equivalence classes or types
+     * by the ordered set of the pitches of the notes that compose it. For example, all C Major
+     * Chords belong to the family {0, 4, 7}. Because these equivalence classes are ordered by
+     * construction, they can be compared lexicographically. These types are expressive enough to
+     * capture differences in number of notes, added tones, and harmonic content; however, they fail
+     * to discriminate between the various inversions of a chord. Partitioning chords into types
+     * dramatically reduces the state space and makes a variety of machine learning methods more
+     * tractable.
+     */
+    @Transient
+    public Set<Integer> type() {
+        return this.notes.stream()
+            .map(Note::pitch)
+            .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public static final class Builder implements MusicElement.Builder<Chord> {
