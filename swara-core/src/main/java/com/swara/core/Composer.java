@@ -1,8 +1,11 @@
 package com.swara.core;
 
-import java.time.Duration;
+import java.util.List;
+import java.util.stream.Stream;
 
+import com.swara.music.elements.Chord;
 import com.swara.music.elements.Song;
+import com.swara.music.elements.Voice;
 
 /**
  * A composer generates an original {@link Song} of the specified duration. Composers utilize
@@ -11,6 +14,6 @@ import com.swara.music.elements.Song;
 @FunctionalInterface
 public interface Composer {
 
-    Song compose(Duration duration);
+    Stream<Chord> compose(List<Voice> voices);
 
 }
