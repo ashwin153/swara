@@ -22,4 +22,5 @@ public interface MusicWriter {
             write(out, song);
         }
     }
+
 }

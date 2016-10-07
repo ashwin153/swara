@@ -18,11 +18,15 @@ import com.swara.music.elements.Song;
 import com.swara.music.elements.Voice;
 
 /**
- * Writes {@link Song} to a MIDI {@link Sequence}. Writing conforms to the MIDI Format 0 spec;
- * therefore, the result is a single-track, 16-channel MIDI file. For more information about the
- * MIDI file spec check out: http://www.somascape.org/midi/tech/mfile.html.
+ * Writes {@link Song} to a Midi {@link Sequence}. Midi files provide a compact alternative to space
+ * inefficient audio files. Midi files are composed of sequences of time-stamped Midi messages,
+ * which each encode the various musical events that occur throughout a song (e.g. key and tempo
+ * changes, note played, note released, etc.). Midi writing conforms to the Format 0 specification;
+ * therefore, the resulting sequence is a single-track, 16-channel Midi file. The ability to write
+ * Midi files enables the library to interface with conventional musical production and playback
+ * tools. For more information on Midi, check out: http://www.somascape.org/midi/tech/mfile.html.
  */
-public class MidiWriter implements MusicWriter {
+public final class MidiWriter implements MusicWriter {
 
     private static final int TICK_RESOLUTION = 480;
 

@@ -30,9 +30,14 @@ import com.swara.music.elements.Voice;
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
- * Reads a {@link Song} from a MIDI {@link javax.sound.midi.Sequence}.
+ * Reads a {@link Song} from a Midi {@link javax.sound.midi.Sequence}. Midi files provide a compact
+ * alternative to space inefficient audio files. Midi files are composed of sequences of
+ * time-stamped Midi messages, which each encode the various musical events that occur throughout a
+ * song (e.g. key and tempo changes, note played, note released, etc.). The ability to read Midi
+ * files enables the library to interface with conventional musical production and playback tools.
+ * For more information on Midi, check out: http://www.somascape.org/midi/tech/mfile.html.
  */
-public class MidiReader implements MusicReader {
+public final class MidiReader implements MusicReader {
 
     private static final Function<Integer, Predicate<MidiEvent>> META_EVENT = type ->
         (evt -> evt.getMessage() instanceof MetaMessage && ((MetaMessage) evt.getMessage()).getType() == type);

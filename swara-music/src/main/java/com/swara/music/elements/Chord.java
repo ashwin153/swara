@@ -20,9 +20,8 @@ import lombok.ToString;
 /**
  * A set of notes sounded simultaneously at a particular volume for a particular duration. Chords,
  * therefore, encode the rhythmic, dynamic, and harmonic properties of a sequence of notes. Chords
- * are combined together to form a {@link Voice}. A sequence of chords forms a chord progression or
- * {@link com.swara.music.features.Harmony}. Chords are built using a {@link Chord.Builder} and are
- * immutable, and, therefore thread-safe. The default chord is a quarter-rest.
+ * are combined together to form a {@link Voice}. Chords are built using a {@link Chord.Builder} and
+ * are immutable, and, therefore thread-safe. The default chord is a quarter-rest.
  */
 @ToString
 @EqualsAndHashCode(exclude = { "volume" })

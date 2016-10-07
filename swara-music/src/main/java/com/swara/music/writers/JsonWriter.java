@@ -15,9 +15,12 @@ import com.swara.music.elements.Song;
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
- * Writes a {@link Song} to a JSON string.
+ * Writes a {@link Song} to a Json string. Json conversion is particularly important to facilitate
+ * interoperability; without a convenient format for transferring musical information between
+ * programming languages, the complex logic in {@link com.swara.music.readers.MidiReader} and in
+ * {@link MidiWriter} would have to be constantly rewritten in every supported language.
  */
-public class JsonWriter implements MusicWriter {
+public final class JsonWriter implements MusicWriter {
 
     private final ObjectMapper mapper;
 
@@ -36,8 +39,8 @@ public class JsonWriter implements MusicWriter {
     }
 
     /**
-     * Custom fraction serializer to make is easier to read and modify fractional values like time
-     * signatures, note durations, etc.
+     * Custom fraction serializer to make is easier to read and modify fractional values like note
+     * durations, etc. Fractions are parsed according to the following regex: \\d+\\s*\/\\s*\\d+.
      */
     private final class FractionSerializer extends JsonSerializer<Fraction> {
 
