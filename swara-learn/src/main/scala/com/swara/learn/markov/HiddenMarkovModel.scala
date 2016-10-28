@@ -15,6 +15,9 @@ import com.swara.learn.markov.HiddenMarkovModel._
  * and emissions (observed state outputs). However, unlike most open source HMM implementations,
  * these probability distributions are implicitly defined and we rely on the famous [[Multiset]] to
  * determine probabilities only when they are needed.
+ *
+ * @tparam O Type of observed states
+ * @tparam H Type of hidden states
  */
 class HiddenMarkovModel[O, H] {
 
@@ -24,7 +27,9 @@ class HiddenMarkovModel[O, H] {
 
   /**
    * Trains the hidden markov model on sequences of observed states and their associated hidden
-   * states. Training is thread-safe,
+   * states. Training is thread-safe.
+   *
+   * @param states Sequence of states to train on
    */
   def train(states: Seq[(O, H)]): Unit = {
     if (states.nonEmpty) {
@@ -51,6 +56,9 @@ class HiddenMarkovModel[O, H] {
    * http://people.csail.mit.edu/jonfeld/pubs/lazyviterbi.pdf and to the A* algorithm. The algorithm
    * relies on the fundamental observation that optimal paths are themselves composed of optimal
    * paths (e.g. if a-b-c-d is an optimal path, then a-b and a-b-c are also optimal paths).
+   *
+   * @param observed Observed state sequence
+   * @return Most likely hidden state sequence that generated it
    */
   def predict(observed: Seq[O]): Seq[H] = {
     // Nodes contain a time and a hidden state, while paths form a linked list of nodes with an
@@ -112,6 +120,8 @@ class HiddenMarkovModel[O, H] {
    * Generates an iterator over an infinite sequence of observed states. Each iteration, the model
    * randomly emits an observed state and randomly transitions to a new hidden state. Note, an
    * iterator is preferable to a stream because streams cache previous computations.
+   *
+   * @return An infinite iterator over observed states
    */
   def generate(): Iterator[O] = {
     var state: H = rand(this.initial)

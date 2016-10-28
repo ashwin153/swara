@@ -12,6 +12,8 @@ import scala.util.Random
  * the Markov property requires that the P(x_{n} | x_{n-1}, ... , x_{0}) = P(x_{n} | x_{n-1}).
  * Markov chains are trained on state sequences, from which they approximate the aforementioned
  * state transition probability distribution.
+ *
+ * @tparam T Type of states
  */
 class DiscreteMarkovChain[T](
   val order: Int,
@@ -25,8 +27,10 @@ class DiscreteMarkovChain[T](
    * state transition probability distribution. Implementation slides an 'order + 1' length window
    * across the specified state sequence in parallel and records a mapping between each 'order'
    * length state sequence and the state that immediately follows it.
+   *
+   * @param states Sequence of states to train on
    */
-  def train(states: List[T]): Unit = {
+  def train(states: Seq[T]): Unit = {
     states.par.iterator.sliding(this.order + 1, 1).foreach(seq =>
       this.transitions.put(seq.toList, (suffix, prev) => (suffix, prev) match {
         case (_, None) => Some(1)
@@ -41,23 +45,28 @@ class DiscreteMarkovChain[T](
    * structured randomness to select the most likely next state for any given state sequence. Throws
    * a Runtime Exception if the markov chain has not yet been trained, because all models must be
    * trained before they may be used for predictive tasks.
+   *
+   * @param states Sequence of states
+   * @return Random next state
    */
-  def predict(states: List[T]): T = {
-    val cur = this.transitions.get(states)
+  def predict(states: Seq[T]): T = {
+    val cur = this.transitions.get(states.toList)
     var num = this.random.nextInt(cur.value.getOrElse(0))
 
-    val iter = cur.children.dropWhile(child => {
+    val iter = cur.children.iterator.dropWhile(child => {
       num -= child.value.getOrElse(0)
       num > 0
     })
 
-    if (iter.hasNext) iter.next().symbol.get else cur.symbol.get
+    if (iter.hasNext) iter.next.symbol.get else cur.symbol.get
   }
 
   /**
    * Markov chains can use the learned state transition probability distribution to generate an
    * arbitrary state sequence. Returns an infinite iterator; note, an iterator is preferable to a
    * stream because streams store all previously computed values in memory.
+   *
+   * @return An infinite iterator over states
    */
   def generate(): Iterator[T] = {
     // Append elements until the state is the correct length.
