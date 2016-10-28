@@ -9,6 +9,7 @@ target/
 *.iml
 
 # Pants
+.cache
 .pants.d
 dist
 .pids
