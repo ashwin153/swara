@@ -1,9 +1,15 @@
-# OS Files
+# macOS
 .DS_Store
 
-# Build Files
+# Maven
 target/
 
-# IntelliJ Files
+# IntelliJ 
 .idea/
 *.iml
+
+# Pants
+.pants.d
+dist
+.pids
+.pants.workdir.file_lock
