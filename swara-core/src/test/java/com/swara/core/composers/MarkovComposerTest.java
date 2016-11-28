@@ -73,18 +73,17 @@ public class MarkovComposerTest {
         input.close();
 
         // Create a piano and a violin phrase using a Markov Composer.
-        final MarkovComposer ashwin = new MarkovComposer(key);
         final Function<Integer, Phrase> generator = program -> new Phrase.Builder()
             .withProgram(program)
             .withVoice(new Voice.Builder()
-                .withChords(ashwin
-                    .compose(songs.stream()
+                .withChords(new MarkovComposer(key, songs.stream()
                         .flatMap(song -> song.fragments().stream())
                         .filter(fragment -> fragment.key().equals(key))
                         .flatMap(fragment -> fragment.phrases().values().stream())
                         .filter(phrase -> phrase.program() == program)
                         .flatMap(phrase -> phrase.voices().stream())
                         .collect(Collectors.toList()))
+                    .compose()
                     .limit(50)
                     .collect(Collectors.toList()))
                 .build())

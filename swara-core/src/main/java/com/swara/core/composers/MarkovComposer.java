@@ -3,9 +3,7 @@ package com.swara.core.composers;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -17,7 +15,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Ints;
 import com.swara.core.Composer;
-import com.swara.ml.markov.DiscreteMarkovChain;
+import com.swara.learn.markov.DiscreteMarkovChain;
 import com.swara.music.elements.Chord;
 import com.swara.music.elements.Key;
 import com.swara.music.elements.Note;
@@ -26,41 +24,36 @@ import com.swara.music.elements.Voice;
 import org.apache.commons.math3.fraction.Fraction;
 
 /**
- *
+ * A markov composer utilizes a number of {@link DiscreteMarkovChain} to synthesize music that is
+ * oringal, but representative of the example voices. Markov methods have been used with varying
+ * degrees of success in musical synthesis before; however, what is novel are the techniques
+ * that significantly reduce the size state space, which makes these methods more tractable.
  */
 public class MarkovComposer implements Composer {
 
-    private final Random random;
     private final Key key;
 
     public MarkovComposer(Key key) {
         this.key = key;
-        this.random = new Random();
     }
 
     @Override
-    public Stream<Chord> compose(List<Voice> voices) {
-        // Create markov chains to generate chord durations, chord volumes and chord notes. Chords
-        // are partitioned into equivalence classes or 'families' by the ordered set of the pitches
-        // of the notes that compose it. For example, all c major chords belong to the family
-        // {0, 4, 7}. Because these equivalence classes are ordered by construction, they can be
-        // compared lexicographically. By partitioning chords into equivalence classes, we
-        // drastically reduce the state space and make Markov methods more tractable. We can recover
-        // actual chords by storing a mapping between families and the various chords within them.
+    public Stream<Chord> compose(List<Voice> examples) {
+        // Create and train markov chains to generate chord durations, volumes and notes. Because
+        // the markov chain implementation is thread-safe, we can train them on all the sample
+        // songs in parallel. This will significantly reduce train time for large datasets.
         final DiscreteMarkovChain<Fraction> rhythm = new DiscreteMarkovChain<>(5, Fraction::compareTo);
         final DiscreteMarkovChain<Integer> dynamics = new DiscreteMarkovChain<>(2, Integer::compareTo);
         final DiscreteMarkovChain<Iterable<Integer>> harmony = new DiscreteMarkovChain<>(2, Ordering.natural().lexicographical());
-        final Map<Iterable<Integer>, Multiset<Set<Note>>> families = new ConcurrentHashMap<>();
+        final Map<Iterable<Integer>, Multiset<Set<Note>>> types = new ConcurrentHashMap<>();
 
-        // Because the markov chain implementation is thread-safe, we can train them on all the
-        // sample voices in parallel. This will significantly reduce train time for large datasets.
-        voices.stream().parallel().forEach(voice -> {
+        examples.stream().parallel().forEach(voice -> {
             // Remove all chords that have notes that are not in the key for now. Accidentals
             // significantly increase the size of the state space and make it extremely difficult
             // to produce high quality music.
             final List<Chord> chords = voice.chords().stream().filter(chord -> chord.notes().stream()
                 .map(Note::pitch)
-                .map(pitch -> Ints.indexOf(this.key.scale(), pitch))
+                .map(pitch -> Ints.indexOf(key.scale(), pitch))
                 .min(Integer::compareTo)
                 .orElse(-1) >= 0
             ).collect(Collectors.toList());
@@ -76,37 +69,34 @@ public class MarkovComposer implements Composer {
             );
 
             final List<Iterable<Integer>> classes = chords.stream()
-                .map(chord -> chord.notes().stream()
-                    .map(Note::pitch)
-                    .collect(Collectors.toCollection(TreeSet::new)))
+                .map(Chord::type)
                 .collect(Collectors.toList());
 
             harmony.train(classes);
             IntStream.range(0, classes.size()).parallel().forEach(i -> {
-                families.putIfAbsent(classes.get(i), ConcurrentHashMultiset.create());
-                families.get(classes.get(i)).add(chords.get(i).notes());
+                types.putIfAbsent(classes.get(i), ConcurrentHashMultiset.create());
+                types.get(classes.get(i)).add(chords.get(i).notes());
             });
         });
 
-        // Use the trained markov chains to generated a stream of random, but representative chords.
-        // This stream is infinite, but lazily computed; therefore, there is a negligible
-        // performance impact for iterating over the stream.
+        // Use the trained markov chains to crate state iterators.
         final Iterator<Fraction> durations = rhythm.generate();
         final Iterator<Integer> volumes = dynamics.generate();
         final Iterator<Set<Note>> notes = Iterators.transform(harmony.generate(), pitch -> {
-            final Multiset<Set<Note>> family = families.get(pitch);
-            final Iterator<Set<Note>> members = family.iterator();
-            int total = this.random.nextInt(family.size());
+            final Multiset<Set<Note>> type = types.get(pitch);
+            final Iterator<Set<Note>> members = type.iterator();
 
             Set<Note> next = null;
+            int total = (int) (Math.random() * type.size());
             while (total >= 0 && members.hasNext()) {
                 next = members.next();
-                total -= family.count(next);
+                total -= type.count(next);
             }
 
             return next;
         });
 
+        // Use the state iterators to create an infinite, but lazily computed stream of chords.
         return Stream.generate(() -> new Chord.Builder()
             .withNotes(notes.next())
             .withDuration(durations.next())
