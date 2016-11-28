@@ -1,61 +1,46 @@
 # Swara Machine Learning
-A machine learning framework built on [Apache Commons Math](http://commons.apache.org/proper/commons-math/).
+A machine learning framework built from scratch with help from [Breeze](http://commons.apache.org/proper/commons-math/).
 
 ## Recipes
+### Automatic Differentiation
+The following is an example of the automatic differentation tools built into the library.
+
+```scala
+val x = Var(5.0)
+val y = Var(2.5)
+Cos(x) * Sin(x) / Tan(y) d(x)d(y)
+```
+
+
 ### Markov Chains
 #### Discrete Markov Chains
-The following is an example of a 3rd-order discrete markov chain learning to generate a gradient. The image below is the training example, and the image to the right is the output of a 3rd-order discrete markov chain. This example highlights the simplicity of the implementation; all that must be provided is an order, a comparator, and training examples.
+The following is an example of a ```DiscreteMarkovChain``` learning to generate a gradient. The image below is the training example, and the image to the right is the output of a 3rd-order discrete markov chain. The markov chain implementation is thread-safe, it may be trained while it is concurrently being used for prediction!
 
-```java
-// Load the gradient image and create the output image.
-final BufferedImage input = ImageIO.read(this.getClass().getResource("/gradient.jpg"));
-final BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+```scala
+val markov = DiscreteMarkovChain[Color](3)
 
-// Construct a markov chain that compares colors by luminance.
-final DiscreteMarkovChain<Color> markov = new DiscreteMarkovChain<>(3, (a, b) -> {
-    final int dr = a.getRed() - b.getRed();
-    final int dg = a.getGreen() - b.getGreen();
-    final int db = a.getBlue() - b.getBlue();
-    return (int) (0.2126 * dr + 0.7152 * dg + 0.0722 * db);
-});
+// Load the color gradient from the test image.
+val input = ImageIO.read(new File("swara-learn/src/test/resources/gradient.jpg"))
+val gradient = (0 until input.getWidth * input.getHeight)
+  .map(pixel => new Color(input.getRGB(pixel / input.getWidth, pixel % input.getHeight)))
+  .toList
 
-// Train the markov chains on the RGB contents of the image.
-markov.train(IntStream.range(0, input.getWidth() * input.getHeight()).boxed()
-    .map(i -> new Color(input.getRGB(i / input.getHeight(), i % input.getHeight())))
-    .collect(Collectors.toList()));
-
-// Generate a sequence of bits and write it it to an image.
-final Iterator<Color> color = markov.generate();
-IntStream.range(0, height).forEach(h -> {
-    final int rgb = color.next().getRGB();
-    IntStream.range(0, width).forEach(w -> result.setRGB(w, h, rgb));
-});
-
-// Write the image to file.
-ImageIO.write(result, "jpg", new File("src/test/resources/gradient-result.jpg"));
+// Generate a new gradient and write to file.
+markov.train(gradient)
+val result = markov.generate().take(200).toList
+val output = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB)
+(0 until 200).foreach(w => (0 until 200).foreach(h => output.setRGB(h, w, result(w).getRGB)))
+ImageIO.write(output, "jpg", new File("swara-learn/src/test/resources/gradient-result.jpg"))
 ```
 
 <img width="49.744%" src="src/test/resources/gradient.jpg"/>
 <img width="49.744%" style="float: right" src="src/test/resources/gradient-result.jpg"/>
 
+#### Hidden Markov Models
+The following is an example of a ```HiddenMarkovModel``` learning to predict the parts-of-speech in a sentence. The HMM implementation is thread-safe, it may be trained while it is concurrently being used for prediction!
+
 ### Neural Networks
-All neural networks are trained via [backpropagation through time](https://en.wikipedia.org/wiki/Backpropagation_through_time).
 
-```java
-final NeuralNetwork<RealVector, RealVector> network = NeuralNetwork.of(new LstmLayer())
-    .compose(new ForwardLayer(4, 3, new Tanh()))
-    .compose(new LstmLayer(3, 2))
-    .compose(NeuralNetwork.of(new LstmLayer()));
-```
-
-
-### Support Vector Machines (SVM)
-
-### Kernels
-- Linear Kernel
-- Polynomial Kernel
-- Sigmoid Kernel
-- Gaussian RBF Kernel
 
 ## Attribution
 Here's a little page-rank karma for all the sources I used:

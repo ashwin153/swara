@@ -66,42 +66,43 @@ class HiddenMarkovModel[O, H] {
     // is to locate the maximum length path (aka most likely sequence) of nodes in time.
     case class Node(time: Int, state: H)
     case class Path(prev: Option[Node], prob: Double)
+    case class Step(node: Node, path: Path)
 
     // The algorithm maintains two data structures a max-heap (priority queue) and an implicit
-    // trellis. The trellis stores processed nodes and the max-heap stores pending nodes keyed by
+    // trellis. The trellis stores processed nodes and the max-heap stores pending steps keyed by
     // the length of their associated paths. The trellis and heap maintain two important invariants
     // that are central to the correctness of this algorithm: (1) the trellis contains the optimal
     // path for any processed node and (2) the prev pointer of any pending node in the max-heap does
     // not point to any other pending node.
-    val maxheap = mutable.PriorityQueue.newBuilder[(Node, Path)](Ordering.by(_._2.prob))
+    val maxheap = mutable.PriorityQueue.newBuilder[Step](Ordering.by(_.path.prob))
     val trellis = mutable.HashMap[Node, Path]()
 
     // Add the initial states to the priority queue. Initial states are hidden states with a
     // non-zero probability of beginning a state sequence. The initial path probabilities are simply
     // the probability of the initial state multiplied by the probability of emitting the first
     // observed state from it.
-    this.initial.asScala.foreach(state => maxheap.enqueue((
+    this.initial.asScala.foreach(state => maxheap.enqueue(Step(
       Node(0, state),
-      Path(None, prob(Some(this.initial), state) * prob(this.emissions.get(state), observed.head)))
-    ))
+      Path(None, prob(Some(this.initial), state) * prob(this.emissions.get(state), observed.head))
+    )))
 
-    // Iteratively remove and process pending nodes from the max-heap until a node has a time equal
-    // to the length of the observed state sequence. From (1) the node is guaranteed to form the
-    // minimum length path and from (2) the previous nodes in the path are already processed.
+    // Iteratively remove and process pending steps from the max-heap until a step has a node with a
+    // time equal to the length of the observed state sequence. From (1) the step is guaranteed to
+    // form the minimum length path and from (2) the previous steps in the path have been processed.
     var next = maxheap.dequeue()
-    while (next._1.time < observed.size - 1) {
+    while (next.node.time < observed.size - 1) {
       // If a pending node has already been processed, then from (1) we know the pending node forms
       // a suboptimal path. Otherwise, enqueue all possible next nodes for the pending node and add
       // it to the trellis. Then, dequeue the next node for processing.
-      trellis.getOrElseUpdate(next._1, {
-        this.transitions.get(next._1.state).foreach(_.asScala.foreach(state => maxheap.enqueue((
-          Node(next._1.time + 1, state),
-          Path(Some(next._1), next._2.prob *
-            prob(this.transitions.get(next._1.state), state) *
-            prob(this.emissions.get(state), observed(next._1.time + 1))))
-        )))
+      trellis.getOrElseUpdate(next.node, {
+        this.transitions.get(next.node.state).foreach(_.asScala.foreach(state => maxheap.enqueue(Step(
+          Node(next.node.time + 1, state),
+          Path(Some(next.node), next.path.prob *
+            prob(this.transitions.get(next.node.state), state) *
+            prob(this.emissions.get(state), observed(next.node.time + 1)))
+        ))))
 
-        next._2
+        next.path
       })
 
       next = maxheap.dequeue()
@@ -113,7 +114,7 @@ class HiddenMarkovModel[O, H] {
       case Path(Some(prev), _) => unroll(prev) :+ node.state
     }
 
-    unroll(next._1)
+    unroll(next.node)
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.swara.learn.common
 
-import com.swara.learn.markov.HiddenMarkovModel
 import java.util.concurrent.Executors
 import org.scalatest.FunSuite
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -9,7 +8,7 @@ import scala.util.{Failure, Success}
 
 class TrieTest extends FunSuite {
 
-  test("Get after put and remove") {
+  test("Get should have happens-before relationship") {
     val trie = Trie[Char, Int]
     val hello = 'h' :: 'e' :: 'l' :: 'l' :: 'o' :: Nil
 
@@ -22,7 +21,7 @@ class TrieTest extends FunSuite {
     assert(trie.get(hello).key != hello)
   }
 
-  test("Put updates value on traversal") {
+  test("Put should update values") {
     val trie = Trie[Char, Int]
     val hel = 'h' :: 'e' :: 'l' :: Nil
     val help = hel :+ 'p'
@@ -45,23 +44,23 @@ class TrieTest extends FunSuite {
     assert(trie.get(hel).value.contains(3))
   }
 
-  test("Put atomically updates value") {
+  test("Put should atomically updates value") {
     val trie = Trie[Char, Int]
     val hello = 'h' :: 'e' :: 'l' :: 'l' :: 'o' :: Nil
     val executor = Executors.newCachedThreadPool()
 
     // Submit simultaneous put operations and verify results.
-    Future.sequence((0 until 10)
-      .map(i => Future { trie.put(hello, (s, p) => (s, p) match {
+    Future.sequence((0 until 10).map { i =>
+      Future { trie.put(hello, (s, p) => (s, p) match {
         case (_, None) => Some(1)
         case (_, Some(value)) => Some(value + 1)
-      })})
-    ).onComplete(result => result match {
+      })}
+    }).onComplete {
       case Success(v) => (1 until hello.length)
         .map(i => hello.slice(0, i))
         .foreach(prefix => assert(trie.get(prefix).value.contains(9)))
       case Failure(e) => fail(e)
-    })
+    }
   }
 
 }

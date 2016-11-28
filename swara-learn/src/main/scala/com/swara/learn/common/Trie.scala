@@ -39,12 +39,12 @@ class Trie[K, V] private (
    * shared lock for each trie node corresponding to a symbol in the key. O(k), where k is the
    * length of the key.
    *
-   * @param key Sequence of symbols to search for
+   * @param symbols Sequence of symbols to search for
    * @return Trie with the closest matching key
    */
-  def get(key: List[K]): Trie[K, V] = key match {
+  def get(symbols: List[K]): Trie[K, V] = symbols match {
     case Nil => this
-    case x :: rest => this.lock.shared { this.next.get(x) }.fold(this)(_.get(rest))
+    case x :: rest => this.lock.optimistic(this.next.get(x)).fold(this)(_.get(rest))
   }
 
   /**
@@ -54,29 +54,33 @@ class Trie[K, V] private (
    * applied atomically. Implementation is thread-safe, but requires an exclusive lock for each
    * visited trie node. O(k O(visitor)), where k is the length of the key.
    *
-   * @param key Sequence of symbols to insert
+   * @param symbols Sequence of symbols to insert
    * @param visitor Function to apply to each visited trie node.
    */
-  def put(key: List[K], visitor: (List[K], Option[V]) => Option[V]): Unit = key match {
+  def put(symbols: List[K], visitor: (List[K], Option[V]) => Option[V]): Unit = symbols match {
     case Nil => this.lock.exclusive { this.value = visitor(Nil, this.value) }
     case x :: rest =>
       this.lock.exclusive {
-        this.value = visitor(key, this.value)
+        this.value = visitor(symbols, this.value)
         this.next.getOrElseUpdate(x, new Trie(Some(this), Some(x), None))
       }.put(rest, visitor)
   }
 
-  def put(key: List[K], value: V): Unit = put(key, (suffix, prev) => (suffix, prev) match {
-    case (Nil, _) => Some(value)
-    case (_, prev) => prev
-  })
+  def put(symbols: List[K], value: V): Unit =
+    put(symbols, (suffix, prev) => (suffix, prev) match {
+      case (Nil, _) => Some(value)
+      case (_, prev) => prev
+    })
 
   /**
    * Recursively removes this node and all its children, by removing the trie from its parent's list
    * of children. Implementation is thread-safe, but requires an exclusive write-lock. O(h), where
    * h is the height of the trie.
    */
-  def remove(): Unit = parent.foreach(trie => this.symbol.foreach(trie.lock.exclusive { trie.next.remove(_) }))
+  def remove(): Unit =
+    parent.foreach(trie => this.symbol.foreach {
+      trie.lock.exclusive(trie.next.remove(_))
+    })
 
   /**
    * Returns the set of all children of this trie. Modifications to this set have no effect on the
@@ -84,7 +88,27 @@ class Trie[K, V] private (
    *
    * @return Set of all children of this trie.
    */
-  def children: Set[Trie[K, V]] = this.next.values.toSet
+  def children: Set[Trie[K, V]] = this.lock.optimistic(this.next.values.toSet)
+
+  /**
+   * Returns a string representation of the trie. Prints the symbol and value for each node of the
+   * trie, but indents the output for children by a tab. Useful for debugging purposes. For example,
+   * the output might look like:
+   *
+   * ("h", 15)
+   *   ("e", 15)
+   *     ("l", 7)
+   *       ("l", 3)
+   *       ("p", 4)
+   *     ("y", 3)
+   *
+   * @return String representation of the trie.
+   */
+  override def toString: String = {
+    val builder = new mutable.StringBuilder((this.symbol, this.value).toString)
+    this.children.foreach(child => builder.append("\n" + child.toString))
+    builder.toString.replaceAll("\n", "\n\t")
+  }
 
 }
 

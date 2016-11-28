@@ -1,4 +1,4 @@
 scala_library(name='scala', sources=rglobs('*.scala'), dependencies=[
-  '3rdparty/jvm:guava',
-  '3rdparty/jvm:breeze',
+  'swara-music/src/main/java',
+  'swara-learn/src/main/scala'
 ])
