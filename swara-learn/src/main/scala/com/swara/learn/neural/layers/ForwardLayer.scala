@@ -11,9 +11,9 @@ import com.swara.learn.neural.Layer
  * differentiable activation function, A. The forward layer is essentially a linear combination
  * machine; for some input vector x, the output of the forward layer is A(Wx + B).
  *
- * @param weights
- * @param biases
- * @param activation
+ * @param weights Weight matrix.
+ * @param biases Bias vector.
+ * @param activation Monotonically increasing, bounded, differentiable function.
  */
 class ForwardLayer(weights: Matrix, biases: Vector, activation: DiffFunction[Double]) {
 
@@ -37,83 +37,25 @@ class ForwardLayer(weights: Matrix, biases: Vector, activation: DiffFunction[Dou
 
     // Propagate the calculated error to the previous layer.
     propagated
-
-//    val (dX, dW, external) = seq.map { case ((in, out), error) ⇒
-//      val dFdX = act.diffAtY(out)
-//      /*
-//       * Chain Rule : dG/dX_ij = tr[ ( dG/dF ).t * dF/dX_ij ].
-//       *
-//       * Note 1. X, dG/dF, dF/dX_ij are row vectors. Therefore tr(.) can be omitted.
-//       *
-//       * Thus, dG/dX = [ (dG/dF).t * dF/dX ].t, because [...] is 1 × fanOut matrix.
-//       * Therefore dG/dX = dF/dX * dG/dF, because dF/dX is symmetric in our case.
-//       */
-//      val dGdX: DataVec = dFdX * error
-//
-//      /*
-//       * Chain Rule : dG/dW_ij = tr[ ( dG/dX ).t * dX/dW_ij ].
-//       *
-//       * dX/dW_ij is a fan-Out dimension column vector with all zero but (i, 1) = X_j.
-//       * Thus, tr(.) can be omitted, and dG/dW_ij = (dX/dW_ij).t * dG/dX
-//       * Then {j-th column of dG/dW} = X_j * dG/dX = dG/dX * X_j.
-//       *
-//       * Therefore dG/dW = dG/dX * X.t
-//       */
-//      val dGdW: Matrix = dGdX * in.t
-//
-//      /*
-//       * Chain Rule : dG/dx_ij = tr[ ( dG/dX ).t * dX/dx_ij ].
-//       *
-//       * X is column vector. Thus j is always 1, so dX/dx_i is a W_?i.
-//       * Hence dG/dx_i = tr[ (dG/dX).t * dX/dx_ij ] = (W_?i).t * dG/dX.
-//       *
-//       * Thus dG/dx = W.t * dG/dX
-//       */
-//      val dGdx: DataVec = weight.value.t * dGdX
-//
-//      (dGdX, dGdW, dGdx)
-//    }.unzip3
-//
-//    (external, ParSeq(bias -= dX, weight -= dW))
   }
-//  def backward(seq: Seq[(Vec, Vec, Vec)]): Seq[Vec] = {
-//
-//  }
+}
 
-//    private final UnivariateDifferentiableFunction activation;
-//    private final Stack<RealVector> history;
-//    private RealMatrix weights;
-//
-//    public ForwardLayer(int inputs, int outputs, UnivariateDifferentiableFunction activation) {
-//        super(inputs, outputs);
-//        this.activation = activation;
-//        this.history = new Stack<>();
-//        this.weights = new Array2DRowRealMatrix(outputs, inputs + 1);
-//    }
-//
-//    @Override
-//    public RealVector forward(RealVector input) {
-//        // Append a bias weight to the input, and calculate the linear combination.
-//        final RealVector netj = this.history.push(this.weights.operate(input.append(1.0)));
-//        return this.history.push(netj.map(this.activation));
-//    }
-//
-//    @Override
-//    public RealVector backward(RealVector error) {
-//        final RealVector output = this.history.pop();
-//        final RealVector input  = this.history.pop();
-//
-//        // Calculate the gradient of the activation function with respect to the last input to the
-//        // activation (netj in wikipedia description).
-//        final RealVector gradient = error.ebeMultiply(input.map(i -> this.activation
-//            .value(new DerivativeStructure(1, 1, 0, i))
-//            .getPartialDerivative(1)
-//        ));
-//
-//        // Calculate the error that is propagated to the previous layer.
-//        final RealVector next = this.weights.preMultiply(gradient);
-//        this.weights = this.weights.add(gradient.outerProduct(output));
-//        return next;
-//    }
+object ForwardLayer {
+
+  /**
+   * Constructs a forward layer that accepts the specified number of inputs and produces the
+   * specified number of outputs. The initial weights and biases are uniformly random numbers
+   * normalized using the equation described in http://stats.stackexchange.com/a/186351.
+   * 
+   * @param in Number of inputs.
+   * @param out Number of outputs.
+   * @param activation Monotically increasing, bounded, differentiable function.
+   */
+  def apply(in: Int, out: Int, activation: DiffFunction[Double]): ForwardLayer =
+    new ForwardLayer(
+      DenseMatrix.rand(out, in).map((_ * 2 - 1) *  Math.sqrt(6.0 / (in + out))),
+      DenseVector.rand(out).map((_ * 2 - 1) * Math.sqrt(6.0 / in)),
+      activation
+    )
 
 }
