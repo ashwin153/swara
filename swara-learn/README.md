@@ -17,20 +17,22 @@ Cos(x) * Sin(x) / Tan(y) d(x)d(y)
 The following is an example of a ```DiscreteMarkovChain``` learning to generate a gradient. The image below is the training example, and the image to the right is the output of a 3rd-order discrete markov chain. The markov chain implementation is thread-safe, it may be trained while it is concurrently being used for prediction!
 
 ```scala
-val markov = DiscreteMarkovChain[Color](3)
+val markov  = DiscreteMarkovChain[Color](3)
+val infile  = new File("swara-learn/src/test/resources/gradient.jpg")
+val outfile = new File("swara-learn/src/test/resources/gradient-result.jpg")
+val width   = 200
+val height  = 200
 
 // Load the color gradient from the test image.
-val input = ImageIO.read(new File("swara-learn/src/test/resources/gradient.jpg"))
-val gradient = (0 until input.getWidth * input.getHeight)
-  .map(pixel => new Color(input.getRGB(pixel / input.getWidth, pixel % input.getHeight)))
-  .toList
+val in = ImageIO.read(infile)
+val grad = (0 until in.getWidth * in.getHeight).map(p => new Color(in.getRGB(p / in.getWidth, p % in.getHeight)))
 
 // Generate a new gradient and write to file.
 markov.train(gradient)
-val result = markov.generate().take(200).toList
-val output = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB)
-(0 until 200).foreach(w => (0 until 200).foreach(h => output.setRGB(h, w, result(w).getRGB)))
-ImageIO.write(output, "jpg", new File("swara-learn/src/test/resources/gradient-result.jpg"))
+val gen = markov.generate().take(width * height).toList
+val out = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+(0 until width).foreach(w => (0 until height).foreach(h => out.setRGB(h, w, gen(w).getRGB)))
+ImageIO.write(out, "jpg", outfile)
 ```
 
 <img width="49.744%" src="src/test/resources/gradient.jpg"/>
