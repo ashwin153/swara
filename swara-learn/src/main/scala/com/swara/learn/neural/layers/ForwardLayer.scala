@@ -1,6 +1,5 @@
 package com.swara.learn.neural.layers
 
-import breeze.linalg._
 import breeze.numerics
 import breeze.optimize.DiffFunction
 import breeze.stats.distributions.Rand
@@ -20,14 +19,14 @@ class ForwardLayer(activation: DiffFunction[Double], weights: Matrix, biases: Ve
 
   require(this.weights.rows == this.biases.length)
 
-  def forward(input: Vector): Vector =
-    (this.weights * input + this.biases).map(activation)
+  def forward(x: Vector): Vector =
+    (this.weights * x + this.biases).map(this.activation)
 
   def backward(examples: Seq[(Vector, Vector, Vector)]): Seq[Vector] = {
     // Calculate the gradients for each neuron, weight updates, and propagated error.
     val (gradient, updates, propagated) = examples.map { case (input, _, error) =>
       val gradient = (this.weights * input + this.biases).map(activation.gradientAt) :* error
-      val updates = gradient.asDenseMatrix * input.toDenseMatrix.t
+      val updates = gradient.asDenseMatrix.t * input.toDenseMatrix
       val propagated = this.weights.t * gradient
       (gradient, updates, propagated)
     }.unzip3
@@ -53,19 +52,26 @@ object ForwardLayer {
    * @param in Number of inputs.
    * @param out Number of outputs.
    */
-  def apply(activation: DiffFunction[Double])(in: Int, out: Int): ForwardLayer =
+  def apply(activation: DiffFunction[Double])(in: Int, out: Int): ForwardLayer = {
+    val dist = Rand.uniform.map(x => (x * 2 - 1) / numerics.sqrt(in))
     new ForwardLayer(
       activation,
-      Matrix.rand(out, in, Rand.uniform.map(r => (r * 2 - 1) / sqrt(in))),
-      Vector.rand(out, Rand.uniform.map(r => (r * 2 - 1) / sqrt(in)))
+      Matrix.rand(out, in, dist),
+      Vector.rand(out, dist)
     )
+  }
 
-  def identity: (Int, Int) => ForwardLayer = 
+  def identity: (Int, Int) => ForwardLayer =
     apply(new DiffFunction[Double] {
       override def calculate(x: Double): (Double, Double) = (x, 1)
     })
 
-  def sigmoid: (Int, Int) => ForwardLayer = 
+  def rectifier: (Int, Int) => ForwardLayer =
+    apply(new DiffFunction[Double] {
+      override def calculate(x: Double): (Double, Double) = if (x < 0) (0, 0) else (x, 1)
+    })
+
+  def sigmoid: (Int, Int) => ForwardLayer =
     apply(new DiffFunction[Double] {
       override def calculate(x: Double): (Double, Double) = {
         val fx = numerics.sigmoid(x)
@@ -73,17 +79,12 @@ object ForwardLayer {
       }
     })
 
-  def tanh: (Int, Int) => ForwardLayer = 
+  def tanh: (Int, Int) => ForwardLayer =
     apply(new DiffFunction[Double] {
       override def calculate(x: Double): (Double, Double) = {
         val fx = numerics.tanh(x)
         (fx, 1 - fx * fx)
       }
-    })
-
-  def rectifier: (Int, Int) => ForwardLayer = 
-    apply(new DiffFunction[Double] {
-      override def calculate(x: Double): (Double, Double) = if (x < 0) (0, 0) else (x, 1)
     })
 
 }
