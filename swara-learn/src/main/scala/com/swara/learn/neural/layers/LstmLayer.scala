@@ -2,6 +2,16 @@ package com.swara.learn.neural.layers
 
 import breeze.numerics._
 
+/**
+ * Special thanks to: 
+ * - http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+ * - http://arunmallya.github.io/writeups/nn/lstm/index.html#/
+ 
+ * @param forget Forget gate (sigmoid); "forgets" elements of the state.
+ * @param input Input gate (sigmoid); determines the parts of the state that receive updates.
+ * @param output Output gate (sigmoid); determines the output of the layer.
+ * @param detect Detect gate (tanh); "detects" new candidate values for the state.
+ */
 class LstmLayer(
   forget: ForwardLayer,
   input:  ForwardLayer,
@@ -25,13 +35,13 @@ class LstmLayer(
     this.memory
   }
 
-  def backward(examples: Seq[(Vector, Vector, Vector)]): Seq[Vector] = {
-    // Gradient Output Gate = error * tanh(ct) = error * norm;
-    // Error cT += error * ot * (1 - tanh^2(ct))
-    // Gradient Forget = err memory * last_memory
-    // Gradient Input  = err memory * detect output
-    // Gradient Update = err memory * err input
-    // Error cT-1 = gradient * forget
+  def backward(examples: Seq[(Vector, Vector)]): Seq[Vector] = {
+    // Output Layer Error (o_t) = error_t :* tanh(state_t)
+    // State Error (c_t) += error_t :* output_t :* (1 - tanh^2(state_t))
+    // Input Layer Error (i_t) = c_t :* detect_t
+    // Forget Layer Error (f_t) = c_t :* state_(t-1)
+    // Detect Layer Error (d_t) = c_t :* input_t
+    // Previous State Error (c_(t-1)) = c_t :* forget_t
   }
 
 }
