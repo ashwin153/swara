@@ -20,6 +20,16 @@ class ForwardLayer(activation: DiffFunction[Double], weights: Matrix, biases: Ve
 
   require(this.weights.rows == this.biases.length)
 
+  def apply(inputs: Seq[Vector]): (Seq[Vector], Seq[Vector] => Seq[Vector]) = {
+    val weighted = inputs.map(this.weights * _ + this.biases)
+    (weighted.map(this.activation), { errors => inputs.zip(errors).foreach { case (input, error) =>
+      val gradient = weighted.map(this.activation.gradientAt) :* error
+      this.biases -= gradient
+      this.weights -= gradient.asDenseMatrix.t * input.toDenseMatrix
+      this.weights.t * gradient
+    }})
+
+
   def forward(x: Vector): Vector =
     (this.weights * x + this.biases).map(this.activation)
 
