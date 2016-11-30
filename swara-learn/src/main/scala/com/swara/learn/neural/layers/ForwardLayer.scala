@@ -20,10 +20,8 @@ class ForwardLayer(activation: DiffFunction[Double], weights: Matrix, biases: Ve
 
   require(this.weights.rows == this.biases.length)
 
-  def forward(x: Vector): Output[Vector, Array[Vector]] = {
-    val potential = this.weights * x + this.biases
-    Output(potential.map(this.activation), Array(x, potential))
-  }
+  def forward(x: Vector): Vector =
+    (this.weights * x + this.biases).map(this.activation)
 
   def backward(results: Seq[(Output[Vector, Array[Vector]], Vector)]): Seq[Vector] = {
     // Calculate the gradients for each neuron, weight updates, and propagated error.
