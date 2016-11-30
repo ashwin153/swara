@@ -1,9 +1,6 @@
 # macOS
 .DS_Store
 
-# Maven
-target/
-
 # IntelliJ 
 .idea/
 *.iml
