@@ -3,6 +3,7 @@ package com.swara.learn.neural.layers
 import breeze.numerics
 import breeze.optimize.DiffFunction
 import breeze.stats.distributions.Rand
+import com.swara.learn.neural.Output
 
 /**
  * A feed-forward, fully-connected layer. A forward layer consists of a weight matrix, W, in which
@@ -19,14 +20,16 @@ class ForwardLayer(activation: DiffFunction[Double], weights: Matrix, biases: Ve
 
   require(this.weights.rows == this.biases.length)
 
-  def forward(x: Vector): Vector =
-    (this.weights * x + this.biases).map(this.activation)
+  def forward(x: Vector): Output[Vector, Array[Vector]] = {
+    val potential = this.weights * x + this.biases
+    Output(potential.map(this.activation), Array(x, potential))
+  }
 
-  def backward(examples: Seq[(Vector, Vector, Vector)]): Seq[Vector] = {
+  def backward(results: Seq[(Output[Vector, Array[Vector]], Vector)]): Seq[Vector] = {
     // Calculate the gradients for each neuron, weight updates, and propagated error.
-    val (gradient, updates, propagated) = examples.map { case (input, _, error) =>
-      val gradient = (this.weights * input + this.biases).map(activation.gradientAt) :* error
-      val updates = gradient.asDenseMatrix.t * input.toDenseMatrix
+    val (gradient, updates, propagated) = results.map { case (result, error) =>
+      val gradient = result.state(1).map(activation.gradientAt) :* error
+      val updates = gradient.asDenseMatrix.t * result.state(0).toDenseMatrix
       val propagated = this.weights.t * gradient
       (gradient, updates, propagated)
     }.unzip3
@@ -38,6 +41,26 @@ class ForwardLayer(activation: DiffFunction[Double], weights: Matrix, biases: Ve
     // Propagate the calculated error to the previous layer.
     propagated
   }
+
+//  def forward(x: Vector): Vector =
+//    (this.weights * x + this.biases).map(this.activation)
+//
+//  def backward(examples: Seq[(Vector, Vector, Vector)]): Seq[Vector] = {
+//    // Calculate the gradients for each neuron, weight updates, and propagated error.
+//    val (gradient, updates, propagated) = examples.map { case (input, _, error) =>
+//      val gradient = (this.weights * input + this.biases).map(activation.gradientAt) :* error
+//      val updates = gradient.asDenseMatrix.t * input.toDenseMatrix
+//      val propagated = this.weights.t * gradient
+//      (gradient, updates, propagated)
+//    }.unzip3
+//
+//    // Update biases and weights using the calculated neuron gradients and weight updates.
+//    this.biases -= gradient
+//    this.weights -= updates
+//
+//    // Propagate the calculated error to the previous layer.
+//    propagated
+//  }
 
 }
 

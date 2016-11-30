@@ -1,6 +1,7 @@
 package com.swara.learn.neural.layers
 
 import breeze.numerics._
+import com.swara.learn.neural.Output
 
 /**
  * Special thanks to: 
@@ -21,7 +22,17 @@ class LstmLayer(
   var memory: Vector
 ) {
 
-  def forward(x: Vector): Vector = {
+  case class LstmState(
+    f: ForwardState,
+    i: ForwardState,
+    o: ForwardState,
+    a: ForwardState,
+    s: Vector,
+    m: Vector
+  )
+
+
+  def forward(x: Vector): Output[Vector, Array[Vector]] = {
     // Input is a concatenation of previous output and new input.
     val concat = Vector.vertcat(this.memory, x)
 
@@ -43,6 +54,29 @@ class LstmLayer(
     // Detect Layer Error (d_t) = c_t :* input_t
     // Previous State Error (c_(t-1)) = c_t :* forget_t
   }
+
+//  def forward(x: Vector): Vector = {
+//    // Input is a concatenation of previous output and new input.
+//    val concat = Vector.vertcat(this.memory, x)
+//
+//    // Update the state as a linear combination of recalled state and detected updates.
+//    val recall = this.forget.forward(concat) :* this.state
+//    val update = this.detect.forward(concat) :* this.input.forward(concat)
+//    this.state = recall :+ update
+//
+//    // Selectively output normalized elements of its state.
+//    this.memory = this.output.forward(concat) :* tanh(this.state)
+//    this.memory
+//  }
+//
+//  def backward(examples: Seq[(Vector, Vector)]): Seq[Vector] = {
+//    // Output Layer Error (o_t) = error_t :* tanh(state_t)
+//    // State Error (c_t) += error_t :* output_t :* (1 - tanh^2(state_t))
+//    // Input Layer Error (i_t) = c_t :* detect_t
+//    // Forget Layer Error (f_t) = c_t :* state_(t-1)
+//    // Detect Layer Error (d_t) = c_t :* input_t
+//    // Previous State Error (c_(t-1)) = c_t :* forget_t
+//  }
 
 }
 
