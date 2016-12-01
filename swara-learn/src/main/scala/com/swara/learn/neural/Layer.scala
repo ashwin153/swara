@@ -13,6 +13,16 @@ trait Layer[I, O] {
    */
   case class Result(forward: Seq[O], backward: Seq[O] => Seq[I])
 
+  case class Cons[A, B, C](prev: Layer[A, B], next: Layer[B, C]) extends Layer[A, C] {
+    override def apply(x: Seq[A]): Result = {
+      val r1 = prev(x)
+      val r2 = next(r1.forward)
+      Result(r2.forward, r2.backward andThen r1.backward)
+    }
+  }
+
   def apply(inputs: Seq[I]): Result
+
+  def ::[T](that: Layer[O, T]): Layer[I, T] = Cons(this, that)
 
 }
