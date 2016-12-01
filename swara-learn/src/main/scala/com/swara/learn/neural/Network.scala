@@ -6,7 +6,7 @@ package com.swara.learn.neural
  * of inputs and outputs. This implementation provides a flexible and extensible model for
  * building arbitrarily complex networks (rnn, cnn, etc.).
  */
-trait Network[I, O] {
+class Network[I, O](layer: Layer[I, O]) {
 
   def train(data: List[(I, O)]): Unit = ???
 
