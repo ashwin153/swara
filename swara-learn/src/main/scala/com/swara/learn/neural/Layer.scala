@@ -1,15 +1,18 @@
 package com.swara.learn.neural
 
-import breeze.linalg.Tensor
-
 trait Layer[I, O] {
 
   /**
-   * Applies the layer to the specified sequence of inputs. Returns a tuple containing the 
-   * outputs of the layer as well as a backpropagation function that takes a sequence of
-   * output errors, calculates and applies weight updates, and returns a sequence of input 
-   * errors.
+   * A result represents the outcome of the application of a [[Layer]] to a particular input.
+   * Results contain a 'forward' attribute, which is the value that is passed forward as input to
+   * the next layer in a network, and a 'backward' attribute, which is a backpropagation function
+   * that calculates the error to pass backward to the previous layer in a network.
+   *
+   * @param forward Forward result.
+   * @param backward Backpropagation function.
    */
-  def apply(x: Seq[I]): (Seq[O], Seq[O] => Seq[I])
+  case class Result(forward: Seq[O], backward: Seq[O] => Seq[I])
+
+  def apply(inputs: Seq[I]): Result
 
 }

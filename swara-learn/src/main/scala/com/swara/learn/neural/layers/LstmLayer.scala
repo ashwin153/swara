@@ -1,7 +1,7 @@
 package com.swara.learn.neural.layers
 
 import breeze.numerics._
-import com.swara.learn.neural.Output
+import com.swara.learn.neural.Result
 
 /**
  * Special thanks to: 
@@ -22,17 +22,7 @@ class LstmLayer(
   var memory: Vector
 ) {
 
-  case class LstmState(
-    f: ForwardState,
-    i: ForwardState,
-    o: ForwardState,
-    a: ForwardState,
-    s: Vector,
-    m: Vector
-  )
-
-
-  def forward(x: Vector): Output[Vector, Array[Vector]] = {
+  def forward(x: Vector): Result[Vector, Array[Vector]] = {
     // Input is a concatenation of previous output and new input.
     val concat = Vector.vertcat(this.memory, x)
 
