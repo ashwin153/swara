@@ -1,11 +1,11 @@
 package com.swara.learn.markov
 
+import com.google.common.collect.{ConcurrentHashMultiset, Multiset}
+import com.swara.learn.markov.HiddenMarkovModel._
+import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.Random
-import java.util.concurrent.ConcurrentHashMap
-import com.google.common.collect.{ConcurrentHashMultiset, Multiset}
-import com.swara.learn.markov.HiddenMarkovModel._
 
 /**
  * A hidden markov model (HMM) consists of observable states (O) and hidden states (H), in which the

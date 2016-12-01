@@ -1,28 +1,30 @@
 package com.swara.learn.neural
 
-trait Layer[I, O] {
+/**
+ * A layer in a neural network. An artificial neural network can be thought of as a "layered"
+ * computation; inputs flow forward through the network from layer to layer to produce a result, and
+ * errors flow backward through the network to train each layer to produce more accurate results.
+ *
+ * @tparam I Type of input.
+ * @tparam O Type of output.
+ */
+trait Layer[-I, +O] extends (Seq[I] => Result[I, O]) {
 
   /**
-   * A result represents the outcome of the application of a [[Layer]] to a particular input.
-   * Results contain a 'forward' attribute, which is the value that is passed forward as input to
-   * the next layer in a network, and a 'backward' attribute, which is a backpropagation function
-   * that calculates the error to pass backward to the previous layer in a network.
+   * Concatenates this layer and the specified layer. Performs the equivalent of functional
+   * composition. Concatenation enables layers to be chained together in a type-safe way to form
+   * arbitrarily complex neural networks.
    *
-   * @param forward Forward result.
-   * @param backward Backpropagation function.
+   * @param that Next layer.
+   * @tparam T Type of output.
+   * @return Concatenated layers.
    */
-  case class Result(forward: Seq[O], backward: Seq[O] => Seq[I])
-
-  case class Cons[A, B, C](prev: Layer[A, B], next: Layer[B, C]) extends Layer[A, C] {
-    override def apply(x: Seq[A]): Result = {
-      val r1 = prev(x)
-      val r2 = next(r1.forward)
+  def ::[T](that: Layer[O, T]): Layer[I, T] = new Layer[I, T] {
+    override def apply(x: Seq[I]): Result[I, T] = {
+      val r1 = Layer.this(x)
+      val r2 = that(r1.forward)
       Result(r2.forward, r2.backward andThen r1.backward)
     }
   }
-
-  def apply(inputs: Seq[I]): Result
-
-  def ::[T](that: Layer[O, T]): Layer[I, T] = Cons(this, that)
 
 }
