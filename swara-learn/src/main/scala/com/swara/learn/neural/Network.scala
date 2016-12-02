@@ -9,7 +9,7 @@ import com.swara.learn.{Model, Supervised}
  * building arbitrarily complex networks (rnn, cnn, etc.).
  *
  * @param loss Loss function.
- * @param  layer Layer(s) that form the network.
+ * @param layer Layer(s) that form the network.
  * @tparam I Type of inputs.
  * @tparam O Type of outputs.
  */
@@ -25,6 +25,8 @@ class Network[I, O](
     result.backward(errors)
   }
 
-  override def predict(inputs: Seq[I]): Seq[O] = this.layer(inputs).forward
+  override def predict(inputs: Seq[I]): Seq[O] = {
+    this.layer(inputs).forward
+  }
 
 }
