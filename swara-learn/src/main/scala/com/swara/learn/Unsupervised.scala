@@ -1,10 +1,13 @@
 package com.swara.learn
 
 /**
- * Unsupervised learning techniques build a model from a set of training examples. Examples of
- * unsupervised methods include Markov Models and K-Means.
+ * An unsupervised model is training against a sequence of ''unlabeled'' examples. Each examples
+ * consists only of an input; therefore, there is way to evaluate a potential solution. Examples of
+ * unsupervised models include K-Means and Discrete Markov Chains.
+ *
+ * @tparam I Type of inputs.
  */
-trait Unsupervised[I, O] extends Model[I, O] {
+trait Unsupervised[I] {
 
   def train(inputs: Seq[I])
 

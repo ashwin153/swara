@@ -16,8 +16,8 @@ import scala.util.Random
  * these probability distributions are implicitly defined and we rely on the famous [[Multiset]] to
  * determine probabilities only when they are needed.
  *
- * @tparam O Type of observed states
- * @tparam H Type of hidden states
+ * @tparam O Type of observed states.
+ * @tparam H Type of hidden states.
  */
 class HiddenMarkovModel[O, H] {
 
@@ -29,7 +29,7 @@ class HiddenMarkovModel[O, H] {
    * Trains the hidden markov model on sequences of observed states and their associated hidden
    * states. Training is thread-safe.
    *
-   * @param states Sequence of states to train on
+   * @param states Sequence of states to train on.
    */
   def train(states: Seq[(O, H)]): Unit = {
     if (states.nonEmpty) {
@@ -57,8 +57,8 @@ class HiddenMarkovModel[O, H] {
    * relies on the fundamental observation that optimal paths are themselves composed of optimal
    * paths (e.g. if a-b-c-d is an optimal path, then a-b and a-b-c are also optimal paths).
    *
-   * @param observed Observed state sequence
-   * @return Most likely hidden state sequence that generated it
+   * @param observed Observed state sequence.
+   * @return Most likely hidden state sequence that generated it.
    */
   def predict(observed: Seq[O]): Seq[H] = {
     // Nodes contain a time and a hidden state, while paths form a linked list of nodes with an
@@ -122,7 +122,7 @@ class HiddenMarkovModel[O, H] {
    * randomly emits an observed state and randomly transitions to a new hidden state. Note, an
    * iterator is preferable to a stream because streams cache previous computations.
    *
-   * @return An infinite iterator over observed states
+   * @return An infinite iterator over observed states.
    */
   def generate(): Iterator[O] = {
     var state: H = rand(this.initial)
@@ -137,10 +137,6 @@ class HiddenMarkovModel[O, H] {
 
 object HiddenMarkovModel {
 
-  implicit val random: Random = Random
-
-  def apply[O, H]() = new HiddenMarkovModel[O, H]
-
   /**
    * Returns the probability of an element based on the frequency with which it occurs in a
    * [[Multiset]]. Convenience method to facilitate the logic in the prediction and generation
@@ -148,6 +144,10 @@ object HiddenMarkovModel {
    * atomic, the [[Multiset]] does not (and can not) make any guarantees that it won't change
    * between operations. However, this potential race-condition is unavoidable without a significant
    * performance penalty, and, therefore, we ignore it.
+   *
+   * @param set Multiset to select from.
+   * @param element Element to search for.
+   * @return Probability of element.
    */
   private def prob[T](set: Option[Multiset[T]], element: T): Double =
     set.fold(0.0)(s => s.count(element) / s.size.toDouble)
@@ -156,9 +156,12 @@ object HiddenMarkovModel {
    * Returns a random element from a [[Multiset]] based on the frequency with which it appears.
    * Convenience method to facilitate the logic in the generation function. This method is not
    * thread-safe; the underlying [[Multiset]] may not change during this operation.
+   *
+   * @param set Multiset to randomly select from.
+   * @return Randomly selected element in the set.
    */
-  private def rand[T](set: Multiset[T])(implicit random: Random): T = {
-    var num = random.nextInt(set.size())
+  private def rand[T](set: Multiset[T]): T = {
+    var num = Random.nextInt(set.size())
     set.iterator.asScala.dropWhile(element => {
       num -= set.count(element)
       num > 0

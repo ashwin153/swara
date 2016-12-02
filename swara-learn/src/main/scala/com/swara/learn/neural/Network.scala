@@ -6,7 +6,7 @@ package com.swara.learn.neural
  * of inputs and outputs. This implementation provides a flexible and extensible model for
  * building arbitrarily complex networks (rnn, cnn, etc.).
  */
-class Network[I, O](layer: Layer[I, O], loss: ((O, O) => O)) {
+class Network[I, O](loss: ((O, O) => O), layer: Layer[I, O]) {
 
   def train(data: Seq[(I, O)]): Unit = {
     val (inputs, expected) = data.unzip
@@ -15,6 +15,6 @@ class Network[I, O](layer: Layer[I, O], loss: ((O, O) => O)) {
     result.backward(errors)
   }
 
-  def predict(inputs: I): O = this.layer(Seq(inputs)).forward.head
+  def predict(inputs: Seq[I]): Seq[O] = this.layer(inputs).forward
 
 }

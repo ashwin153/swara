@@ -13,12 +13,9 @@ import scala.util.Random
  * Markov chains are trained on state sequences, from which they approximate the aforementioned
  * state transition probability distribution.
  *
- * @tparam T Type of states
+ * @tparam T Type of states.
  */
-class DiscreteMarkovChain[T](
-  val order: Int,
-  val random: Random
-) {
+class DiscreteMarkovChain[T](order: Int) {
 
   private[this] val transitions = Trie[T, Int]
 
@@ -28,7 +25,7 @@ class DiscreteMarkovChain[T](
    * across the specified state sequence in parallel and records a mapping between each 'order'
    * length state sequence and the state that immediately follows it.
    *
-   * @param states Sequence of states to train on
+   * @param states Sequence of states to train on.
    */
   def train(states: Seq[T]): Unit = {
     states.par.iterator.sliding(this.order + 1, 1).foreach(seq =>
@@ -46,12 +43,12 @@ class DiscreteMarkovChain[T](
    * a Runtime Exception if the markov chain has not yet been trained, because all models must be
    * trained before they may be used for predictive tasks.
    *
-   * @param states Sequence of states
-   * @return Random next state
+   * @param states Sequence of states.
+   * @return Random next state.
    */
   def predict(states: Seq[T]): T = {
     val cur = this.transitions.get(states.toList)
-    var num = this.random.nextInt(cur.value.getOrElse(0))
+    var num = Random.nextInt(cur.value.getOrElse(0))
 
     val iter = cur.children.iterator.dropWhile(child => {
       num -= child.value.getOrElse(0)
@@ -66,7 +63,7 @@ class DiscreteMarkovChain[T](
    * arbitrary state sequence. Returns an infinite iterator; note, an iterator is preferable to a
    * stream because streams store all previously computed values in memory.
    *
-   * @return An infinite iterator over states
+   * @return An infinite iterator over states.
    */
   def generate(): Iterator[T] = {
     // Append elements until the state is the correct length.
@@ -81,11 +78,5 @@ class DiscreteMarkovChain[T](
       next
     })
   }
-
-}
-
-object DiscreteMarkovChain {
-
-  def apply[T](order: Int, random: Random = Random) = new DiscreteMarkovChain[T](order, random)
 
 }

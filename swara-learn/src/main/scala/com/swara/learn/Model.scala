@@ -1,11 +1,15 @@
 package com.swara.learn
 
 /**
- * Predictive models utilize machine learning and statistical methods to predict the outcome for
- * a particular set of inputs. In a sense, predictive models are extrapolation engines.
+ * A predictive model utilizes various machine learning and statistical techniques to predict the
+ * most likely outcomes for a sequence of inputs. The purpose of this library is to implement
+ * generic predictive models that may be applied to a variety of prediction problems.
+ *
+ * @tparam I Type of inputs.
+ * @tparam O Type of outputs.
  */
 trait Model[I, O] {
 
-  def predict(input: I): O
+  def predict(input: Seq[I]): Seq[O]
 
 }

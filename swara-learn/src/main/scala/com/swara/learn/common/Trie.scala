@@ -8,8 +8,8 @@ import scala.collection.mutable
  * PatriciaTrie, this implementation makes no claim to be space-optimized; each node of the trie
  * stores exactly one symbol (except the root, which contains no symbol) and an optional value.
  *
- * @tparam K Type of symbols; keys are a sequence of symbols
- * @tparam V Type of values stored in the trie
+ * @tparam K Type of symbols.
+ * @tparam V Type of values.
  */
 class Trie[K, V] private (
   val parent: Option[Trie[K, V]],
@@ -25,7 +25,7 @@ class Trie[K, V] private (
    * symbols of all the trie's ancestors. Implementation ignores all empty symbols. Because symbols
    * are immutable, this method is thread-safe. O(h), where h is the height of the trie.
    *
-   * @return Concatenation of all symbols of all ancestors
+   * @return Concatenation of all symbols of all ancestors.
    */
   def key: List[K] = (parent, symbol) match {
     case (None, None) => Nil
@@ -39,8 +39,8 @@ class Trie[K, V] private (
    * shared lock for each trie node corresponding to a symbol in the key. O(k), where k is the
    * length of the key.
    *
-   * @param symbols Sequence of symbols to search for
-   * @return Trie with the closest matching key
+   * @param symbols Sequence of symbols to search for.
+   * @return Trie with the closest matching key.
    */
   def get(symbols: List[K]): Trie[K, V] = symbols match {
     case Nil => this
@@ -54,7 +54,7 @@ class Trie[K, V] private (
    * applied atomically. Implementation is thread-safe, but requires an exclusive lock for each
    * visited trie node. O(k O(visitor)), where k is the length of the key.
    *
-   * @param symbols Sequence of symbols to insert
+   * @param symbols Sequence of symbols to insert.
    * @param visitor Function to apply to each visited trie node.
    */
   def put(symbols: List[K], visitor: (List[K], Option[V]) => Option[V]): Unit = symbols match {
@@ -114,7 +114,7 @@ class Trie[K, V] private (
 
 object Trie {
 
-  /** Construct an empty Trie */
+  /** Constructs an empty Trie. */
   def apply[K, V] = new Trie[K, V](None, None, None)
 
 }

@@ -16,9 +16,9 @@ import breeze.stats.distributions.Rand
  * @param activation Monotonically increasing, bounded, differentiable function.
  */
 class FeedForward(
+  activation: DiffFunction[Double],
   weights: Matrix,
-  biases: Vector,
-  activation: DiffFunction[Double]
+  biases: Vector
 ) extends Layer[Vector, Vector] {
 
   require(this.weights.rows == this.biases.length)
@@ -26,7 +26,7 @@ class FeedForward(
   override def apply(inputs: Seq[Vector]): Result[Vector, Vector] = {
     // Calculate the weighted output of each neuron. (Wx + b)
     val weighted = inputs.map(this.weights * _ + this.biases)
-    
+
     Result(weighted.map(_.map(this.activation)), { errors =>
       (inputs, errors, weighted).zipped.map { case (in, err, out) =>
         // Calculate the gradient for each neuron as the derivative of the activation function at
