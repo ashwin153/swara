@@ -9,4 +9,4 @@ package com.swara.learn.neural
  * @param forward Forward value.
  * @param backward Backpropagation function.
  */
-case class Result[-I, +O](forward: Seq[O], backward: Seq[O] => Seq[I])
+case class Result[I, O](forward: Seq[O], backward: Seq[O] => Seq[I])

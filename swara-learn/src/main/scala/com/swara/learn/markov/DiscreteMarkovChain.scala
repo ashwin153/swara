@@ -26,10 +26,10 @@ class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervi
    * across the specified state sequence in parallel and records a mapping between each 'order'
    * length state sequence and the state that immediately follows it.
    *
-   * @param states Sequence of states to train on.
+   * @param examples Sequence of states to train on.
    */
-  override def train(states: Seq[T]): Unit = {
-    states.par.iterator.sliding(this.order + 1, 1).foreach(seq =>
+  override def train(examples: Seq[T]): Unit = {
+    examples.par.iterator.sliding(this.order + 1, 1).foreach(seq =>
       this.transitions.put(seq.toList, (suffix, prev) => (suffix, prev) match {
         case (_, None) => Some(1)
         case (_, Some(value)) => Some(value + 1)

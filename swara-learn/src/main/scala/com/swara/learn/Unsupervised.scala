@@ -9,6 +9,6 @@ package com.swara.learn
  */
 trait Unsupervised[I] {
 
-  def train(inputs: Seq[I])
+  def train(examples: Seq[I])
 
 }

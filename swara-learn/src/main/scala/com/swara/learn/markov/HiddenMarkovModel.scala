@@ -30,21 +30,21 @@ class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[O, H
    * Trains the hidden markov model on sequences of observed states and their associated hidden
    * states. Training is thread-safe.
    *
-   * @param states Sequence of states to train on.
+   * @param examples Sequence of states to train on.
    */
-  override def train(states: Seq[(O, H)]): Unit = {
-    if (states.nonEmpty) {
+  override def train(examples: Seq[(O, H)]): Unit = {
+    if (examples.nonEmpty) {
       // Record the initial hidden state.
-      this.initial.add(states.head._2)
+      this.initial.add(examples.head._2)
 
       // Slide a window across the states and record transitions between hidden states.
-      states.iterator.map(_._2).sliding(2, 1).foreach { hidden => this.transitions
+      examples.iterator.map(_._2).sliding(2, 1).foreach { hidden => this.transitions
         .getOrElseUpdate(hidden(1), { ConcurrentHashMultiset.create[H]() })
         .add(hidden(2))
       }
 
       // Iterate across the states and record emissions of observed states from hidden states.
-      states.iterator.foreach { case (observed, hidden) => this.emissions
+      examples.iterator.foreach { case (observed, hidden) => this.emissions
         .getOrElseUpdate(hidden, { ConcurrentHashMultiset.create[O]() })
         .add(observed)
       }

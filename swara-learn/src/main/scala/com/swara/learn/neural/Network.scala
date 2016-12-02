@@ -18,15 +18,15 @@ class Network[I, O](
   layer: Layer[I, O]
 ) extends Model[Seq[I], Seq[O]] with Supervised[I, O] {
 
-  override def train(data: Seq[(I, O)]): Unit = {
-    val (inputs, expected) = data.unzip
+  override def train(examples: Seq[(I, O)]): Unit = {
+    val (inputs, expected) = examples.unzip
     val result = this.layer(inputs)
     val errors = result.forward.zip(expected).map(this.loss.tupled)
     result.backward(errors)
   }
 
-  override def predict(inputs: Seq[I]): Seq[O] = {
-    this.layer(inputs).forward
+  override def predict(input: Seq[I]): Seq[O] = {
+    this.layer(input).forward
   }
 
 }

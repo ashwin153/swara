@@ -23,12 +23,12 @@ class FeedForward(
 
   require(this.weights.rows == this.biases.length)
 
-  override def apply(inputs: Seq[Vector]): Result[Vector, Vector] = {
+  override def apply(x: Seq[Vector]): Result[Vector, Vector] = {
     // Calculate the weighted output of each neuron. (Wx + b)
-    val weighted = inputs.map(this.weights * _ + this.biases)
+    val weighted = x.map(this.weights * _ + this.biases)
 
     Result(weighted.map(_.map(this.activation)), { errors =>
-      (inputs, errors, weighted).zipped.map { case (in, err, out) =>
+      (x, errors, weighted).zipped.map { case (in, err, out) =>
         // Calculate the gradient for each neuron as the derivative of the activation function at
         // its weighted output, multiplied by its error (Chain Rule).
         val gradient = out.map(this.activation.gradientAt) :* err
