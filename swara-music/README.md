@@ -1,97 +1,21 @@
 # Swara Music
-Musical data structures.
+The ```swara-music``` library defines the various data structures required to programmatically model musical information and provides interfaces for reading from and writing to various musical file formats.
 
-## Data
-### Terminology
-Each ```Song``` is composed of a sequence of ```Fragments``` in which each ```Fragment``` represents a group of instruments playing simultaneously in a particular key and tempo. Each instrument is represented by a ```Phrase``` that consists of series of ```Voices``` played simultaneously. Each ```Voice``` consists of a series of ```Chords``` played sequentially, which each consist of a set of ```Notes``` played simulatenously. Each data structure is constructed using a Fluent-style Builder Pattern.
-
-- ```Song```: symphony
-- ```Fragment```: passage
-- ```Key```: scale
-- ```Tempo```: beat
-- ```Phrase```: instrument
-- ```Voice```: melody
-- ```Chord```: harmony, volume, and duration
-- ```Note```: pitch
-
-### Example
-![Rendered Sheet Music](https://raw.githubusercontent.com/ashwin153/swara/master/swara-assets/swara-pics/sheet-music.png)
-
-```java
-// C Major Key.
-final Key cmajor = new Key.Builder()
-    .withSignature(0)
-    .withType(Key.MAJOR)
-    .build();
-
-// Waltz Tempo.
-final Tempo waltz = new Tempo.Builder()
-    .withSignature(3, 4)
-    .withBpm(88)
-    .build();
-
-// C Major 7 Chord.
-final Chord.Builder cmaj7 = new Chord.Builder()
-    .withNote(new Note.Builder().withPitch(Note.C).withOctave(4).build())
-    .withNote(new Note.Builder().withPitch(Note.E).withOctave(4).build())
-    .withNote(new Note.Builder().withPitch(Note.G).withOctave(5).build())
-    .withNote(new Note.Builder().withPitch(Note.B).withOctave(5).build());
-
-// G Major 7 Chord.
-final Chord.Builder gmaj7 = new Chord.Builder()
-    .withNote(new Note.Builder().withPitch(Note.G).withOctave(4).build())
-    .withNote(new Note.Builder().withPitch(Note.B).withOctave(4).build())
-    .withNote(new Note.Builder().withPitch(Note.D).withOctave(5).build())
-    .withNote(new Note.Builder().withPitch(Note.F).withOctave(5).build());
-
-// Piano Phrase.
-final Phrase piano = new Phrase.Builder()
-    .withVoice(new Voice.Builder()
-        .withChord(cmaj7.withDuration(new Fraction(1, 4)).withVolume(42).build())
-        .withChord(gmaj7.withDuration(new Fraction(1, 2)).withVolume(64).build())
-        .withChord(gmaj7.withDuration(new Fraction(1, 4)).withVolume(80).build())
-        .withProgram(Phrase.PIANO)
-        .build()
-    .build();
-
-// Guitar Phrase.
-final Phrase guitar = new Phrase.Builder()
-    .withVoice(new Voice.Builder()
-        .withChord(cmaj7.withDuration(new Fraction(1, 8)).withVolume(80).build())
-        .withChord(gmaj7.withDuration(new Fraction(1, 8)).withVolume(64).build())
-        .withChord(cmaj7.withDuration(new Fraction(3, 4)).withVolume(42).build())
-        .build()
-    .withProgram(Phrase.ACOUSTIC_GUITAR)
-    .build();
-
-// Song Fragment.
-final Fragment fragment = new Fragment.Builder()
-    .withKey(cmajor)
-    .withTempo(waltz)
-    .withPhrase(0, piano)
-    .withPhrase(1, guitar)
-    .build();
-
-// Song.
-final Song song = new Song.Builder()
-    .withFragment(fragment)
-    .build();
-```
+## Data Structures
+* ```Note``` is a musical pitch.
+* ```Chord``` is a collection of notes played simultaneously at some volume for some duration.
+* ```Voice``` is a collection of chords played simultaneously.
+* ```Phrase``` is a collection of voices played simultaneously for a particular instrument.
+* ```Fragment``` is a collection of phrases played simultaneously in a particular key and tempo.
+* ```Song``` is a sequence of fragments played sequentially.
 
 ## I/O
-### Overview
-The I/O APIs expose the ```MusicWriter``` and ```MusicReader``` interface for serializing and deserializing ```Songs``` to and from streams. This provides a convenient solution to interoperability. For example, if you wanted to use machine learning frameworks written in Python ([TensorFlow](https://www.tensorflow.org/), [Theano](http://deeplearning.net/software/theano/), etc.), you would no longer have to rewrite the clunky ```MidiSongWriter``` and ```MidiSongReader```; you could simple do all the heavy-weight MIDI parsing in Java, and pass around comparatively light-weight JSON strings between languages. Another advantage of this approach is that you no longer need a MIDI sequencer to create music; you can write your music as a JSON string in a text editor read it through a ```JsonSongReader``` and into a MIDI file using a  ```MidiSongWriter```. The possibilities are endless!
+The library exposes the ```MusicReader``` and ```MusicWriter``` interfaces to encourage interoperability between the internal musical representation and external musical formats and includes implementations for [MIDI](https://en.wikipedia.org/wiki/MIDI) and JSON.
 
-### Example
-```java
-// Read song from JSON file.
-final SongReader reader = new JsonSongReader();
-final Song song = reader.read(new File("test.json"));
+## Example
+For example, this [code](https://gist.github.com/ashwin153/d86292dbfc346b48d7e8f9e79db463fd) produces the following fragment of sheet music (rendered using [MuseScore 2](https://musescore.org/en/2.0)). The fragment is marked up with examples of the musical data structures described above and highlights some of libraries cool features including support for: key and tempo changes, polyphony, multiple instruments, dynamics, and accidentals!
 
-// Write song to MIDI file.
-final SongWriter writer = new MidiSongWriter();
-writer.write(new File("test.midi"), song);
-```
+![Sample Song](https://raw.githubusercontent.com/ashwin153/swara/master/swara-assets/swara-pics/sample-song.png)
 
 ## Attribution
 Here's a little page-rank karma for all the sources I used:

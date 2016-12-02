@@ -11,28 +11,26 @@ val y = Var(2.5)
 Cos(x) * Sin(x) / Tan(y) d(x)d(y)
 ```
 
-
 ### Markov Chains
 #### Discrete Markov Chains
 The following is an example of a ```DiscreteMarkovChain``` learning to generate a gradient. The image below is the training example, and the image to the right is the output of a 3rd-order discrete markov chain. The markov chain implementation is thread-safe, it may be trained while it is concurrently being used for prediction!
 
 ```scala
-val markov  = DiscreteMarkovChain[Color](3)
-val infile  = new File("swara-learn/src/test/resources/gradient.jpg")
-val outfile = new File("swara-learn/src/test/resources/gradient-result.jpg")
-val width   = 200
-val height  = 200
+// Load the color gradient from the input image.
+val img = ImageIO.read(new File("swara-learn/src/test/resources/gradient.jpg"))
+val inW = img.getWidth, inH = img.getHeight
+val col = (0 until inW * inH).map(pix => new Color(img.getRGB(pix / inW, pix % inH)))
 
-// Load the color gradient from the test image.
-val in = ImageIO.read(infile)
-val grad = (0 until in.getWidth * in.getHeight).map(p => new Color(in.getRGB(p / in.getWidth, p % in.getHeight)))
+// Create and train a markov chain.
+val markov = DiscreteMarkovChain[Color](3)
+markov.train(col)
 
-// Generate a new gradient and write to file.
-markov.train(gradient)
-val gen = markov.generate().take(width * height).toList
-val out = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-(0 until width).foreach(w => (0 until height).foreach(h => out.setRGB(h, w, gen(w).getRGB)))
-ImageIO.write(out, "jpg", outfile)
+// Generate a new gradient using the markov chain.
+val outW = 200, outH = 200
+val out = new BufferedImage(outW, outH, BufferedImage.TYPE_INT_RGB)
+val gen = markov.generate().take(outW * outH).toList
+(0 until outW).foreach(w => (0 until outH).foreach(h => out.setRGB(h, w, gen(w).getRGB)))
+ImageIO.write(out, "jpg", new File("swara-learn/src/test/resources/gradient-result.jpg"))
 ```
 
 <img width="49.744%" src="src/test/resources/gradient.jpg"/>
