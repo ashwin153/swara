@@ -1,6 +1,7 @@
 package com.swara.learn.markov
 
 import com.google.common.collect.{ConcurrentHashMultiset, Multiset}
+import com.swara.learn.{Model, Supervised}
 import com.swara.learn.markov.HiddenMarkovModel._
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConverters._
@@ -19,7 +20,7 @@ import scala.util.Random
  * @tparam O Type of observed states.
  * @tparam H Type of hidden states.
  */
-class HiddenMarkovModel[O, H] {
+class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[O, H] {
 
   private[this] val initial     = ConcurrentHashMultiset.create[H]()
   private[this] val transitions = new ConcurrentHashMap[H, Multiset[H]]().asScala
@@ -31,7 +32,7 @@ class HiddenMarkovModel[O, H] {
    *
    * @param states Sequence of states to train on.
    */
-  def train(states: Seq[(O, H)]): Unit = {
+  override def train(states: Seq[(O, H)]): Unit = {
     if (states.nonEmpty) {
       // Record the initial hidden state.
       this.initial.add(states.head._2)
@@ -60,7 +61,7 @@ class HiddenMarkovModel[O, H] {
    * @param observed Observed state sequence.
    * @return Most likely hidden state sequence that generated it.
    */
-  def predict(observed: Seq[O]): Seq[H] = {
+  override def predict(observed: Seq[O]): Seq[H] = {
     // Nodes contain a time and a hidden state, while paths form a linked list of nodes with an
     // associated length (aka probability). The goal of this algorithm, like the Viterbi Algorithm,
     // is to locate the maximum length path (aka most likely sequence) of nodes in time.

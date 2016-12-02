@@ -1,5 +1,6 @@
 package com.swara.learn.markov
 
+import com.swara.learn.{Model, Unsupervised}
 import com.swara.learn.common.Trie
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -15,7 +16,7 @@ import scala.util.Random
  *
  * @tparam T Type of states.
  */
-class DiscreteMarkovChain[T](order: Int) {
+class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervised[T] {
 
   private[this] val transitions = Trie[T, Int]
 
@@ -27,7 +28,7 @@ class DiscreteMarkovChain[T](order: Int) {
    *
    * @param states Sequence of states to train on.
    */
-  def train(states: Seq[T]): Unit = {
+  override def train(states: Seq[T]): Unit = {
     states.par.iterator.sliding(this.order + 1, 1).foreach(seq =>
       this.transitions.put(seq.toList, (suffix, prev) => (suffix, prev) match {
         case (_, None) => Some(1)
@@ -46,7 +47,7 @@ class DiscreteMarkovChain[T](order: Int) {
    * @param states Sequence of states.
    * @return Random next state.
    */
-  def predict(states: Seq[T]): T = {
+  override def predict(states: Seq[T]): T = {
     val cur = this.transitions.get(states.toList)
     var num = Random.nextInt(cur.value.getOrElse(0))
 

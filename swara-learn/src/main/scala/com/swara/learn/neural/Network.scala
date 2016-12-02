@@ -16,7 +16,7 @@ import com.swara.learn.{Model, Supervised}
 class Network[I, O](
   loss: ((O, O) => O),
   layer: Layer[I, O]
-) extends Model[I, O] with Supervised[I, O] {
+) extends Model[Seq[I], Seq[O]] with Supervised[I, O] {
 
   override def train(data: Seq[(I, O)]): Unit = {
     val (inputs, expected) = data.unzip
