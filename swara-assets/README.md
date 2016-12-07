@@ -9,9 +9,6 @@ The [midi-songs](http://swara-data.s3.amazonaws.com/midi-songs.zip), [midi-drums
 - [Lakh Midi](http://colinraffel.com/projects/lmd/#get): A compilation of 176,581 files by Colin Raffel. "Learning-Based Methods for Comparing Sequences, with Applications to Audio-to-MIDI Alignment and Matching". PhD Thesis, 2016.
 - [Million Song](http://labrosa.ee.columbia.edu/millionsong/): A compilation of a million popular tracks by Thierry Bertin-Mahieux, Daniel P. W. Ellis, Brian Whitman, and Paul Lamere. "The Million Song Dataset". In Proceedings of the 12th International Society for Music Information Retrieval Conference, pages 591–596, 2011.
 
-## Logo
-![Swara Logo](https://raw.githubusercontent.com/ashwin153/swara/master/swara-assets/swara-logo/logo-base.png)
-
 ## Attribution
 Here's a little page-rank karma for all the sources I used:
 - [Treble Clef Image](http://www.selftaughtguitarlessons.com/wp-content/uploads/2014/03/TrebleClef.gif)
