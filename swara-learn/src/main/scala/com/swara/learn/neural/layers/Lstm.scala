@@ -4,22 +4,22 @@ import breeze.numerics._
 import com.swara.learn.neural.{Layer, Result}
 
 /**
- * Special thanks to: 
- * - http://colah.github.io/posts/2015-08-Understanding-LSTMs/
- * - http://arunmallya.github.io/writeups/nn/lstm/index.html#/
+  * Special thanks to: 
+  * - http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+  * - http://arunmallya.github.io/writeups/nn/lstm/index.html#/
  
- * @param forget Forget gate (sigmoid); "forgets" elements of the state.
- * @param input Input gate (sigmoid); determines the parts of the state that receive updates.
- * @param output Output gate (sigmoid); determines the output of the layer.
- * @param detect Detect gate (tanh); "detects" new candidate values for the state.
- */
+  * @param forget Forget gate (sigmoid); "forgets" elements of the state.
+  * @param input Input gate (sigmoid); determines the parts of the state that receive updates.
+  * @param output Output gate (sigmoid); determines the output of the layer.
+  * @param detect Detect gate (tanh); "detects" new candidate values for the state.
+  */
 class Lstm(
-  forget: FeedForward,
-  input:  FeedForward,
-  output: FeedForward,
-  detect: FeedForward,
-  var state:  Vector,
-  var memory: Vector
+    forget: FeedForward,
+    input: FeedForward,
+    output: FeedForward,
+    detect: FeedForward,
+    var state: Vector,
+    var memory: Vector
 ) extends Layer[Vector, Vector] {
 
   override def apply(inputs: Seq[Vector]): Result[Vector, Vector] = ???
@@ -52,11 +52,11 @@ object Lstm {
 
   def apply(in: Int, out: Int): Lstm =
     new Lstm(
-      FeedForward.sigmoid(in + out, out),
-      FeedForward.sigmoid(in + out, out),
-      FeedForward.sigmoid(in + out, out),
-      FeedForward.tanh(in + out, out),
-      Vector.zeros(out),
-      Vector.zeros(out)
+        FeedForward.sigmoid(in + out, out),
+        FeedForward.sigmoid(in + out, out),
+        FeedForward.sigmoid(in + out, out),
+        FeedForward.tanh(in + out, out),
+        Vector.zeros(out),
+        Vector.zeros(out)
     )
 }
