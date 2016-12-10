@@ -16,7 +16,7 @@ import scala.util.Random
  *
  * @tparam T Type of states.
  */
-class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervised[T] {
+class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervised[Seq[T]] {
 
   private[this] val transitions = Trie[T, Int]
 
