@@ -1,7 +1,7 @@
 package com.swara.learn.common
 
+import net.jcip.annotations.ThreadSafe
 import scala.collection.mutable
-import scala.util.Random
 
 /**
   * A simple implementation of a concurrent, generalized trie. A trie or prefix tree, is a data
@@ -12,11 +12,11 @@ import scala.util.Random
   * @tparam K Type of symbols.
   * @tparam V Type of values.
   */
+@ThreadSafe
 class Trie[K, V] private (
   val parent: Option[Trie[K, V]],
   val symbol: Option[K],
-  var value: Option[V],
-  val depth: Int
+  var value: Option[V]
 ) {
 
   private[Trie] val next = new mutable.HashMap[K, Trie[K, V]]
@@ -78,7 +78,7 @@ class Trie[K, V] private (
       case x :: rest =>
         this.lock.exclusive {
           this.value = visitor(symbols, this.value)
-          this.next.getOrElseUpdate(x, new Trie(Some(this), Some(x), None, this.depth + 1))
+          this.next.getOrElseUpdate(x, new Trie(Some(this), Some(x), None))
         }.put(rest, visitor)
     }
 
@@ -138,6 +138,6 @@ object Trie {
    * @tparam V Type of values.
    * @return An empty trie.
    */
-  def empty[K, V]: Trie[K, V] = new Trie[K, V](None, None, None, 0)
+  def empty[K, V]: Trie[K, V] = new Trie[K, V](None, None, None)
 
 }
