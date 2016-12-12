@@ -8,6 +8,11 @@ jar_library(name='breeze', jars=[
   jar(org='org.scalanlp', name='breeze_2.11', rev='0.12')
 ])
 
+# Java Concurrency In Practice (JCIP) Annotations
+jar_library(name='jcip-annotations', jars=[
+  jar(org='net.jcip', name='jcip-annotations', rev='1.0')
+])
+
 # Apache Commons
 jar_library(name='commons-math3', jars=[
   jar(org='org.apache.commons', name='commons-math3', rev='3.6.1')
