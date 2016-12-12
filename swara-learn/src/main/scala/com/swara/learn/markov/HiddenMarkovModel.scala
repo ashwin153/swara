@@ -1,14 +1,8 @@
 package com.swara.learn.markov
 
-import com.google.common.collect.{ConcurrentHashMultiset, Multiset}
 import com.swara.learn.common.Distribution
-import com.swara.learn.common.distributions.MarginalDistribution
 import com.swara.learn.{Model, Supervised}
-import com.swara.learn.markov.HiddenMarkovModel._
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.util.Random
 
 /**
   * A hidden markov model (HMM) consists of observable states (O) and hidden states (H), in which the
@@ -16,8 +10,7 @@ import scala.util.Random
   * tasks such as speech, handwriting, and gesture recognition. The model is governed by three
   * probability distributions: initial (initial hidden states), transitions (between hidden states),
   * and emissions (observed state outputs). However, unlike most open source HMM implementations,
-  * these probability distributions are implicitly defined and we rely on the famous [[Multiset]] to
-  * determine probabilities only when they are needed.
+  * these probability distributions are implicitly defined.
   *
   * @tparam O Type of observed states.
   * @tparam H Type of hidden states.
@@ -118,26 +111,6 @@ class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[Seq[
       state = this.transitions(state).sample()
       next
     })
-  }
-
-}
-
-object HiddenMarkovModel {
-
-  /**
-    * Returns a random element from a [[Multiset]] based on the frequency with which it appears.
-    * Convenience method to facilitate the logic in the generation function. This method is not
-    * thread-safe; the underlying [[Multiset]] may not change during this operation.
-    *
-    * @param set Multiset to randomly select from.
-    * @return Randomly selected element in the set.
-    */
-  private def rand[T](set: Multiset[T]): T = {
-    var num = Random.nextInt(set.size())
-    set.iterator.asScala.dropWhile { element =>
-      num -= set.count(element)
-      num > 0
-    }.next()
   }
 
 }

@@ -77,6 +77,4 @@ class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervi
     })
   }
 
-
-
 }

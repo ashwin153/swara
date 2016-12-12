@@ -112,84 +112,78 @@ sealed trait Differentiable {
 /* Nullary Differentiable Functions */
 case class Const(value: Double) extends Differentiable {
   override def apply(): Double = value
-  override def d(wrt: Var) = Const(0)
+  override def d(wrt: Var): Differentiable = Const(0)
 }
 
 case class Var(var value: Double) extends Differentiable {
   override def apply(): Double = value
-  override def d(wrt: Var): Differentiable =
-    if (wrt == this) Const(1) else Const(0)
+  override def d(wrt: Var): Differentiable = if (wrt == this) Const(1) else Const(0)
 }
 
 /* Unary Differentiable Functions */
 case class Cos(f: Differentiable) extends Differentiable {
-  override def apply() = Math.cos(f())
-  override def d(wrt: Var) = Const(-1) * Sin(f) * f.d(wrt)
+  override def apply(): Double = Math.cos(f())
+  override def d(wrt: Var): Differentiable = Const(-1) * Sin(f) * f.d(wrt)
 }
 
 case class Sin(f: Differentiable) extends Differentiable {
-  override def apply() = Math.sin(f())
-  override def d(wrt: Var) = Cos(f) * f.d(wrt)
+  override def apply(): Double = Math.sin(f())
+  override def d(wrt: Var): Differentiable = Cos(f) * f.d(wrt)
 }
 
 case class Tan(f: Differentiable) extends Differentiable {
-  override def apply() = Math.tan(f())
-  override def d(wrt: Var) = Secant(f) * Secant(f) * f.d(wrt)
+  override def apply(): Double = Math.tan(f())
+  override def d(wrt: Var): Differentiable = Secant(f) * Secant(f) * f.d(wrt)
 }
 
 case class Secant(f: Differentiable) extends Differentiable {
-  override def apply() = 1.0 / Math.cos(f())
-  override def d(wrt: Var) = Secant(f) * Tan(f) * f.d(wrt)
+  override def apply(): Double = 1.0 / Math.cos(f())
+  override def d(wrt: Var): Differentiable = Secant(f) * Tan(f) * f.d(wrt)
 }
 
 case class Cosecant(f: Differentiable) extends Differentiable {
-  override def apply() = 1.0 / Math.sin(f())
-  override def d(wrt: Var) = Const(-1) * Cosecant(f) * Cotangent(f) * f.d(wrt)
+  override def apply(): Double = 1.0 / Math.sin(f())
+  override def d(wrt: Var): Differentiable = Const(-1) * Cosecant(f) * Cotangent(f) * f.d(wrt)
 }
 
-case class Cotangent(f: Differentiable)
-    extends Differentiable {
-  override def apply() = 1.0 / Math.tan(f())
-  override def d(wrt: Var) = Const(-1) * Cosecant(f) * Cosecant(f) * f.d(wrt)
+case class Cotangent(f: Differentiable) extends Differentiable {
+  override def apply(): Double = 1.0 / Math.tan(f())
+  override def d(wrt: Var): Differentiable = Const(-1) * Cosecant(f) * Cosecant(f) * f.d(wrt)
 }
 
 case class Exp(f: Differentiable) extends Differentiable {
-  override def apply() = Math.exp(f())
-  override def d(wrt: Var) = Exp(f) * f.d(wrt)
+  override def apply(): Double = Math.exp(f())
+  override def d(wrt: Var): Differentiable = Exp(f) * f.d(wrt)
 }
 
 case class Log(f: Differentiable) extends Differentiable {
-  override def apply() = Math.log(f())
-  override def d(wrt: Var) = Pow(f, -1) * f.d(wrt)
+  override def apply(): Double = Math.log(f())
+  override def d(wrt: Var): Differentiable = Pow(f, -1) * f.d(wrt)
 }
 
 case class Pow(f: Differentiable, degree: Double)
     extends Differentiable {
-  override def apply() = Math.pow(f(), degree)
-  override def d(wrt: Var) = Const(degree) * Pow(f, degree - 1) * f.d(wrt)
+  override def apply(): Double = Math.pow(f(), degree)
+  override def d(wrt: Var): Differentiable = Const(degree) * Pow(f, degree - 1) * f.d(wrt)
 }
 
 /* Binary Differentiable Functions */
-case class Add(f1: Differentiable, f2: Differentiable)
-    extends Differentiable {
-  override def apply() = f1() + f2()
-  override def d(wrt: Var) = f1.d(wrt) + f2.d(wrt)
+case class Add(f1: Differentiable, f2: Differentiable) extends Differentiable {
+  override def apply(): Double = f1() + f2()
+  override def d(wrt: Var): Differentiable = f1.d(wrt) + f2.d(wrt)
 }
 
-case class Sub(f1: Differentiable, f2: Differentiable)
-    extends Differentiable {
-  override def apply() = f1() - f2()
-  override def d(wrt: Var) = f1.d(wrt) - f2.d(wrt)
+case class Sub(f1: Differentiable, f2: Differentiable) extends Differentiable {
+  override def apply(): Double = f1() - f2()
+  override def d(wrt: Var): Differentiable = f1.d(wrt) - f2.d(wrt)
 }
 
-case class Mul(f1: Differentiable, f2: Differentiable)
-    extends Differentiable {
-  override def apply() = f1() * f2()
-  override def d(wrt: Var) = (f1 * f2.d(wrt)) + (f1.d(wrt) * f2)
+case class Mul(f1: Differentiable, f2: Differentiable) extends Differentiable {
+  override def apply(): Double = f1() * f2()
+  override def d(wrt: Var): Differentiable = (f1 * f2.d(wrt)) + (f1.d(wrt) * f2)
 }
 
-case class Div(f1: Differentiable, f2: Differentiable)
-    extends Differentiable {
-  override def apply() = f1() / f2()
-  override def d(wrt: Var) = ((f1.d(wrt) * f2) - (f2.d(wrt) * f1)) / Pow(f2, 2)
+case class Div(f1: Differentiable, f2: Differentiable) extends Differentiable {
+  override def apply(): Double = f1() / f2()
+  override def d(wrt: Var): Differentiable = ((f1.d(wrt) * f2) - (f2.d(wrt) * f1)) / Pow(f2, 2)
 }
