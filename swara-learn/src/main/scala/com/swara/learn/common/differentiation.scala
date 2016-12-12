@@ -8,7 +8,7 @@ package com.swara.learn.common
   * mathematical functions as compound operations on primitive analytic functions (cos, log, etc.)
   * we can take infinitely many derivatives without invoking expensive numerical methods.
   */
-sealed trait DifferentiableFunction {
+sealed trait Differentiable {
 
   /**
     * Applies the function and results the result. Variables used in the function must be set before
@@ -25,7 +25,7 @@ sealed trait DifferentiableFunction {
     * @param wrt Variable to differentiate with-respect-to.
     * @return Partial derivative.
     */
-  def d(wrt: Var): DifferentiableFunction
+  def d(wrt: Var): Differentiable
 
   /**
     * Returns the nth partial derivative of the function with-respect-to(wrt) the specified variable,
@@ -35,7 +35,7 @@ sealed trait DifferentiableFunction {
     * @param times Number of times to differentiate; degree.
     * @return Partial derivative.
     */
-  def d(wrt: Var, times: Int): DifferentiableFunction = {
+  def d(wrt: Var, times: Int): Differentiable = {
     var func = this
     (0 until times).foreach(_ => func = func d (wrt))
     func
@@ -49,7 +49,7 @@ sealed trait DifferentiableFunction {
     * @param that Right-hand-side.
     * @return Differentiable sum of functions.
     */
-  def +(that: DifferentiableFunction): DifferentiableFunction =
+  def +(that: Differentiable): Differentiable =
     (this, that) match {
       case (Const(0), _) => that
       case (_, Const(0)) => this
@@ -65,7 +65,7 @@ sealed trait DifferentiableFunction {
     * @param that Right-hand-side.
     * @return Differentiable difference of functions.
     */
-  def -(that: DifferentiableFunction): DifferentiableFunction =
+  def -(that: Differentiable): Differentiable =
     (this, that) match {
       case (Const(0), _) => Const(-1) * that
       case (_, Const(0)) => this
@@ -81,7 +81,7 @@ sealed trait DifferentiableFunction {
     * @param that Right-hand-side.
     * @return Differentiable product of functions.
     */
-  def *(that: DifferentiableFunction): DifferentiableFunction =
+  def *(that: Differentiable): Differentiable =
     (this, that) match {
       case (Const(0), _) => Const(0)
       case (_, Const(0)) => Const(0)
@@ -99,7 +99,7 @@ sealed trait DifferentiableFunction {
     * @param that Right-hand-side.
     * @return Differentiable quotient of functions.
     */
-  def /(that: DifferentiableFunction): DifferentiableFunction =
+  def /(that: Differentiable): Differentiable =
     (this, that) match {
       case (Const(0), _) => Const(0)
       case (_, Const(1)) => this
@@ -110,86 +110,86 @@ sealed trait DifferentiableFunction {
 }
 
 /* Nullary Differentiable Functions */
-case class Const(value: Double) extends DifferentiableFunction {
+case class Const(value: Double) extends Differentiable {
   override def apply(): Double = value
   override def d(wrt: Var) = Const(0)
 }
 
-case class Var(var value: Double) extends DifferentiableFunction {
+case class Var(var value: Double) extends Differentiable {
   override def apply(): Double = value
-  override def d(wrt: Var): DifferentiableFunction =
+  override def d(wrt: Var): Differentiable =
     if (wrt == this) Const(1) else Const(0)
 }
 
 /* Unary Differentiable Functions */
-case class Cos(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Cos(f: Differentiable) extends Differentiable {
   override def apply() = Math.cos(f())
   override def d(wrt: Var) = Const(-1) * Sin(f) * f.d(wrt)
 }
 
-case class Sin(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Sin(f: Differentiable) extends Differentiable {
   override def apply() = Math.sin(f())
   override def d(wrt: Var) = Cos(f) * f.d(wrt)
 }
 
-case class Tan(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Tan(f: Differentiable) extends Differentiable {
   override def apply() = Math.tan(f())
   override def d(wrt: Var) = Secant(f) * Secant(f) * f.d(wrt)
 }
 
-case class Secant(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Secant(f: Differentiable) extends Differentiable {
   override def apply() = 1.0 / Math.cos(f())
   override def d(wrt: Var) = Secant(f) * Tan(f) * f.d(wrt)
 }
 
-case class Cosecant(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Cosecant(f: Differentiable) extends Differentiable {
   override def apply() = 1.0 / Math.sin(f())
   override def d(wrt: Var) = Const(-1) * Cosecant(f) * Cotangent(f) * f.d(wrt)
 }
 
-case class Cotangent(f: DifferentiableFunction)
-    extends DifferentiableFunction {
+case class Cotangent(f: Differentiable)
+    extends Differentiable {
   override def apply() = 1.0 / Math.tan(f())
   override def d(wrt: Var) = Const(-1) * Cosecant(f) * Cosecant(f) * f.d(wrt)
 }
 
-case class Exp(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Exp(f: Differentiable) extends Differentiable {
   override def apply() = Math.exp(f())
   override def d(wrt: Var) = Exp(f) * f.d(wrt)
 }
 
-case class Log(f: DifferentiableFunction) extends DifferentiableFunction {
+case class Log(f: Differentiable) extends Differentiable {
   override def apply() = Math.log(f())
   override def d(wrt: Var) = Pow(f, -1) * f.d(wrt)
 }
 
-case class Pow(f: DifferentiableFunction, degree: Double)
-    extends DifferentiableFunction {
+case class Pow(f: Differentiable, degree: Double)
+    extends Differentiable {
   override def apply() = Math.pow(f(), degree)
   override def d(wrt: Var) = Const(degree) * Pow(f, degree - 1) * f.d(wrt)
 }
 
 /* Binary Differentiable Functions */
-case class Add(f1: DifferentiableFunction, f2: DifferentiableFunction)
-    extends DifferentiableFunction {
+case class Add(f1: Differentiable, f2: Differentiable)
+    extends Differentiable {
   override def apply() = f1() + f2()
   override def d(wrt: Var) = f1.d(wrt) + f2.d(wrt)
 }
 
-case class Sub(f1: DifferentiableFunction, f2: DifferentiableFunction)
-    extends DifferentiableFunction {
+case class Sub(f1: Differentiable, f2: Differentiable)
+    extends Differentiable {
   override def apply() = f1() - f2()
   override def d(wrt: Var) = f1.d(wrt) - f2.d(wrt)
 }
 
-case class Mul(f1: DifferentiableFunction, f2: DifferentiableFunction)
-    extends DifferentiableFunction {
+case class Mul(f1: Differentiable, f2: Differentiable)
+    extends Differentiable {
   override def apply() = f1() * f2()
   override def d(wrt: Var) = (f1 * f2.d(wrt)) + (f1.d(wrt) * f2)
 }
 
-case class Div(f1: DifferentiableFunction, f2: DifferentiableFunction)
-    extends DifferentiableFunction {
+case class Div(f1: Differentiable, f2: Differentiable)
+    extends Differentiable {
   override def apply() = f1() / f2()
   override def d(wrt: Var) = ((f1.d(wrt) * f2) - (f2.d(wrt) * f1)) / Pow(f2, 2)
 }

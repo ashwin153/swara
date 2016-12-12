@@ -2,6 +2,7 @@ package com.swara.learn.markov
 
 import com.google.common.collect.{ConcurrentHashMultiset, Multiset}
 import com.swara.learn.common.Distribution
+import com.swara.learn.common.distributions.MarginalDistribution
 import com.swara.learn.{Model, Supervised}
 import com.swara.learn.markov.HiddenMarkovModel._
 import java.util.concurrent.ConcurrentHashMap
@@ -23,31 +24,32 @@ import scala.util.Random
   */
 class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[Seq[O], Seq[H]] {
 
-  private[this] val initial = ConcurrentHashMultiset.create[H]()
-  private[this] val transitions = new Distribution[H]
-  private[this] val emissions = new Distribution[Any]
+  private[this] val initial     = Distribution.empty[H]
+  private[this] val transitions = mutable.Map.empty[H, Distribution[H]]
+  private[this] val emissions   = mutable.Map.empty[H, Distribution[O]]
 
   /**
     * Trains the hidden markov model on sequences of observed states and their associated hidden
     * states. Training is thread-safe.
     *
-    * @param examples Sequence of states to train on.
+    * @param observed Sequence of observations.
+    * @param hidden Sequence of hidden states.
     */
-  override def train(examples: Seq[(O, H)]): Unit = {
-    if (examples.nonEmpty) {
-      // Record the initial hidden state.
-      this.initial.insert(examples.head._2)
+  override def train(observed: Seq[O], hidden: Seq[H]): Unit = {
+    require(hidden.nonEmpty)
+    require(hidden.size == observed.size)
 
-      // Slide a window across the states and record transitions between hidden states.
-      examples.iterator.map(_._2).sliding(2, 1).foreach { hidden =>
-        this.transitions.insert(hidden(2), given = hidden(1))
-      }
+    // Record the initial hidden state.
+    this.initial += hidden.head
 
-      // Iterate across the states and record emissions of observed states from hidden states.
-      examples.iterator.foreach {
-        case (observed, hidden) =>
-          this.emissions.insert(observed, given = hidden)
-      }
+    // Slide a window across the hidden states and record state transitions.
+    hidden.iterator.sliding(2, 1).foreach { transition =>
+      this.transitions.getOrElseUpdate(transition.head, Distribution.empty[H]) += transition.last
+    }
+
+    // Record emissions of observed states from hidden states.
+    hidden.zip(observed).foreach { case (state, emission) =>
+      this.emissions.getOrElseUpdate(state, Distribution.empty[O]) += emission
     }
   }
 
@@ -63,48 +65,43 @@ class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[Seq[
     */
   override def predict(observed: Seq[O]): Seq[H] = {
     case class Step(state: H, time: Int)
-    case class Path(steps: List[Step], prob: Double) {
-      def length: Int = steps.last.time
-    }
+    case class Path(steps: List[Step], prob: Double)
 
     // Construct a max-heap of paths keyed by their probability and a set of visited steps.
     val maxheap = mutable.PriorityQueue.empty[Path](Ordering.by(_.prob))
     val visited = mutable.Set.empty[Step]
 
     // Add all the initial paths to the max-heap that have non-zero probabilities.
-    this.initial.probabilities().foreach {
-      case (state, iprob) =>
-        maxheap.enqueue(
-            Path(
-                List(Step(state, 0)),
-                iprob * this.emissions.probability(observed.head,
-                                                   given = state)
-            ))
+    this.initial.foreach { state =>
+      val emission = this.emissions.getOrElse(state, Distribution.empty)
+      maxheap.enqueue(Path(
+        List(Step(state, 0)),
+        this.initial.probability(state) * emission.probability(observed.head)
+      ))
     }
 
-    var current = maxheap.dequeue()
-    while (current.length < observed.length) {
-      // If the last step in the current path is unvisited, then expand all possible neighbors.
-      if (!visited.contains(current.steps.last)) {
-        this.transitions
-          .probabilities(given = current.steps.last.state)
-          .foreach {
-            case (state, tprob) =>
-              maxheap.enqueue(
-                  Path(
-                      current.steps :+ Step(state, current.length + 1),
-                      current.prob * tprob * this.emissions.probability(
-                          observed(current.length + 1),
-                          given = state)
-                  ))
-          }
+    // Continually dequeue the maximum element, until a path of the desired length is located.
+    var max = maxheap.dequeue()
+    while (max.steps.length < observed.length) {
+      if (!visited.contains(max.steps.last)) {
+        // Determine the transition and emission distributions.
+        val transition = this.transitions.getOrElse(max.steps.last.state, Distribution.empty)
+        val emission = this.emissions.getOrElse(max.steps.last.state, Distribution.empty)
+
+        // Expand all possible next paths.
+        val time = max.steps.length + 1
+        transition.foreach { state =>
+          maxheap.enqueue(Path(
+            max.steps :+ Step(state, time),
+            max.prob * transition.probability(state) * emission.probability(observed(time))
+          ))
+        }
       }
 
-      // Dequeue elements from the max-heap until a path of the desired length is found.
-      current = maxheap.dequeue()
+      max = maxheap.dequeue()
     }
 
-    current.steps.map(_.state)
+    max.steps.map(_.state)
   }
 
   /**
@@ -115,10 +112,10 @@ class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[Seq[
     * @return An infinite iterator over observed states.
     */
   def generate(): Iterator[O] = {
-    var state: H = rand(this.initial)
+    var state: H = this.initial.sample()
     Iterator.continually({
-      val next = rand(this.emissions(state))
-      state = rand(this.transitions(state))
+      val next = this.emissions(state).sample()
+      state = this.transitions(state).sample()
       next
     })
   }
@@ -137,12 +134,10 @@ object HiddenMarkovModel {
     */
   private def rand[T](set: Multiset[T]): T = {
     var num = Random.nextInt(set.size())
-    set.iterator.asScala
-      .dropWhile(element => {
-        num -= set.count(element)
-        num > 0
-      })
-      .next()
+    set.iterator.asScala.dropWhile { element =>
+      num -= set.count(element)
+      num > 0
+    }.next()
   }
 
 }

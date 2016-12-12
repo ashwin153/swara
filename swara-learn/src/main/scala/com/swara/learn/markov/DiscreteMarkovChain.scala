@@ -58,20 +58,6 @@ class DiscreteMarkovChain[T](order: Int) extends Model[Seq[T], T] with Unsupervi
 
     if (iter.hasNext) iter.next.symbol.get else cur.symbol.get
   }
-
-  /**
-   *
-   * @param states
-   * @return
-   */
-  def probability(states: Seq[T]): Double = {
-    val probability = for {
-      event <- this.transitions.exactly(states.toList)
-      total <- event.parent.flatMap(_.value) if total > 0
-      count <- event.value if count >= 0 && count < total
-    } yield count / total.toDouble
-    probability.getOrElse(0.0)
-  }
   
   /**
     * Markov chains can use the learned state transition probability distribution to generate an
