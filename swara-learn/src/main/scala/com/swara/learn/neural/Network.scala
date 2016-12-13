@@ -3,16 +3,15 @@ package com.swara.learn.neural
 import com.swara.learn.{Model, Supervised}
 
 /**
-  * An artificial neural network is a supervised learning technique inspired by biological neural
-  * networks that are used to approximate functions. Neural networks are trained on labeled vectors
-  * of inputs and outputs. This implementation provides a flexible and extensible model for
-  * building arbitrarily complex networks (rnn, cnn, etc.).
-  *
-  * @param loss Loss function.
-  * @param layer Layer(s) that form the network.
-  * @tparam I Type of inputs.
-  * @tparam O Type of outputs.
-  */
+ * An artificial neural network. A neural network is a supervised learning technique inspired by
+ * biological neural networks that are used to approximate functions. Implementation provides a
+ * flexible and extensible way to build arbitrarily complex networks (rnn, cnn, etc.).
+ *
+ * @param loss Loss function.
+ * @param layer Layer(s) that form the network.
+ * @tparam I Type of inputs.
+ * @tparam O Type of outputs.
+ */
 class Network[I, O](
   loss: ((O, O) => O),
   layer: Layer[I, O]
