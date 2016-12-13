@@ -50,6 +50,7 @@ class Distribution[X](elements: Multiset[X]) extends mutable.Set[X] {
    * number less than the total number of elements in the distribution, and subtract the frequency
    * of each element in the distribution until the number is negative. O(n)
    *
+   * @throws NoSuchElementException If the distribution is empty.
    * @return Weighted random element.
    */
   def sample(): X = {
