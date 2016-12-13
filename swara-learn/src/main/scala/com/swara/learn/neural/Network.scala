@@ -7,8 +7,8 @@ import com.swara.learn.{Model, Supervised}
  * biological neural networks that are used to approximate functions. Implementation provides a
  * flexible and extensible way to build arbitrarily complex networks (rnn, cnn, etc.).
  *
- * @param loss Loss function.
- * @param layer Layer(s) that form the network.
+ * @param loss Loss function s.t. (actual, expected) => loss
+ * @param layer Layers that form the network.
  * @tparam I Type of inputs.
  * @tparam O Type of outputs.
  */

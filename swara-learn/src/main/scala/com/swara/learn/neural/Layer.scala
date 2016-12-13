@@ -3,7 +3,7 @@ package com.swara.learn.neural
 /**
  * A layer in a neural network. An artificial neural network can be thought of as a "layered"
  * computation; inputs flow forward through the network from layer to layer to produce an output,
- * and errors flow backward to train each layer to produce more accurate results.
+ * and errors flow backward to train layers to produce more accurate results.
  *
  * @tparam I Type of input.
  * @tparam O Type of output.
@@ -11,18 +11,24 @@ package com.swara.learn.neural
 trait Layer[-I, +O]  {
 
   /**
-   * Returns a [[Result]] containing the outcome of applying the layer to the specified sequence of
-   * inputs.
+   * Returns the result of applying the layer to the specified sequence of inputs. Application of a
+   * layer produces two values: a forward value that is passed forward as input to the next layer in
+   * the network, and a backward function that backpropagates error to the previous layer.
    *
    * @param x Sequence of inputs.
    * @return Result of applying the layer.
    */
   def apply(x: Seq[I]): Result[Seq[I], Seq[O]]
 
+  def apply(x: I): Result[I, O] = {
+    val res = apply(Seq(x))
+    Result(res.forward.head, res.backward.compose(Seq(_)).andThen(_.head))
+  }
+
   /**
-   * Concatenates this layer and the specified layer. Performs the equivalent of functional
-   * composition. Concatenation enables layers to be chained together in a type-safe way to form
-   * arbitrarily complex neural networks.
+   * Returns the concatenation of this and the specified layer. Mathematically equivalent to
+   * functional composition. Concatenation enables layers to be chained together in a type-safe way
+   * to form arbitrarily complex neural networks.
    *
    * @param that Next layer.
    * @tparam T Type of output.

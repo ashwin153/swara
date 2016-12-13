@@ -31,19 +31,19 @@ class FeedForward(
    * function is monotonically increasing and differentiable, we can backpropagate error using
    * gradient descent.
    *
-   * @param x Input vectors.
+   * @param inputs Input vectors.
    * @return Result of applying the layer.
    */
-  override def apply(x: Seq[Vector]): Result[Seq[Vector], Seq[Vector]] = {
-    val weighted = x.map(this.weights * _ + this.biases)
+  override def apply(inputs: Seq[Vector]): Result[Seq[Vector], Seq[Vector]] = {
+    val weighted = inputs.map(this.weights * _ + this.biases)
     val activate = weighted.map(_.map(this.activation))
 
     Result(activate, { errors: Seq[Vector] =>
-      (x, errors, weighted).zipped.map { case (in, err, net) =>
+      (inputs, errors, weighted).zipped.map { case (x, err, net) =>
         val gradient  = net.map(this.activation.gradientAt) :* err
         val propagate = this.weights.t * gradient
         this.biases  -= gradient
-        this.weights -= gradient.asDenseMatrix.t * in.asDenseMatrix
+        this.weights -= gradient.asDenseMatrix.t * x.asDenseMatrix
         propagate
       }
     })
@@ -52,6 +52,28 @@ class FeedForward(
 }
 
 object FeedForward {
+
+  object identity extends DiffFunction[Double] {
+    override def calculate(x: Double): (Double, Double) = (x, 1)
+  }
+
+  object rectifier extends DiffFunction[Double] {
+    override def calculate(x: Double): (Double, Double) = if (x < 0) (0, 0) else (x, 1)
+  }
+
+  object sigmoid extends DiffFunction[Double] {
+    override def calculate(x: Double): (Double, Double) = {
+      val fx = numerics.sigmoid(x)
+      (fx, fx * (1 - fx))
+    }
+  }
+
+  object tanh extends DiffFunction[Double] {
+    override def calculate(x: Double): (Double, Double) = {
+      val fx = numerics.tanh(x)
+      (fx, 1 - fx * fx)
+    }
+  }
 
   /**
    * Constructs a forward layer that accepts the specified number of inputs and produces the
@@ -75,28 +97,5 @@ object FeedForward {
     Matrix.rand(outputs, inputs, init),
     Vector.rand(outputs, init)
   )
-
-
-  object identity extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = (x, 1)
-  }
-
-  object rectifier extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = if (x < 0) (0, 0) else (x, 1)
-  }
-
-  object sigmoid extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = {
-      val fx = numerics.sigmoid(x)
-      (fx, fx * (1 - fx))
-    }
-  }
-
-  object tanh extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = {
-      val fx = numerics.tanh(x)
-      (fx, 1 - fx * fx)
-    }
-  }
 
 }

@@ -9,8 +9,8 @@ import com.swara.learn.neural.{Layer, Result}
  * selective memory is facilitated by a series of gates:
  *
  * - Forget: What elements of the state should be forgotten?
- * - Input:  What elements of the state should receive updates?
- * - Detect: How are elements of the state updated?
+ * - Select:  What elements of the state should receive updates?
+ * - Update: How are elements of the state updated?
  * - Output: What elements of the state should be outputted?
  *
  * Special thanks to the following articles:
@@ -25,18 +25,25 @@ import com.swara.learn.neural.{Layer, Result}
  */
 class Lstm(
   forget: FeedForward,
-  input: FeedForward,
-  detect: FeedForward,
+  select: FeedForward,
+  update: FeedForward,
   output: FeedForward,
   private[this] var state: Vector,
-  private[this] var memory: Vector
+  private[this] var previous: Vector
 ) extends Layer[Vector, Vector] {
 
   override def apply(inputs: Seq[Vector]): Result[Vector, Vector] = {
     // Input is a concatenation of the previous output and new input.
+    val (states, outputs, updates, selects, forgots) = inputs.map { x =>
+
+
+    }
+
+
+
     inputs.foreach { x =>
       // Input is a concatenation of previous output and new input.
-      val in = Vector.vertcat(x, this.memory)
+      val in = Vector.vertcat(x, this.previous)
 
       // Update the state as a linear combination of recalled state and detected updates.
       val f: Result[Vector, Vector] = this.forget(in)
@@ -49,8 +56,8 @@ class Lstm(
       this.state = recall :+ update
 
       // Selectively output normalized elements of the state.
-      this.memory = o.forward :* tanh(this.state)
-      this.memory
+      this.previous = o.forward :* tanh(this.state)
+      this.previous
     }
 
   }
