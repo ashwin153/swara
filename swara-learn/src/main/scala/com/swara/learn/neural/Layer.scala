@@ -12,8 +12,9 @@ trait Layer[-I, +O]  {
 
   /**
    * Returns the result of applying the layer to the specified sequence of inputs. Application of a
-   * layer produces two values: a forward value that is passed forward as input to the next layer in
-   * the network, and a backward function that backpropagates error to the previous layer.
+   * layer produces two values: forward which is the value that is passed forward as input to the
+   * next layer in the network, and backward which is a function that specifies how to backpropagate
+   * error to the previous layer.
    *
    * @param x Sequence of inputs.
    * @return Result of applying the layer.
@@ -21,7 +22,7 @@ trait Layer[-I, +O]  {
   def apply(x: Seq[I]): Result[Seq[I], Seq[O]]
 
   def apply(x: I): Result[I, O] = {
-    val res = apply(Seq(x))
+    val res = this(Seq(x))
     Result(res.forward.head, res.backward.compose(Seq(_)).andThen(_.head))
   }
 
