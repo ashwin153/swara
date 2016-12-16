@@ -2,8 +2,8 @@ package com.swara.learn.neural
 package layers
 
 import breeze.numerics
-import breeze.optimize.DiffFunction
 import breeze.stats.distributions.Rand
+import com.swara.learn.neural.math._
 
 /**
  * A feed-forward, fully-connected layer. Feed-forward layers consist of: a weight matrix (W) in
@@ -12,17 +12,15 @@ import breeze.stats.distributions.Rand
  * This activation function is typically non-linear and must be monotonically increasing, bounded,
  * and differentiable.
  *
- * @param activation Monotonically increasing, bounded, differentiable function.
+ * @param activation Activation function.
  * @param weights Weight matrix.
  * @param biases Bias vector.
  */
 class FeedForward(
-  activation: DiffFunction[Double],
+  activation: Activation,
   weights: Matrix,
   biases: Vector
 ) extends Layer[Vector, Vector] {
-
-  require(this.weights.rows == this.biases.length, "Inconsistent number of neurons.")
 
   /**
    * Returns the result of applying the feed-forward layer to the specified input. Feed-forward
@@ -36,11 +34,11 @@ class FeedForward(
    */
   override def apply(inputs: Seq[Vector]): Result[Seq[Vector], Seq[Vector]] = {
     val weighted = inputs.map(this.weights * _ + this.biases)
-    val activate = weighted.map(_.map(this.activation))
+    val activate = weighted.map(this.activation(_))
 
     Result(activate, { errors: Seq[Vector] =>
       (inputs, errors, weighted).zipped.map { case (x, err, net) =>
-        val gradient  = net.map(this.activation.gradientAt) :* err
+        val gradient  = this.activation.gradient(net) :* err
         val propagate = this.weights.t * gradient
         this.biases  -= gradient
         this.weights -= gradient.asDenseMatrix.t * x.asDenseMatrix
@@ -53,41 +51,19 @@ class FeedForward(
 
 object FeedForward {
 
-  object identity extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = (x, 1)
-  }
-
-  object rectifier extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = if (x < 0) (0, 0) else (x, 1)
-  }
-
-  object sigmoid extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = {
-      val fx = numerics.sigmoid(x)
-      (fx, fx * (1 - fx))
-    }
-  }
-
-  object tanh extends DiffFunction[Double] {
-    override def calculate(x: Double): (Double, Double) = {
-      val fx = numerics.tanh(x)
-      (fx, 1 - fx * fx)
-    }
-  }
-
   /**
    * Constructs a forward layer that accepts the specified number of inputs and produces the
    * specified number of outputs. The initial weights and biases are random numbers selected from
    * the specified distribution. By default, the initial distribution is equivalent to the one
    * described here: http://stats.stackexchange.com/a/186351.
    *
-   * @param activation Monotonically increasing, bounded, differentiable function.
+   * @param activation Activation function.
    * @param inputs Number of inputs.
    * @param outputs Number of outputs.
    * @param init Initial distribution of weights and biases.
    */
   def apply(
-    activation: DiffFunction[Double],
+    activation: Activation,
     inputs: Int,
     outputs: Int
   )(

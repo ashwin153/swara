@@ -21,11 +21,6 @@ trait Layer[-I, +O]  {
    */
   def apply(x: Seq[I]): Result[Seq[I], Seq[O]]
 
-  def apply(x: I): Result[I, O] = {
-    val res = this(Seq(x))
-    Result(res.forward.head, res.backward.compose(Seq(_)).andThen(_.head))
-  }
-
   /**
    * Returns the concatenation of this and the specified layer. Mathematically equivalent to
    * functional composition. Concatenation enables layers to be chained together in a type-safe way
