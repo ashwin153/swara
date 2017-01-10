@@ -2,15 +2,13 @@ package com.swara.core
 
 import com.swara.music.elements.{Chord, Voice}
 
+/**
+ * A music composer. Composers generate original sequences of chords that are representative of but
+ * distinct from a set of example voices. Composers may utilize a variety of machine learning and
+ * statistical techniques to produce musically correct and interesting chord sequences.
+ */
 trait Composer {
 
-  /**
-   * Returns an infinite iterator over chords that are generated from the specified sequence of
-   * example voices.
-   *
-   * @param examples
-   * @return
-   */
   def compose(examples: Seq[Voice]): Iterator[Chord]
 
 }
