@@ -34,7 +34,7 @@ class FeedForward(
    */
   override def apply(inputs: Seq[Vector]): Result[Seq[Vector], Seq[Vector]] = {
     val weighted = inputs.map(this.weights * _ + this.biases)
-    val activate = weighted.map(this.activation(_))
+    val activate = weighted.map(this.activation)
 
     Result(activate, { errors: Seq[Vector] =>
       (inputs, errors, weighted).zipped.map { case (x, err, net) =>

@@ -8,6 +8,11 @@ jar_library(name='breeze', jars=[
   jar(org='org.scalanlp', name='breeze_2.11', rev='0.12')
 ])
 
+# DeepLearning4J
+jar_library(name='dl4j', jars=[
+  jar(org='org.deeplearning4j', name='deeplearning4j-core', rev='0.7.2')
+])
+
 # Java Concurrency In Practice (JCIP) Annotations
 jar_library(name='jcip-annotations', jars=[
   jar(org='net.jcip', name='jcip-annotations', rev='1.0')

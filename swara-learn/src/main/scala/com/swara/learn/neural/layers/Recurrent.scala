@@ -3,6 +3,10 @@ package layers
 
 import com.swara.learn.neural.math._
 
+// x1, x2, x3, x4, x5
+// h0, h1, h2, h3, h4
+// backpropagate errors backward
+
 class Recurrent(
   forget: FeedForward,
   select: FeedForward,
