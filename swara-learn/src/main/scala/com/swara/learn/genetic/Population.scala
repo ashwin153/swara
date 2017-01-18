@@ -6,7 +6,6 @@ package com.swara.learn.genetic
  * @param individuals Members of the population.
  * @tparam T Type of genome.
  */
-@Immutable
 class Population[T] private (
   val individuals: Seq[Individual[T]]
 ) {
@@ -57,7 +56,7 @@ class Population[T] private (
 object Population {
 
   /**
-   * Constructs a population containing the specified
+   * Constructs a population containing the specified sequence of individuals.
    *
    * @param individuals Members of population.
    * @tparam T Type of genome.
@@ -66,4 +65,6 @@ object Population {
   def apply[T](individuals: Seq[Individual[T]]): Population[T] =
     new Population[T](individuals.sortBy(-_.fitness))
 
+  def apply[T](genomes: Seq[T], evaluator: Evaluator[T]): Population[T] =
+    Population(genomes.map(i => Individual(i, evaluator.fitness(i))))
 }
