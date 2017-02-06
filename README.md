@@ -10,10 +10,6 @@ Musical machine learning.
 ## Deadlines
 - [x] Implement Discrete Markov Chains
 - [x] Implement Hidden Markov Models
-- [ ] Implement Neural Networks
-    - [ ] Implement Feed Forward Layers by 12/16
-    - [ ] Implement Lstm Layers by 1/7
-    - [ ] Implement Convolution/Pooling Layers by 1/20
 
 ## Roadmap
 - Experiment with digital music.

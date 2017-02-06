@@ -5,12 +5,27 @@ jar_library(name='guava', jars=[
 
 # Breeze
 jar_library(name='breeze', jars=[
-  jar(org='org.scalanlp', name='breeze_2.11', rev='0.12')
+  jar(org='org.scalanlp', name='breeze_2.12', rev='0.13')
+])
+
+# Shapeless
+jar_library(name='shapeless', jars=[
+  jar(org='com.chuusai', name='shapeless_2.12', rev='2.3.2')
 ])
 
 # DeepLearning4J
 jar_library(name='dl4j', jars=[
   jar(org='org.deeplearning4j', name='deeplearning4j-core', rev='0.7.2')
+])
+
+# Json4s
+jar_library(name='json4s', jars=[
+  jar(org='org.json4s', name='json4s-jackson_2.12', rev='3.5.0')
+])
+
+# Scala-ARM
+jar_library(name='scala-arm', jars=[
+  jar(org='com.jsuereth', name='scala-arm_2.12', rev='2.0')
 ])
 
 # Java Concurrency In Practice (JCIP) Annotations
@@ -49,7 +64,7 @@ jar_library(name='junit', jars=[
 
 # Scalatest
 jar_library(name='scalatest',
-  jars=[jar(org='org.scalatest', name='scalatest_2.11', rev='3.0.0', excludes=[exclude('org.scala-lang')])],
+  jars=[jar(org='org.scalatest', name='scalatest_2.12', rev='3.0.1', excludes=[exclude('org.scala-lang')])],
   dependencies=['//:scala-library', '//:scala-reflect']
 )
 
