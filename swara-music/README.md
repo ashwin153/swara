@@ -2,8 +2,9 @@
 The ```swara-music``` library defines the various data structures required to programmatically model musical information and provides interfaces for reading from and writing to various musical file formats.
 
 ## Data Structures
-* ```Note``` is a musical pitch.
-* ```Chord``` is a collection of notes played simultaneously at some volume for some duration.
+* ```Pitch``` is a musical pitch.
+* ```Note``` is a pitch and a volume.
+* ```Chord``` is a collection of notes played simultaneously for some duration.
 * ```Voice``` is a collection of chords played simultaneously.
 * ```Phrase``` is a collection of voices played simultaneously for a particular instrument.
 * ```Fragment``` is a collection of phrases played simultaneously in a particular key and tempo.
