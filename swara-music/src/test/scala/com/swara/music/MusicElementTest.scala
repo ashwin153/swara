@@ -5,6 +5,20 @@ import org.scalatest.Matchers._
 
 class MusicElementTest extends FunSuite {
 
+  test("Fragment length is correctly calculated.") {
+    import Key._
+
+    val phrase  = Phrase(0, Set(Voice(Seq(Chord(Set.empty, Duration(1, 4))))))
+    val half    = Tempo(Duration(4, 4), 30.0)
+    val regular = Tempo(Duration(4, 4), 60.0)
+    val double  = Tempo(Duration(4, 4), 120.0)
+
+    assert(Fragment(CMajor, Tempo(Duration(4, 4), 80), Map.empty).length === 0)
+    assert(Fragment(CMajor, half,    Map(0 -> phrase)).length === 0.0083 +- 0.0001)
+    assert(Fragment(CMajor, regular, Map(0 -> phrase)).length === 0.0041 +- 0.0001)
+    assert(Fragment(CMajor, double,  Map(0 -> phrase)).length === 0.0021 +- 0.0001)
+  }
+
   test("Key scale returns correct note pitches.") {
     import Key._
     import Pitch._

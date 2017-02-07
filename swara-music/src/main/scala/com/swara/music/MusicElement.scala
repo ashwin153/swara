@@ -63,9 +63,8 @@ case class Fragment(
     val beats = channels.values
       .flatMap(_.voices.map(_.chords.map(_.duration)))
       .map(_.foldLeft(0.0)((b, d) => b + d.beats.toDouble / d.meter))
-      .max
 
-    beats / tempo.bpm
+    if (channels.isEmpty) 0.0 else beats.max / tempo.bpm
   }
 
 }
@@ -148,11 +147,10 @@ object Key {
 }
 
 /**
- * A musical tempo. Tempo specifies the number of beats per minute (bpm) as well as a time
- * signature. Time signatures define the duration of a measure of music as a particular number of
- * beats in a particular meter. For example, waltzes typically have a time signature of 3/4,
- * indicating that each measure consists of three quarter notes. Tempos are immutable, and,
- * therefore, thread-safe.
+ * A musical tempo. Tempo specifies the realtive duration of a measure, or a time signature, as well
+ * as the absolute speed in beats per minute (bpm). For example, waltzes typically have a time
+ * signature of 3/4 and a bpm of 80, indicating that each measure consists of three quarters of a
+ * beat and that 80 beats are played in a minute. Tempos are immutable, and, therefore, thread-safe.
  *
  * @param signature Time signature.
  * @param bpm Beats per minute.

@@ -56,9 +56,9 @@ object MidiWriter extends MusicWriter {
 
         phrase.voices.foreach { voice =>
           // Calculate the tick duration of each chord.
-          val ticks = voice.chords
+          val ticks: Seq[Long] = voice.chords
             .map(c => (c.duration.beats * 4 * this.TickResolution) / c.duration.meter)
-            .scan(start)((a, b) => a + b)
+            .scanLeft(start)((a, b) => a + b)
 
           // Encode the notes of the chord as note on/off events.
           ticks.sliding(2).zip(voice.chords.iterator).foreach {
