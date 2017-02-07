@@ -1,6 +1,8 @@
 package com.swara
 
-import java.io.{File, FileInputStream, FileOutputStream}
+import com.swara.music.writers.MidiWriter
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, File, FileInputStream, FileOutputStream}
+import javax.sound.midi.MidiSystem
 import scala.util.Try
 import resource._
 
@@ -23,5 +25,35 @@ package object music {
         reader.read(in).flatMap(writer.write(_, out))
       }
     }
+
+  /**
+   * A music player. Plays the specified song by first converting it into midi, and then utilizing
+   * the Java Sound Api for playback. Returns whether or not playback was successful.
+   *
+   * @param song Song to play.
+   * @return Whether or not playback was successful.
+   */
+  def play(song: Song): Try[Unit] = {
+    val out = new ByteArrayOutputStream
+    MidiWriter.write(song, out).flatMap(_ => Try {
+      // Load the midi file into a sequencer.
+      val in = new ByteArrayInputStream(out.toByteArray)
+      val sequencer = MidiSystem.getSequencer()
+      sequencer.setSequence(MidiSystem.getSequence(in))
+
+      // Run the sequencer to completion.
+      sequencer.open()
+      sequencer.start()
+
+      try {
+        while (sequencer.isRunning)
+          Thread.sleep(500)
+      } finally {
+        // Close the sequencer.
+        sequencer.stop()
+        sequencer.close()
+      }
+    })
+  }
 
 }
