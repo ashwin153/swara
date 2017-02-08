@@ -13,5 +13,4 @@ dist
 .pants.workdir.file_lock
 
 # Swara
-swara-midi/
-swara-datasets/
+swara-data/

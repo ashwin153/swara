@@ -4,13 +4,16 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import scala.io.Source
 
+@RunWith(classOf[JUnitRunner])
 class DiscreteMarkovChainTest extends FunSuite {
 
   test("Text writer") {
-    val markov = DiscreteMarkovChain[String](3)
+    val markov = new DiscreteMarkovChain[String](3)
     val shakespeare = Source
       .fromFile("swara-learn/src/test/resources/shakespeare.txt")
       .getLines()
@@ -25,7 +28,7 @@ class DiscreteMarkovChainTest extends FunSuite {
     // Construct a markov chain that compares colors by luminance.
     val luminance: Color => Double =
       c => c.getRed * 0.2126 + c.getBlue * 0.0722 + c.getGreen * 0.7152
-    val markov = DiscreteMarkovChain[Color](3)
+    val markov = new DiscreteMarkovChain[Color](3)
 
     // Load the color gradient from the test image.
     val input =
