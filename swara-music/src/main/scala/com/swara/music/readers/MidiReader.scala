@@ -33,7 +33,7 @@ object MidiReader extends MusicReader {
     // Iteratively construct the various musical elements; defaults specified in midi format spec.
     val fragments = mutable.Buffer.empty[Fragment]
     var key = Key.CMajor
-    var tempo = Tempo(Duration(4, 4), 120.0)
+    var tempo = Tempo(Length(4, 4), 120.0)
     val programs = mutable.Map.empty[Int, Int]
     val channels = mutable.Map.empty[Int, Phrase]
 
@@ -45,7 +45,7 @@ object MidiReader extends MusicReader {
         case m: MetaMessage if m.getType == 0x59 /* Key Change */ =>
           key = key.copy(signature = m.getData()(0), isMajor = m.getData()(1) == 1)
         case m: MetaMessage if m.getType == 0x58 /* Time Change */ =>
-          tempo = tempo.copy(signature = Duration(m.getData()(0), Math.pow(2, m.getData()(1)).toInt))
+          tempo = tempo.copy(signature = Length(m.getData()(0), Math.pow(2, m.getData()(1)).toInt))
         case m: MetaMessage if m.getType == 0x51 /* Tempo Change */ =>
           val mspqn = (m.getData()(0) << 16) + (m.getData()(1) << 8) + m.getData()(2)
           tempo = tempo.copy(bpm = 6E7 / mspqn)
@@ -104,14 +104,14 @@ object MidiReader extends MusicReader {
           // chord itself and shift the previous time to the end of the next chord.
           while (next.nonEmpty) {
             val ((start, end), group) = next.head
-            if (start > prev) chords += Chord(Set.empty, Duration((start - prev).toInt, ppb).reduce)
-            chords += Chord(group, Duration((end - start).toInt, ppb).reduce)
+            if (start > prev) chords += Chord(Set.empty, Length((start - prev).toInt, ppb).reduce)
+            chords += Chord(group, Length((end - start).toInt, ppb).reduce)
             groups -= ((start, end))
             prev = end
             next = groups.from((prev, prev))
           }
 
-          if (midi.nonEmpty) chords += Chord(Set.empty, Duration((midi.head._1 - prev).toInt, ppb).reduce)
+          if (midi.nonEmpty) chords += Chord(Set.empty, Length((midi.head._1 - prev).toInt, ppb).reduce)
           voices += Voice(chords)
         }
 

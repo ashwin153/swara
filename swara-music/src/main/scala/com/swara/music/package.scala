@@ -46,10 +46,8 @@ package object music {
       sequencer.start()
 
       try {
-        while (sequencer.isRunning)
-          Thread.sleep(500)
+        Thread.sleep(song.duration.toMillis)
       } finally {
-        // Close the sequencer.
         sequencer.stop()
         sequencer.close()
       }

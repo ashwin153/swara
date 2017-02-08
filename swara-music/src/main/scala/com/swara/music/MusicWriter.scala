@@ -1,6 +1,7 @@
 package com.swara.music
 
-import java.io.OutputStream
+import java.io.{File, FileOutputStream, OutputStream}
+import resource.managed
 import scala.util.Try
 
 /**
@@ -12,5 +13,8 @@ import scala.util.Try
 trait MusicWriter {
 
   def write(song: Song, out: OutputStream): Try[Unit]
+
+  final def write(song: Song, file: File): Try[Unit] =
+    managed(new FileOutputStream(file)).acquireAndGet(write(song, _))
 
 }

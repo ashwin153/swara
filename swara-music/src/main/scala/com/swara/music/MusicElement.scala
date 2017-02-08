@@ -1,5 +1,7 @@
 package com.swara.music
 
+import scala.concurrent.duration._
+
 /**
  * A musical element. An element is any attribute of a [[Song]] that is necessary to encode it as
  * sheet music. In other words, elements are all the non-derived properties of music; songs are
@@ -21,13 +23,13 @@ case class Song(
 ) extends MusicElement {
 
   /**
-   * Returns the length of the song in minutes. The length of a song is simply the sum of the
-   * lengths of all the fragments in the song.
+   * Returns the duration of the song. The duration of a song is simply the sum of the durations of
+   * all the fragments in the song.
    *
-   * @return Length of the song in minutes.
+   * @return Duration of the song.
    */
-  def length: Double =
-    this.fragments.map(_.length).sum
+  def duration: Duration =
+    this.fragments.map(_.duration).fold(Duration.Zero)((a, b) => a + b)
 
 }
 
@@ -51,20 +53,22 @@ case class Fragment(
   channels: Map[Int, Phrase]
 ) extends MusicElement {
 
+
   require(this.channels.keys.forall(c => c >= 0 && c < 16), "Channels must be between 0 and 16.")
 
   /**
-   * Returns the length of the fragment in minutes. Fragment length is simply the length of the
-   * longest phrase in beats multiplied by the bpm of the tempo.
+   * Returns the duration of the fragment. Fragment duration is simply the length of the longest
+   * voice in beats divided by the bpm of the tempo.
    *
-   * @return Length of the fragment in minutes.
+   * @return Duration of the fragment.
    */
-  def length: Double = {
+  def duration: Duration = {
     val beats = channels.values
-      .flatMap(_.voices.map(_.chords.map(_.duration)))
+      .flatMap(_.voices)
+      .map(_.chords.map(_.length))
       .map(_.foldLeft(0.0)((b, d) => b + d.beats.toDouble / d.meter))
 
-    if (channels.isEmpty) 0.0 else beats.max / tempo.bpm
+    if (channels.isEmpty) Duration.Zero else Duration(beats.max * 4 / tempo.bpm, MINUTES)
   }
 
 }
@@ -147,17 +151,18 @@ object Key {
 }
 
 /**
- * A musical tempo. Tempo specifies the realtive duration of a measure, or a time signature, as well
+ * A musical tempo. Tempo specifies the relative length of a measure, or a time signature, as well
  * as the absolute speed in beats per minute (bpm). For example, waltzes typically have a time
  * signature of 3/4 and a bpm of 80, indicating that each measure consists of three quarters of a
- * beat and that 80 beats are played in a minute. Tempos are immutable, and, therefore, thread-safe.
+ * beat and that 80 beats (quarter-notes) are played in a minute. Tempos are immutable, and,
+ * therefore, thread-safe.
  *
  * @param signature Time signature.
- * @param bpm Beats per minute.
+ * @param bpm Beats per minute; duration of quarter note.
  */
 @SerialVersionUID(1L)
 case class Tempo(
-  signature: Duration,
+  signature: Length,
   bpm: Double
 ) extends MusicElement {
 
@@ -236,19 +241,19 @@ case class Voice(
 ) extends MusicElement
 
 /**
- * A set of notes sounded simultaneously for a particular duration. Chords, therefore, encode the
- * rhythmic, and harmonic properties of a set of notes. Unlike many traditional definitions, a chord
- * may contain any number of notes, or no notes at all; in fact, musical rests are represented as
- * empty chords! Chords are combined together to form a [[Voice]]. Chords are immutable, and,
+ * A set of notes sounded simultaneously for a particular period of time. Chords, therefore, encode
+ * the rhythmic, and harmonic properties of a set of notes. Unlike many traditional definitions, a
+ * chord may contain any number of notes, or no notes at all; in fact, musical rests are represented
+ * as empty chords! Chords are combined together to form a [[Voice]]. Chords are immutable, and,
  * therefore, thread-safe.
  *
  * @param notes Notes in the chord.
- * @param duration Duration of the chord.
+ * @param length Duration of the chord.
  */
 @SerialVersionUID(1L)
 case class Chord(
   notes: Set[Note],
-  duration: Duration
+  length: Length
 ) extends MusicElement
 
 /**
@@ -333,36 +338,36 @@ object Pitch {
 }
 
 /**
- * A musical duration. Durations are represented as a particular number of beats in a particular
- * meter. For example, a quarter-note (1/4) is represented as a duration of 1 beat of a meter of 4.
- * Typically, durations have a meter that is a power of 2. Durations are immutable, and, therefore,
+ * A musical length. Length are represented as a particular number of beats in a particular meter.
+ * For example, a quarter-note (1/4) is represented as a duration of 1 beat of a meter of 4.
+ * Typically, lengths have a meter that is a power of 2. Lengths are immutable, and, therefore,
  * thread-safe.
  *
  * @param beats Number of time intervals for the chord.
  * @param meter Length of time intervals for the chord.
  */
-case class Duration (
+case class Length (
   beats: Int,
   meter: Int
-) extends MusicElement with Ordered[Duration] {
+) extends MusicElement with Ordered[Length] {
 
   require(beats > 0, "Beats must be positive.")
   require(meter > 0, "Meter must be positive.")
 
-  override def compare(that: Duration): Int =
+  override def compare(that: Length): Int =
     this.beats * that.meter - that.beats * this.meter
 
   /**
-   * Returns a reduced duration in which the beats and meters are relatively prime. Implementation
+   * Returns a reduced length in which the beats and meters are relatively prime. Implementation
    * utilizes Euclid's Algorithm to find the greatest common denominator of the meter, and then
    * divides the beat and meter parameters by this value.
    *
    * @return Reduced duration.
    */
-  def reduce: Duration = {
+  def reduce: Length = {
     def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
     val mul = gcd(this.beats, this.meter)
-    Duration(this.beats / mul, this.meter / mul)
+    Length(this.beats / mul, this.meter / mul)
   }
 
 }

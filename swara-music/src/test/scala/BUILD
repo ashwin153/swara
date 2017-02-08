@@ -1,7 +1,7 @@
 junit_tests(
   name='scala',
   sources=rglobs('*.scala'),
-  resources=['swara-learn/src/test/resources'],
+  resources=['swara-music/src/test/resources'],
   dependencies=[
     'swara-music/src/main/scala',
     '3rdparty/jvm:junit',
