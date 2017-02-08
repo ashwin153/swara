@@ -11,3 +11,7 @@
 dist
 .pids
 .pants.workdir.file_lock
+
+# Swara
+swara-midi/
+swara-datasets/
