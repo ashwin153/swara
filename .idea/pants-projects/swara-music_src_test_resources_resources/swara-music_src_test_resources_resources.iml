@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="swara-music/src/test/resources:resources" external.linked.project.path="$MODULE_DIR$/../../../swara-music/src/test/resources:resources" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="pants" pants.library.excludes="[]" pants.target.address.infos="[{&quot;targetAddress&quot;:&quot;swara-music/src/test/resources:resources&quot;,&quot;target_type&quot;:&quot;TEST_RESOURCE&quot;,&quot;globs&quot;:{&quot;globs&quot;:[&quot;swara-music/src/test/resources/**/*&quot;,&quot;swara-music/src/test/resources/*&quot;]},&quot;pants_target_type&quot;:&quot;resources&quot;,&quot;is_code_gen&quot;:false,&quot;is_target_root&quot;:true,&quot;id&quot;:&quot;swara-music.src.test.resources.resources&quot;}]" pants.target.addresses="[&quot;swara-music/src/test/resources:resources&quot;]" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../swara-music/src/test/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../swara-music/src/test/resources" type="java-test-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

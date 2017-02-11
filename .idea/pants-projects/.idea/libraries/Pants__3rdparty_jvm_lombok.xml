@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:lombok">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.projectlombok/lombok/jars/lombok-1.16.10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

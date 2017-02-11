@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/._module.iml" filepath="$PROJECT_DIR$/._module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_breeze/3rdparty_jvm_breeze.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_breeze/3rdparty_jvm_breeze.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_commons-collections4/3rdparty_jvm_commons-collections4.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_commons-collections4/3rdparty_jvm_commons-collections4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_commons-io/3rdparty_jvm_commons-io.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_commons-io/3rdparty_jvm_commons-io.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_commons-math3/3rdparty_jvm_commons-math3.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_commons-math3/3rdparty_jvm_commons-math3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_dl4j/3rdparty_jvm_dl4j.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_dl4j/3rdparty_jvm_dl4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_guava/3rdparty_jvm_guava.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_guava/3rdparty_jvm_guava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_jackson/3rdparty_jvm_jackson.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_jackson/3rdparty_jvm_jackson.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_jcip-annotations/3rdparty_jvm_jcip-annotations.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_jcip-annotations/3rdparty_jvm_jcip-annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_json4s/3rdparty_jvm_json4s.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_json4s/3rdparty_jvm_json4s.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_junit/3rdparty_jvm_junit.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_junit/3rdparty_jvm_junit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_lombok/3rdparty_jvm_lombok.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_lombok/3rdparty_jvm_lombok.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_mockito/3rdparty_jvm_mockito.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_mockito/3rdparty_jvm_mockito.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_scala-arm/3rdparty_jvm_scala-arm.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_scala-arm/3rdparty_jvm_scala-arm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_scalatest/3rdparty_jvm_scalatest.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_scalatest/3rdparty_jvm_scalatest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3rdparty_jvm_shapeless/3rdparty_jvm_shapeless.iml" filepath="$PROJECT_DIR$/3rdparty_jvm_shapeless/3rdparty_jvm_shapeless.iml" />
+      <module fileurl="file://$PROJECT_DIR$/___scala-library/___scala-library.iml" filepath="$PROJECT_DIR$/___scala-library/___scala-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/___scala-reflect/___scala-reflect.iml" filepath="$PROJECT_DIR$/___scala-reflect/___scala-reflect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/___scala-repl/___scala-repl.iml" filepath="$PROJECT_DIR$/___scala-repl/___scala-repl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/___scalac/___scalac.iml" filepath="$PROJECT_DIR$/___scalac/___scalac.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-core_src_main_java_java/swara-core_src_main_java_java.iml" filepath="$PROJECT_DIR$/swara-core_src_main_java_java/swara-core_src_main_java_java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-core_src_main_scala_scala/swara-core_src_main_scala_scala.iml" filepath="$PROJECT_DIR$/swara-core_src_main_scala_scala/swara-core_src_main_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-core_src_test_java_java/swara-core_src_test_java_java.iml" filepath="$PROJECT_DIR$/swara-core_src_test_java_java/swara-core_src_test_java_java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-core_src_test_resources_resources/swara-core_src_test_resources_resources.iml" filepath="$PROJECT_DIR$/swara-core_src_test_resources_resources/swara-core_src_test_resources_resources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-core_src_test_scala_scala/swara-core_src_test_scala_scala.iml" filepath="$PROJECT_DIR$/swara-core_src_test_scala_scala/swara-core_src_test_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-examples_src_main_scala_scala/swara-examples_src_main_scala_scala.iml" filepath="$PROJECT_DIR$/swara-examples_src_main_scala_scala/swara-examples_src_main_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-examples_src_test_resources_resources/swara-examples_src_test_resources_resources.iml" filepath="$PROJECT_DIR$/swara-examples_src_test_resources_resources/swara-examples_src_test_resources_resources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-examples_src_test_scala_scala/swara-examples_src_test_scala_scala.iml" filepath="$PROJECT_DIR$/swara-examples_src_test_scala_scala/swara-examples_src_test_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-learn_src_main_scala_scala/swara-learn_src_main_scala_scala.iml" filepath="$PROJECT_DIR$/swara-learn_src_main_scala_scala/swara-learn_src_main_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-learn_src_test_scala_scala/swara-learn_src_test_scala_scala.iml" filepath="$PROJECT_DIR$/swara-learn_src_test_scala_scala/swara-learn_src_test_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-music_src_main_scala_scala/swara-music_src_main_scala_scala.iml" filepath="$PROJECT_DIR$/swara-music_src_main_scala_scala/swara-music_src_main_scala_scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-music_src_test_resources_resources/swara-music_src_test_resources_resources.iml" filepath="$PROJECT_DIR$/swara-music_src_test_resources_resources/swara-music_src_test_resources_resources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swara-music_src_test_scala_scala/swara-music_src_test_scala_scala.iml" filepath="$PROJECT_DIR$/swara-music_src_test_scala_scala/swara-music_src_test_scala_scala.iml" />
+    </modules>
+  </component>
+</project>

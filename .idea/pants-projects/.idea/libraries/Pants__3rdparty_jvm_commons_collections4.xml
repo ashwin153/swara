@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:commons-collections4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.apache.commons/commons-collections4/jars/commons-collections4-4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

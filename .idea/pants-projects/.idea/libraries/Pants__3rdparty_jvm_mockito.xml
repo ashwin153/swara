@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:mockito">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.mockito/mockito-all/jars/mockito-all-1.10.19.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

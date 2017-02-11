@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:scalatest">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang.modules/scala-parser-combinators_2.12/bundles/scala-parser-combinators_2.12-1.0.4.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang.modules/scala-xml_2.12/bundles/scala-xml_2.12-1.0.6.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-library/jars/scala-library-2.12.1.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-reflect/jars/scala-reflect-2.12.1.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scalactic/scalactic_2.12/bundles/scalactic_2.12-3.0.1.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scalatest/scalatest_2.12/jars/scalatest_2.12-3.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PantsSettings">
+    <option name="linkedExternalProjectsSettings">
+      <PantsProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/../.." />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/../.." />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:breeze" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:commons-collections4" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:commons-io" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:commons-math3" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:dl4j" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:guava" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:jackson" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:jcip-annotations" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:json4s" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:junit" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:lombok" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:mockito" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:scala-arm" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:scalatest" />
+            <option value="$PROJECT_DIR$/../../3rdparty/jvm:shapeless" />
+            <option value="$PROJECT_DIR$/../../:scala-library" />
+            <option value="$PROJECT_DIR$/../../:scala-reflect" />
+            <option value="$PROJECT_DIR$/../../:scala-repl" />
+            <option value="$PROJECT_DIR$/../../:scalac" />
+            <option value="$PROJECT_DIR$/../../swara-core/src/main/java:java" />
+            <option value="$PROJECT_DIR$/../../swara-core/src/main/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-core/src/test/java:java" />
+            <option value="$PROJECT_DIR$/../../swara-core/src/test/resources:resources" />
+            <option value="$PROJECT_DIR$/../../swara-core/src/test/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-examples/src/main/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-examples/src/test/resources:resources" />
+            <option value="$PROJECT_DIR$/../../swara-examples/src/test/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-learn/src/main/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-learn/src/test/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-music/src/main/scala:scala" />
+            <option value="$PROJECT_DIR$/../../swara-music/src/test/resources:resources" />
+            <option value="$PROJECT_DIR$/../../swara-music/src/test/scala:scala" />
+          </set>
+        </option>
+        <option name="targetSpecs">
+          <list>
+            <option value="./::" />
+          </list>
+        </option>
+      </PantsProjectSettings>
+    </option>
+    <option name="resolverVersion" value="14" />
+  </component>
+</project>

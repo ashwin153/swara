@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="swara-core/src/main/java:java" external.linked.project.path="$MODULE_DIR$/../../../swara-core/src/main/java:java" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="pants" pants.library.excludes="[]" pants.target.address.infos="[{&quot;targetAddress&quot;:&quot;swara-core/src/main/java:java&quot;,&quot;target_type&quot;:&quot;SOURCE&quot;,&quot;globs&quot;:{&quot;globs&quot;:[&quot;swara-core/src/main/java/**/*.java&quot;,&quot;swara-core/src/main/java/*.java&quot;]},&quot;pants_target_type&quot;:&quot;java_library&quot;,&quot;is_code_gen&quot;:false,&quot;is_target_root&quot;:true,&quot;id&quot;:&quot;swara-core.src.main.java.java&quot;}]" pants.target.addresses="[&quot;swara-core/src/main/java:java&quot;]" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../swara-core/src/main/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../swara-core/src/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="3rdparty_jvm_commons-io" exported="" />
+    <orderEntry type="module" module-name="swara-learn_src_main_scala_scala" exported="" />
+  </component>
+</module>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:jcip-annotations">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/net.jcip/jcip-annotations/jars/jcip-annotations-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

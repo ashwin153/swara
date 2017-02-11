@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="swara-music/src/main/scala:scala" external.linked.project.path="$MODULE_DIR$/../../../swara-music/src/main/scala:scala" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="pants" pants.library.excludes="[]" pants.target.address.infos="[{&quot;targetAddress&quot;:&quot;swara-music/src/main/scala:scala&quot;,&quot;target_type&quot;:&quot;SOURCE&quot;,&quot;globs&quot;:{&quot;globs&quot;:[&quot;swara-music/src/main/scala/**/*.scala&quot;,&quot;swara-music/src/main/scala/*.scala&quot;]},&quot;pants_target_type&quot;:&quot;scala_library&quot;,&quot;is_code_gen&quot;:false,&quot;is_target_root&quot;:true,&quot;id&quot;:&quot;swara-music.src.main.scala.scala&quot;}]" pants.target.addresses="[&quot;swara-music/src/main/scala:scala&quot;]" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../swara-music/src/main/scala">
+      <sourceFolder url="file://$MODULE_DIR$/../../../swara-music/src/main/scala" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="___scala-library" exported="" />
+    <orderEntry type="module" module-name="3rdparty_jvm_json4s" exported="" />
+    <orderEntry type="module" module-name="3rdparty_jvm_scala-arm" exported="" />
+    <orderEntry type="library" name="Pants: org.scala-lang:scala-library:2.12.1" level="project" />
+  </component>
+</module>

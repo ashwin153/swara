@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:junit">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/junit/junit/jars/junit-4.12.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.3.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.pantsbuild/junit-runner-annotations/jars/junit-runner-annotations-0.0.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

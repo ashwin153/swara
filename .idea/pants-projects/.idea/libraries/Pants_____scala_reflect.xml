@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Pants: //:scala-reflect">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-library/jars/scala-library-2.12.1.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-reflect/jars/scala-reflect-2.12.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

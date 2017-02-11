@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:scala-arm">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/com.jsuereth/scala-arm_2.12/jars/scala-arm_2.12-2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-library/jars/scala-library-2.12.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

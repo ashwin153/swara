@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="3rdparty/jvm:scalatest" external.linked.project.path="$MODULE_DIR$/../../../3rdparty/jvm:scalatest" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="pants" pants.library.excludes="[]" pants.target.address.infos="[{&quot;targetAddress&quot;:&quot;3rdparty/jvm:scalatest&quot;,&quot;target_type&quot;:&quot;SOURCE&quot;,&quot;globs&quot;:{&quot;globs&quot;:[]},&quot;pants_target_type&quot;:&quot;jar_library&quot;,&quot;is_code_gen&quot;:false,&quot;is_target_root&quot;:true,&quot;id&quot;:&quot;3rdparty.jvm.scalatest&quot;}]" pants.target.addresses="[&quot;3rdparty/jvm:scalatest&quot;]" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="___scala-library" exported="" />
+    <orderEntry type="module" module-name="___scala-reflect" exported="" />
+    <orderEntry type="library" exported="" name="Pants: 3rdparty/jvm:scalatest" level="project" />
+  </component>
+</module>

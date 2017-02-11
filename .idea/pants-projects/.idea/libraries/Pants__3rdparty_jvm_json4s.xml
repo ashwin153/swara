@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Pants: 3rdparty/jvm:json4s">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/pants/com.fasterxml.jackson.core/jackson-annotations/bundles/jackson-annotations-2.8.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/com.fasterxml.jackson.core/jackson-core/bundles/jackson-core-2.8.4.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/com.fasterxml.jackson.core/jackson-databind/bundles/jackson-databind-2.8.4.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/com.thoughtworks.paranamer/paranamer/bundles/paranamer-2.8.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.json4s/json4s-ast_2.12/jars/json4s-ast_2.12-3.5.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.json4s/json4s-core_2.12/jars/json4s-core_2.12-3.5.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.json4s/json4s-jackson_2.12/jars/json4s-jackson_2.12-3.5.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.json4s/json4s-scalap_2.12/jars/json4s-scalap_2.12-3.5.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang.modules/scala-xml_2.12/bundles/scala-xml_2.12-1.0.6.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/pants/org.scala-lang/scala-library/jars/scala-library-2.12.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="swara-core/src/test/scala:scala" external.linked.project.path="$MODULE_DIR$/../../../swara-core/src/test/scala:scala" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="pants" pants.library.excludes="[]" pants.target.address.infos="[{&quot;targetAddress&quot;:&quot;swara-core/src/test/scala:scala&quot;,&quot;target_type&quot;:&quot;TEST&quot;,&quot;globs&quot;:{&quot;globs&quot;:[&quot;swara-core/src/test/scala/**/*.scala&quot;,&quot;swara-core/src/test/scala/*.scala&quot;]},&quot;pants_target_type&quot;:&quot;java_tests&quot;,&quot;is_code_gen&quot;:false,&quot;is_target_root&quot;:true,&quot;id&quot;:&quot;swara-core.src.test.scala.scala&quot;}]" pants.target.addresses="[&quot;swara-core/src/test/scala:scala&quot;]" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../swara-core/src/test/scala">
+      <sourceFolder url="file://$MODULE_DIR$/../../../swara-core/src/test/scala" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="3rdparty_jvm_junit" exported="" />
+    <orderEntry type="module" module-name="3rdparty_jvm_scalatest" exported="" />
+    <orderEntry type="module" module-name="swara-core_src_main_scala_scala" exported="" />
+    <orderEntry type="module" module-name="swara-core_src_test_resources_resources" exported="" />
+    <orderEntry type="library" name="Pants: org.scala-lang:scala-library:2.12.1" level="project" />
+  </component>
+</module>
