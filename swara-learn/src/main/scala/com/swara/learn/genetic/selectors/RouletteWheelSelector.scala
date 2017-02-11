@@ -19,8 +19,10 @@ class RouletteWheelSelector[T] extends Selector[T] {
     var total = 0.0
 
     individuals.foreach { i =>
-      total += i.fitness
-      wheel += total -> i
+      if (total == 0.0 || i.fitness > 0.0) {
+        total += i.fitness
+        wheel += total -> i
+      }
     }
 
     // Randomly sample from the roulette wheel to choose the selected individuals.

@@ -1,14 +1,17 @@
 package com.swara.learn.genetic
 
+import net.jcip.annotations.ThreadSafe
+
 /**
- * A population. Populations are ordered collections of individuals sorted by descending fitness.
+ * A population. Populations consist of a sequence of members.
  *
- * @param individuals Members of the population.
+ * @param members Members of the population.
  * @tparam T Type of genome.
  */
-class Population[T] private (
-  val individuals: Seq[Individual[T]]
-) {
+@ThreadSafe
+case class Population[T](members: Seq[T]) {
+
+  require(members.nonEmpty, "Population must be non-empty.")
 
   /**
    * Evolves the population according to the rules of Darwinian natural selection. Individuals in
@@ -36,35 +39,19 @@ class Population[T] private (
     // constantly rediscovered. However, elitism can lead to a lack of diversity in the population
     // which in turn reduces the algorithm's ability to break out of local extrema.
     require(elitism >= 0.0 && elitism <= 1.0, "Elitism percentage must be on the interval [0, 1].")
-    val elite = this.individuals.take((elitism * this.individuals.size).toInt)
+    val individuals = members.map(m => Individual(m, evaluator.fitness(m))).sortBy(_.fitness)
+    val elite = individuals.takeRight((elitism * individuals.size).toInt).map(_.genome)
 
     // Select individuals in the population to be ancestors. The genomes of these individuals are
-    // recombinated to produce offspring, which are then mutated to foster diversity. Because these
+    // recombinated to produce offspring, which are xthen mutated to foster diversity. Because these
     // operators are independent of each other, they may be performed in parallel.
-    val ancestors = selector.select(this.individuals, 2 * (this.individuals.size - elite.size))
+    val ancestors = selector.select(individuals, 2 * (individuals.size - elite.size))
     val offspring = ancestors.par.iterator.grouped(2).map { case Seq(father, mother) =>
-      val child = mutator.mutate(recombinator.crossover(father.genome, mother.genome))
-      Individual(child, evaluator.fitness(child))
+      mutator.mutate(recombinator.crossover(father.genome, mother.genome))
     }
 
     // Generate a new population from the unchanged elites and the mutated offspring.
     Population[T](elite ++ offspring)
   }
 
-}
-
-object Population {
-
-  /**
-   * Constructs a population containing the specified sequence of individuals.
-   *
-   * @param individuals Members of population.
-   * @tparam T Type of genome.
-   * @return Population containing the specified individuals.
-   */
-  def apply[T](individuals: Seq[Individual[T]]): Population[T] =
-    new Population[T](individuals.sortBy(-_.fitness))
-
-  def apply[T](genomes: Seq[T], evaluator: Evaluator[T]): Population[T] =
-    Population(genomes.map(i => Individual(i, evaluator.fitness(i))))
 }

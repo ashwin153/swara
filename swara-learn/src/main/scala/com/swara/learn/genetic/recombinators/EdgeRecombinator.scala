@@ -15,10 +15,11 @@ class EdgeRecombinator[T] extends Recombinator[Seq[T]] {
 
   override def crossover(father: Seq[T], mother: Seq[T]): Seq[T] = {
     // Build an adjacency matrix connecting all genes to all neighbor genes.
-    var adjacency = new mutable.HashMap[T, Set[T]] with mutable.MultiMap[T, T]
+    val adjacency = new mutable.HashMap[T, mutable.Set[T]] with mutable.MultiMap[T, T]
     father.sliding(2).foreach(e => adjacency.addBinding(e(0), e(1)))
     mother.sliding(2).foreach(e => adjacency.addBinding(e(0), e(1)))
     adjacency.foreach { case (k, v) => v.foreach(adjacency.addBinding(_, k)) }
+    var genes = (father ++ mother).toSet
 
     // If the last gene currently exists, then remove it from all entries in the adjacency matrix.
     // If the last gene does not exist or it has no neighbors, then choose a random gene that is not
@@ -28,9 +29,12 @@ class EdgeRecombinator[T] extends Recombinator[Seq[T]] {
       child += (child.lastOption flatMap adjacency.get match {
         case Some(neighbors) if neighbors.nonEmpty =>
           neighbors.foreach(adjacency.removeBinding(_, child.last))
-          neighbors.min(Ordering.by(adjacency.getOrElse(_, Set.empty).size))
-        case _ => Random.shuffle(adjacency.keys.filterNot(child.contains)).head
+          neighbors.min(Ordering.by[T, Int](adjacency.getOrElse(_, Set.empty).size))
+        case _ => Random.shuffle(genes).head
       })
+
+      adjacency -= child.last
+      genes -= child.last
     }
 
     child
