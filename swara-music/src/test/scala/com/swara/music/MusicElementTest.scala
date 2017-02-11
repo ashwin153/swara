@@ -1,23 +1,27 @@
 package com.swara.music
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.Matchers._
+import org.scalatest.junit.JUnitRunner
+import scala.concurrent.duration._
 
+@RunWith(classOf[JUnitRunner])
 class MusicElementTest extends FunSuite {
 
-//  test("Fragment length is correctly calculated.") {
-//    import Key._
-//
-//    val phrase  = Phrase(0, Set(Voice(Seq(Chord(Set.empty, Length(1, 4))))))
-//    val half    = Tempo(Length(4, 4), 30.0)
-//    val regular = Tempo(Length(4, 4), 60.0)
-//    val double  = Tempo(Length(4, 4), 120.0)
-//
-//    assert(Fragment(CMajor, Tempo(Length(4, 4), 80), Map.empty).length === 0)
-//    assert(Fragment(CMajor, half,    Map(0 -> phrase)).length === 0.0333 +- 0.0001)
-//    assert(Fragment(CMajor, regular, Map(0 -> phrase)).length === 0.0166 +- 0.0001)
-//    assert(Fragment(CMajor, double,  Map(0 -> phrase)).length === 0.0083 +- 0.0001)
-//  }
+  test("Fragment duration is correctly calculated.") {
+    import Key._
+
+    val channels = Map(0 -> Phrase(0, Set(Voice(Seq(Chord(Set.empty, Length(1, 4)))))))
+    val half     = Tempo(Length(2, 4), 0.5)
+    val regular  = Tempo(Length(3, 4), 1.0)
+    val double   = Tempo(Length(4, 4), 2.0)
+
+    assert(Fragment(CMajor, regular, Map.empty).duration === (0 minutes))
+    assert(Fragment(CMajor, half, channels).duration === (2 minutes))
+    assert(Fragment(CMajor, regular, channels).duration === (1 minutes))
+    assert(Fragment(CMajor, double, channels).duration === (30 seconds))
+  }
 
   test("Key scale returns correct note pitches.") {
     import Key._

@@ -68,7 +68,7 @@ case class Fragment(
       .map(_.chords.map(_.length))
       .map(_.foldLeft(0.0)((b, d) => b + d.beats.toDouble / d.meter))
 
-    if (channels.isEmpty) Duration.Zero else Duration(beats.max * 4 / tempo.bpm, MINUTES)
+    if (beats.isEmpty) Duration.Zero else Duration(beats.max * 4 / tempo.bpm, MINUTES)
   }
 
 }

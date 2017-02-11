@@ -64,6 +64,9 @@ object MidiReader extends MusicReader {
         }
       }
 
+      midi --= messages.keys
+
+      // Extract all the note messages.
       messages.flatMap({
         case (tick, msgs) => msgs.collect {
           case e: ShortMessage if e.getCommand == 0x90 /* Note On */ =>
@@ -87,8 +90,6 @@ object MidiReader extends MusicReader {
           if (note.volume > 0) active += note -> tick
         }
 
-        midi --= messages.keys
-
         // Construct a builder to generate chords from notes and midi tick durations.
         val voices = mutable.Buffer.empty[Voice]
         val ppb = 4 * sequence.getResolution
@@ -105,7 +106,7 @@ object MidiReader extends MusicReader {
           while (next.nonEmpty) {
             val ((start, end), group) = next.head
             if (start > prev) chords += Chord(Set.empty, Length((start - prev).toInt, ppb).reduce)
-            chords += Chord(group, Length((end - start).toInt, ppb).reduce)
+            if (start <  end) chords += Chord(group, Length((end - start).toInt, ppb).reduce)
             groups -= ((start, end))
             prev = end
             next = groups.from((prev, prev))
