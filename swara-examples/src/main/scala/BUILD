@@ -1,0 +1,9 @@
+scala_library(
+  name='scala',
+  sources=rglobs('*.scala'),
+  dependencies=[
+    'swara-music/src/main/scala',
+	  'swara-learn/src/main/scala',
+	  'swara-core/src/main/scala',
+  ]
+)
