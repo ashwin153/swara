@@ -2,8 +2,8 @@
 .DS_Store
 
 # IntelliJ 
-.idea/
-*.iml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
 
 # Pants
 .cache
