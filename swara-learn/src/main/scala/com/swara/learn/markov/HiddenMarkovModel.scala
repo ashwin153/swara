@@ -2,7 +2,6 @@ package com.swara.learn.markov
 
 import com.swara.learn.common.Distribution
 import com.swara.learn.{Model, Supervised}
-import net.jcip.annotations.NotThreadSafe
 import scala.collection.mutable
 import scala.collection.concurrent.TrieMap
 
@@ -11,13 +10,13 @@ import scala.collection.concurrent.TrieMap
  * hidden states have the Markov Property but cannot be directly observed. HMMs are widely used for
  * tasks such as speech, handwriting, and gesture recognition. The model is governed by three
  * probability distributions: initial (initial hidden states), transitions (between hidden states),
- * and emissions (observed state outputs). A hidden markov model may not be simultaneously trained
- * and used, but each operation may be performed separately in parallel.
+ * and emissions (observed state outputs). A hidden markov model may be simultaneously trained and 
+ * used.
  *
  * @tparam O Type of observed states.
  * @tparam H Type of hidden states.
  */
-@NotThreadSafe
+@ThreadSafe
 class HiddenMarkovModel[O, H] extends Model[Seq[O], Seq[H]] with Supervised[Seq[O], Seq[H]] {
 
   private[this] val transitions = TrieMap.empty[H, Distribution[H]]
